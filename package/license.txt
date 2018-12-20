@@ -1,0 +1,127 @@
+LICENSE INFO
+
+Name        : MUCOM88 Windows
+Platform    : Windows XP or later
+Repository  : https://onitama.tv/mucom88/
+Download site : https://github.com/onitama/mucom88
+
+Copyright   : 
+OpenMucom88 Ver.1.7 Copyright 1987-2019(C) Yuzo Koshiro
+Z80 emulation by Yasuo Kuwahara 2002-2018(C)
+FM Sound Generator by cisc 1998, 2003(C)
+SCCI system / adpcm converter by gasshi 2018(C)
+
+Windows version by ONION software/onitama 2018-2019(C)
+License     : CC BY-NC-SA 4.0
+
+This software is provided 'as-is', without any express or implied warranty.
+In no event will the authors be held liable for any damages arising from 
+the use of this software.
+
+Attribution-NonCommercial-NoDerivatives 4.0 International.
+https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ja
+
+1. Attribution:
+   You must give appropriate credit, provide a link to the license, and indicate
+   if changes were made. You may do so in any reasonable manner, but not in any
+   way that suggests the licensor endorses you or your use.
+
+2. NonCommercial:
+   You may not use the material for commercial purposes.
+
+3. ShareAlike:
+   If you remix, transform, or build upon the material, you must distribute
+   your contributions under the same license as the original.
+
+
+・ライセンスおよび連絡先
+
+	MUCOM88 Windowsは、以下のサイトにて1次配布されています。
+
+	OPEN MUCOM88 Windows
+	https://onitama.tv/mucom88/
+
+	OPEN MUCOM88 Windows github repository
+	https://github.com/onitama/mucom88
+
+
+	MUCOM88 Windowsは、以下のライブラリ及びソースコード・データにより作成されています。
+
+	・Portable Z80 emulation作者 Yasuo Kuwahara氏
+	  http://www.geocities.jp/kwhr0/
+	・fmgen作者 cisc氏
+	  http://www.retropc.net/cisc/
+	・MUCOM88作者 古代祐三氏
+	  https://twitter.com/yuzokoshiro
+	・HSPMUCOM作者 おにたま(ONION software)
+	  https://www.onionsoft.net/
+	・adpcm converter/SCCI作者 がし３(gasshi)氏
+	  http://www.pyonpyon.jp/~gasshi/fm/
+
+	作成にあたり、ご協力頂いた和田誠(エインシャント)様、
+	WING☆様、OXYGEN様、がし３(gasshi)様、@MUCOM88様、UME-3様そして
+	オリジナルのPC-8801版を作成した古代祐三様、本当にありがとうございました。
+
+	MUCOM88 Windows及びソースコードは、クリエイティブコモンズで規定された
+	CC BY-NC-SA 4.0ライセンスで公開されています。
+	https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ja
+
+	無償(非営利)である限りは自由に紹介、複製、改造、再配布が可能です。
+	その際には必ずドキュメントとライセンス表記(license.txt)も含めるように
+	してください。
+
+	サンプル楽曲(sampl1.muc、sampl2.muc、sampl3.muc)及び付属するデータ
+	(mucompcm.bin、voice.dat)は株式会社エインシャントの古代祐三氏により
+	提供されています。
+	https://www.ancient.co.jp/yuzo.html
+
+	古代祐三氏のサンプル楽曲についても、同様のCC BY-NC-SA 4.0ライセンスで
+	提供されています。
+	無償(非営利)で使用する場合は、著作権のライセンスを明示するようにしてください。
+
+	ライセンス表記の例:
+	「楽曲名(またはファイル名) / Copyright(C) by Yuzo Koshiro」
+
+	MUCOM88 Windowsは、おにたま(onion software)が中心となり作成されています。
+
+	ONION software Homepage
+	https://www.onionsoft.net/
+
+	ユーザーがMUCOM88を使って作成したオリジナルの楽曲、MMLファイルの権利は
+	それを作成したユーザーに属します。
+	onion softwareは本プログラムによって生じた、いかなる損害についても
+	保証いたしません。自己の責任の範囲で使用してください。
+	また、付属のHSPスクリプトも自由に改変、公開していただいて構いません。
+
+
+	fmgenソースコードに関する配布規定は、作者であるcisc氏のライセンスに
+	従ってください。fmgenソースコードの配布規定は以下の通りです。
+
+	・fmgenソースコードは作者(cisc@retropc.net) が著作権を所有しています。
+
+	・本ソースコードはあるがままに提供されるものであり，
+	  暗黙及び明示的な保証を一切含みません．
+
+	・本ソースコードを利用したこと，利用しなかったこと，
+	  利用できなかったことに関して生じたあるいは生じると予測される
+	  損害について，作者は一切責任を負いません．
+
+	・本ソースコードは，以下の制限を満たす限り自由に改変・組み込み・
+	  配布・利用することができます．
+
+	  1. 本ソフトの由来(作者, 著作権)を明記すること.
+	  2. 配布する際にはフリーソフトとすること．
+	  3. 改変したソースコードを配布する際は改変内容を明示すること.
+	  4. ソースコードを配布する際にはこのテキストを一切改変せずに
+	     そのまま添付すること．
+
+	・公開の際に作者への連絡を頂ければ幸いです．
+
+	・商用ソフト(シェアウェア含む) に本ソースコードの一部，または
+	  全部を組み込む際には，事前に作者の合意を得る必要があります．
+
+	各ライブラリについての詳細は、それぞれのソースコード及びドキュメントを
+	参照ください。
+	有償・商用での配布については、別途作者までお問い合わせください。
+
+

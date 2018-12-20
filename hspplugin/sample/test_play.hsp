@@ -1,0 +1,36 @@
+;
+;	MUCOM88 test
+;
+#include "hspmucom.as"
+
+	mucominit hwnd
+	onexit *byebye
+
+	mucomreset 0
+	mucomloadpcm ""
+	mucomload "sampl1.mub"
+	mucomload "sampl2.mub",1
+
+	mucomres buf
+	mesbox buf,640,200,0
+	button "PLAY",*m_play
+	button "PLAY",*m_play2
+	button "STOP",*m_stop
+
+	stop
+
+*m_play
+	mucomplay 0
+	stop
+*m_play2
+	mucomplay 1
+	stop
+
+*m_stop
+	mucomstop 0
+	stop
+
+*byebye
+	mucombye
+	end
+

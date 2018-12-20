@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{4EC87A04-F214-4ACD-B853-B007E72C4A86}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>hspmucom</RootNamespace>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;HSPMUCOM_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>../src/</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;HSPMUCOM_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>../src/</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\adpcm.h" />
+    <ClInclude Include="..\src\cmucom.h" />
+    <ClInclude Include="..\src\fmgen\diag.h" />
+    <ClInclude Include="..\src\fmgen\file.h" />
+    <ClInclude Include="..\src\fmgen\fmgen.h" />
+    <ClInclude Include="..\src\fmgen\fmgeninl.h" />
+    <ClInclude Include="..\src\fmgen\fmtimer.h" />
+    <ClInclude Include="..\src\fmgen\headers.h" />
+    <ClInclude Include="..\src\fmgen\misc.h" />
+    <ClInclude Include="..\src\fmgen\opm.h" />
+    <ClInclude Include="..\src\fmgen\opna.h" />
+    <ClInclude Include="..\src\fmgen\psg.h" />
+    <ClInclude Include="..\src\fmgen\types.h" />
+    <ClInclude Include="..\src\headers.h" />
+    <ClInclude Include="..\src\md5.h" />
+    <ClInclude Include="..\src\membuf.h" />
+    <ClInclude Include="..\src\mucom88if.h" />
+    <ClInclude Include="..\src\mucomerror.h" />
+    <ClInclude Include="..\src\mucomvm.h" />
+    <ClInclude Include="..\src\plugin.h" />
+    <ClInclude Include="..\src\realchip.h" />
+    <ClInclude Include="..\src\scci.h" />
+    <ClInclude Include="..\src\SCCIDefines.h" />
+    <ClInclude Include="..\src\soundbuf.h" />
+    <ClInclude Include="..\src\soundds.h" />
+    <ClInclude Include="..\src\Z80\Z80.h" />
+    <ClInclude Include="hspdll.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\src\adpcm.cpp" />
+    <ClCompile Include="..\src\cmucom.cpp" />
+    <ClCompile Include="..\src\fmgen\file.cpp" />
+    <ClCompile Include="..\src\fmgen\fmgen.cpp" />
+    <ClCompile Include="..\src\fmgen\fmtimer.cpp" />
+    <ClCompile Include="..\src\fmgen\opm.cpp" />
+    <ClCompile Include="..\src\fmgen\opna.cpp" />
+    <ClCompile Include="..\src\fmgen\psg.cpp" />
+    <ClCompile Include="..\src\md5.c" />
+    <ClCompile Include="..\src\membuf.cpp" />
+    <ClCompile Include="..\src\mucomerror.cpp" />
+    <ClCompile Include="..\src\mucomvm.cpp" />
+    <ClCompile Include="..\src\plugin.cpp" />
+    <ClCompile Include="..\src\realchip.cpp" />
+    <ClCompile Include="..\src\soundbuf.cpp" />
+    <ClCompile Include="..\src\soundds.cpp" />
+    <ClCompile Include="..\src\Z80\Z80.cpp" />
+    <ClCompile Include="hspmucom.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

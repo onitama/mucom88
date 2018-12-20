@@ -1,0 +1,39 @@
+#mucom88 1.5
+#title Sample Music 1
+#composer Yuzo Koshiro
+#author Yuzo Koshiro
+#voice voice.dat
+#pcm mucompcm.bin
+#date 2018/11/24
+#comment 
+   sampl1
+ for sb-2
+A C192  o6t200 L @78v9 l16q4M20,1,12,4 yDR,4,3  e8r4.r4edc8 d8.g&g2  g8f8e4r4 r4cde8e8.f8.c8 c8.d8r<g8>
+C   C192 L @106 o4 S0,0,8,8 H4,4,0   v0l16  [r1]4 c1c2<b4g4>e1f2.g4
+B   C192L @31 o4v11q7  l16 c8rc&c4 c8rc8 ef8 g8rg&g4 g8rg&g4 a8ra&a4  a8ra&a4 f8rf&f4 g8rg&g4
+H   C192 L @159o6v8 l16 [ q9 erre8errer8erere [drrd8drr]2  [erre8err]2  errf8frrfrrf8grr    ]2
+I   C192 L @159o6v8 l16 [ q9 crrc8crrcrrc8crc  crrc8crr<br8b8brr brra8arrarra8arr  arra8arrarra8brr ]2
+J   C192 L @159o5v8 l16 [ q9 grrg8grrgrrg8grg [grrg8gr8]2     >[crrc8crr]2         crrc8crrcrrc8drr   ]2
+K   C192o1L v50 [l16@1c8)50@11c(50@1c8/c)50@11c8  (50  ]16 @11)50ccc(50
+G   C192L v52,21,21,21,20,21,21l16@8[c(9c)9]64
+D   C192 L [r1]4r8 l16@4v8o6    [cr(2]4r4r8 [r1]3
+E   C192 L [r1]4r8 l16@4v8o6D-18[cr(2]4r4r8 [r1]3
+F   C192 L [r1]4r8 l16@4v8o8[rc(2]4 r4r8[r1]3
+
+A e8r4.r4edc8 d8.g&g2  g8f8e4 r2cde8e8.f8.g8 a8.g&g4
+B    c8rc&c4 c8rc8 ef8 g8rg&g4 g8rg&g4 a8ra&a4  a8ra&a4 f8rf&f4 g8rg&g4
+
+A [r8>c8c8c8 dc<b>c8<ra8 b8rb8.a8ag8.&g4  r8a8a8rga8ag8.f8e8.g&g4 r4/>dc<b8]2     d8c8
+B [c8rc8.<b8a8ra8.>c8e8re&e4 e8re&e4  f8rf&f4 g8rg&g4 c8rc8.e8 g8rg&g4 ]2
+H @108o4v1  q0[c1&<b2&>e4&<b4 a2.&b4&>c2 /d8.&c8.&<b8   ]2  g2
+I @108o4v1D5q0[c1&<b2&>e4&<b4 a2.&b4&>c2 /d8.&c8.&<b8   ]2  g2
+C S0,0,0,0
+D @4v10   l16q5 [ o4 ecge>c<geg ecge>c<aea[e<b>gebgeg]2  c<a>fcc<a>fcc<b>gdd<b>gdecge>c<gegd<b>gdbgdg  ]2
+E @4v7    l16q5r[ o4 ecge>c<geg ecge>c<aea[e<b>gebgeg]2  c<a>fcc<a>fcc<b>gdd<b>gdecge>c<gegd<b>gdbgd/g  ]2
+F @0  o4v6  q0[c1<b2>e4<b4 a2.b4>c2 /d8.c8.<b8   ]2  g2
+J @93o6q0(3[r8e8e8e8 fede8.r8>[[ggg8(2]2)4]2< r8f8f8rrf8fe8.d8 c2r4</bag8>]2    r4
+K [[l16@1c8)50@11c(50@1c8c/)50@11c8  (50  ]8  @11)50cc(50  ]2
+G [c]128
+C @159o6v9 p2[r8c8c8c8 dc<b>c8<ra8 b8rb8.a8ag8.&g4  r8a8a8rga8ag8.f8e8.g&g4 r4/>dc<b8]2 p3  r4
+
+

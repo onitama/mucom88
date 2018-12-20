@@ -1,0 +1,28 @@
+;
+;	MUCOM88 test
+;
+#include "hspmucom.as"
+
+	sysfont 17
+
+	mucominit hwnd
+	onexit *byebye
+
+	fname="od3.mub"
+
+	mucomreset MUCOM_RESET_PLAYER
+	;mucomloadpcm "mucompcm.bin"
+	mucomload fname
+	mucomtag info
+
+	mes info
+
+	mucomplay 0
+	mucomres result
+	mes result
+
+	stop
+
+*byebye
+	mucombye
+	end

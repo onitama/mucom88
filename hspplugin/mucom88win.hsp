@@ -1,0 +1,1222 @@
+;
+;	MUCOM88 editor
+;	(HSPMUCOMプラグインの簡易エディター)
+;	onitama 2018/11
+;
+#include "hspmucom.as"
+#include "mod_fontdlg.as"
+#include "mod_selfolder.as"
+#include "mod_appconfig.as"
+
+#define EM_GETSEL	$00B0
+#define EM_LINEFROMCHAR	$00C9
+
+#ifdef objcolor
+#define SETOBJCOLOR 4
+#else
+#define SETOBJCOLOR 0
+#define objcolor(%1,%2,%3) dummy=%1+%2+%3
+#endif
+
+#packopt name "mucom88win"
+#packopt icon "mucom88win.ico"
+#pack "mucom88.png"
+
+#define INIFILE "\\mucom88win.ini"
+#define APP_VER "0.4"
+
+;#define EDITOR_DEBUG
+
+#define EDITOR_TITLE "MUCOM88"
+
+#define TEMPMML "mucommml"
+#define TEMPBIN "mucombin"
+
+	randomize
+	goto *boot
+
+#uselib "shell32.dll"
+#cfunc SHBrowseForFolder "SHBrowseForFolder" int
+#func SHGetPathFromIDList "SHGetPathFromIDList" int,int
+#func SHFileOperation "SHFileOperation" sptr
+#uselib "ole32.dll"
+#func CoTaskMemFree "CoTaskMemFree" int
+
+
+
+	;	起動
+*boot
+	;	初期設定
+	myfile=""
+	editfile=""
+	voicefile=MUCOM_DEFAULT_VOICEFILE
+	pcmfile=MUCOM_DEFAULT_PCMFILE
+	fontname="FixedSys"
+	fontsize=14
+	filedir=dir_exe	;dir_mydoc
+	scci_mode=0
+	author="???"
+	url=""
+	recent=""
+	uuid=""
+	weburl="https://onitama.tv/mucom88/"
+	fastfw=0
+	fgcolor=$dcdcdc
+	bgcolor=0
+
+	wx=800:wy=600
+	app_winx=-1
+	app_winy=-1
+	initopt=0
+
+	celload "mucom88.png",1
+
+	get_appdata_path app_dir
+	cfg_init app_dir+INIFILE
+	cfg_load:modcfg=stat
+	if modcfg {	; iniファイル読み込み
+		wx=0+cfg_getvar("wx")
+		wy=0+cfg_getvar("wy")
+		app_winx=0+cfg_getvar("winx")
+		app_winy=0+cfg_getvar("winy")
+		voicefile=cfg_getvar("voicefile")
+		pcmfile=cfg_getvar("pcmfile")
+		fontname=cfg_getvar("fontname")
+		fontsize=0+cfg_getvar("fontsize")
+		filedir=cfg_getvar("filedir")
+		author=cfg_getvar("author")
+		url=cfg_getvar("url")
+		recent=cfg_getvar("recent")
+		uuid=cfg_getvar("uuid")
+		scci_mode=0+cfg_getvar("scci_mode")
+		fastfw=0+cfg_getvar("fastfw")
+		fgcolor=0+cfg_getvar("fgcolor")
+		bgcolor=0+cfg_getvar("bgcolor")
+		if fgcolor=0&&bgcolor=0 : fgcolor=$dcdcdc : bgcolor=$1e1e1e
+	}
+
+	if app_winx<0 : app_winx = -1
+	if app_winy<0 : app_winy = -1
+	if app_winx>=ginfo_dispx : app_winx = ginfo_dispx-wx
+	if app_winy>=ginfo_dispy : app_winy = ginfo_dispy-wy
+
+	if uuid="" : getuuid uuid
+
+	if scci_mode>0 : initopt=MUCOM_OPTION_FMMUTE|MUCOM_OPTION_SCCI
+
+	screen 0,wx,wy,0,app_winx,app_winy
+	title EDITOR_TITLE
+
+	sdim mml,$10000
+	sdim buf,$10000
+	sdim result,$4000
+	sdim s1,$200
+	sdim s2,$200
+	sdim pcmdir,256
+	sdim mylist,$10000
+
+	mucominit hwnd,initopt
+	mucomsetuuid uuid
+	onexit *byebye
+	onkey gosub *cmdkey
+
+	mucomreset 0
+	mucomres welcome_mes
+	welcome_mes+="#Z80 emulation by Yasuo Kuwahara 2002-2018(C)\n"
+	welcome_mes+="#FM Sound Generator by cisc 1998, 2003(C)\n"
+	welcome_mes+="#SCCI system / adpcm converter by gasshi 2018(C)\n"
+	welcome_mes+="#Windows version by ONION software/onitama 2018-2019(C)\n"
+
+	buf=welcome_mes
+	compflag=0
+	count_max=0
+
+#ifdef EDITOR_DEBUG
+	notesel mml
+	noteload "of1.muc"
+#endif
+
+	dirlist s1,filedir,5
+	if stat>0 {
+		chdir filedir
+	} else {
+		filedir=dir_cur
+	}
+	list_update=0
+
+*main_editor
+	;	メイン構築
+	;
+	syscolor 15:boxf
+	yy=wy-100
+	font fontname,fontsize
+	objmode 2+SETOBJCOLOR
+	a1=(fgcolor>>16)&255:a2=(fgcolor>>8)&255:a3=fgcolor&255
+	objcolor a1,a2,a3
+	a1=(bgcolor>>16)&255:a2=(bgcolor>>8)&255:a3=bgcolor&255
+	color a1,a2,a3
+	pos 0,0
+	mesbox mml,wx,yy,1+8:obj_mml=stat
+	objmode 1
+	pos 0,wy-80
+	mesbox buf,wx,80,0:obj_buf=stat
+	sx=160:sy=20:x=0:y=yy
+	objsize 160,20
+	pos x,y:button "MENU [F1]",*to_menu
+	x+=sx
+	pos x,y:button "SAVE [ctrl+S]",*to_save
+	x+=sx
+	pos x,y:button "PLAY [F5]",*to_mmlcomp
+
+	mesx=x+sx:mesy=y
+	clrmusicbar
+	msg "Ready."
+
+	objsize 80,20
+	pos wx-80,y:button gosub "STOP [ESC]",*m_stop
+	pos wx-80*2,y:button "V.EDIT",*to_vedit
+
+	mucomsetfastfw 2*(fastfw+1)		; 早送りを設定
+
+	;---------------------------------------------------------------------------
+*to_main
+	main_key = 0
+	main_cmd = 0
+	main_ff = 0
+	main_enter=1
+	objsel obj_mml
+	mml_hw=objinfo(obj_mml,2)
+	mml_sptr=0:mml_eptr=0
+*main
+	;	main loop
+	await 1000/15
+	putmusicbar
+	if main_cmd = 0 : goto *main
+
+	on main_cmd goto *to_menu, *to_menu, *to_save, *to_mmlcomp, *to_keyff
+
+	title "System Halted."
+	stop
+
+*to_save
+	gosub *file_saveov
+	goto *to_main
+
+*to_mmlcomp
+	gosub *mmlcomp
+	goto *to_main
+
+*to_keyff
+	main_ff = 1
+	mucomsetoption MUCOM_OPTION_FASTFW,1
+*keyff_main
+	await 20
+	getkey ckey,17
+	if ckey=0 : goto *keyff_main2
+	getkey ckey,112
+	if ckey=0 : goto *keyff_main2
+	goto *keyff_main
+	;
+*keyff_main2
+	mucomsetoption MUCOM_OPTION_FASTFW,2
+	main_ff = 0
+	main_cmd = 0
+	goto *main
+
+*to_menu
+	menu_mode=0
+	main_enter=0
+
+	if list_update {
+		gosub *build_mylist
+		if mylist!=s1 : list_update=0
+	}
+
+*main_menu
+	cls 4
+	syscolor 15:boxf
+	sx=136:x=8:y=20:py=40
+
+	objsize 120,30
+	color 200,200,200:boxf 0,0,sx,wy
+	pos x,y:button "<<",*to_editor
+	y+=py
+	pos x,y:button "Home",*to_menusel:obj_menu=stat
+	y+=py
+	pos x,y:button "Load",*to_menusel
+	y+=py
+	pos x,y:button "Save",*to_menusel
+	y+=py
+	pos x,y:button "Save as...",*to_menusel
+	y+=py
+	pos x,y:button "New",*to_menusel
+
+	y=wy-140
+	pos x,y:button "Option",*to_menusel
+	y-=py
+	pos x,y:button "Tool",*to_menusel
+	y-=py
+	pos x,y:button "Share",*to_menusel
+	y-=py
+	pos x,y:button "Web",*to_menusel
+	y-=py
+	pos x,y:button "About",*to_menusel
+	y-=py
+	obj_menumax=stat
+
+	objmode 1
+	pos 0,wy-80
+	mesbox buf,wx,80,0:obj_buf=stat
+
+	menu_str=""
+	color 0,0,0
+	font msgothic,16,0
+	objsize 120,24
+	x=sx+20:y=20+60:pos x,y
+	if menu_mode=0 : gosub *menu_home
+	if menu_mode=5 : gosub *menu_option
+	if menu_mode=6 : gosub *menu_tool
+	if menu_mode=7 : gosub *menu_share
+	if menu_mode=8 : gosub *menu_web
+	if menu_mode=9 : gosub *menu_about
+	font msgothic,32,0:pos x,y-60
+	color 0,0,0
+	mes menu_str
+
+*main2rev
+	main_cmd = 0
+	main_key = 0
+	prev_sel=sellist
+*main2
+	;	main2 loop
+	wait 4
+	if menu_mode=0 {
+		if main_key=13 {
+			main_key = 0
+			goto *to_sellist
+		}
+		if main_cmd=3 {
+			main_cmd = 0
+			goto *to_selplay
+		}
+		if main_cmd=2 {
+			main_cmd = 0
+			goto *to_selmub
+		}
+		if prev_sel!=sellist {
+			prev_sel=sellist
+			gosub *list_change
+		}
+	}
+
+	if main_cmd = 1 : goto *to_editor
+	if main_cmd = 0 : goto *main2
+	goto *main2
+
+*to_editor
+	cls 1
+	goto *main_editor
+
+*to_menusel
+	i=stat
+	if i>obj_menumax : goto *main2
+	if i<obj_menu : goto *main2
+	i-==obj_menu
+
+	if i=1 : goto *to_load
+	if i=2 : goto *to_menusave
+	if i=3 : goto *to_menusave2
+	if i=4 : goto *to_menunew
+
+	menu_mode=i
+	goto *main_menu
+
+*to_load
+	;	load
+	;
+	gosub *check_modify
+	if i=0 : goto *menuload
+	dialog "編集内容が破棄されます。\n読み込みを行っていいですか?",2
+	if stat=6 : goto *menunew
+	goto *main2
+*menuload
+	dialog "muc",16,"MUCOM88ファイル"
+	if stat=0 : goto *dlcan2
+	fname=refstr
+*load_exec
+	myfile=fname
+
+	s1=getpath(fname,32)
+	s1=strtrim(s1,2,'\\')
+	if s1!=filedir {
+		filedir=s1
+		list_update=0
+	}
+	editfile=getpath(fname,1+8)
+	buf="["+fname+"] Loaded."
+	gosub *update_title
+	notesel mml
+	noteload myfile			; テキストファイル読み込み
+	objprm obj_mml,mml
+	goto *to_editor
+*dlcan2
+	goto *main2
+
+*menu_home
+	menu_str="ホーム"
+	mes "MMLの編集を始めましょう\n"
+	if list_update=0 {
+		sellist=0
+		gosub *build_mylist
+		mylist=s1
+		list_update=1
+	}
+
+	objmode 2
+	objsize 480,24
+
+	mes dir_cur
+	listbox sellist,wy-340,mylist:obj_list=stat
+
+	objmode 1
+	homex=ginfo_cx:homey=ginfo_cy-8
+	objsize 200,24
+	pos homex,homey:button "編集 [Enter]",*to_sellist
+	objsize 120,24
+	pos homex+200,homey:button "再生 [F5]",*to_selplay
+	pos homex+320,homey:button "MUB作成 [F2]",*to_selmub
+
+	gosub *list_change
+
+	objsize 120,22
+	pos x+220,y-4
+	button "フォルダを参照...",*update_folder
+
+	objsel obj_list
+	return
+
+*build_mylist
+	;	ディレクトリ一覧取得
+	dirlist mydirs,"*.*",5
+	s1=dir_cur
+	if strlen(s1)>3 : mydirs="..\n"+mydirs
+
+	notesel mydirs
+	repeat notemax
+		noteget s1,cnt
+		noteadd "<"+s1+">",cnt,1
+	loop
+	dirlist s1,"*.muc",1
+	s1=mydirs+s1
+	return
+
+*update_folder
+	s1=folderdialog(dir_cur)
+	if s1="" : goto *main2
+	chdir s1
+	filedir=s1
+	list_update=0
+	goto *main_menu
+
+*list_change
+	;	リスト表示の更新
+	if sellist<0 : return
+	if mylist="" : return
+	notesel mylist
+	noteget s1,sellist
+	fname=dir_cur+"\\"+s1
+	mucomloadtag s2,fname
+
+	syscolor 15:boxf homex,homey+40,wx,wy
+	sysfont 0:color 0,0,0
+	pos homex,homey+40
+	mucomtag t_title,"title"
+	if t_title="" : t_title="NO TITLE"
+	mucomtag t_author,"author"
+	mucomtag t_composer,"composer"
+	mucomtag t_voice,"voice"
+	mucomtag t_pcm,"pcm"
+	mucomtag t_date,"date"
+	mucomtag s1,"comment"
+	mes t_title
+	sysfont 17
+	mes "Author:"+t_author+"  Composer:"+t_composer
+	mes "Date:"+t_date+"  Voice:"+t_voice+"  PCM:"+t_pcm
+	mes "Comment:"+s1
+	return
+
+*to_sellist
+	if sellist<0 : goto *main2
+
+	notesel mylist
+	noteget s1,sellist
+	if peek(s1,0)='<' {
+		len=strlen(s1)-2
+		s1=strmid(s1,1,len)
+		chdir s1
+		filedir=dir_cur
+		list_update=0
+		goto *main_menu
+	}
+	gosub *check_modify
+	if i {
+		dialog "編集内容が破棄されます。\n読み込みを行っていいですか?",2
+		if stat!=6 : goto *main2
+	}
+	notesel mylist
+	noteget s1,sellist
+	fname=dir_cur+"\\"+s1
+	goto *load_exec
+
+*to_selplay
+	if sellist<0 : goto *to_main2
+	notesel mylist
+	noteget s1,sellist
+	fname=s1
+	sname=TEMPBIN
+	gosub *selcomp_sub
+	if res {
+		buf="エラーのため演奏不可.\n"
+		gosub *updatebuf
+		goto *to_main2
+	}
+	buf="Play["+fname+"].\n"
+	gosub *updatebuf
+
+	mucomreset MUCOM_RESET_PLAYER
+	if tag_pcm="" {
+		mucomloadpcm pcmfile
+	}
+	mucomload sname
+	compflag=1
+	gosub *m_play
+*to_main2
+	objsel obj_list
+	goto *main2
+
+*to_selmub
+	if sellist<0 : goto *to_main2
+	notesel mylist
+	noteget s1,sellist
+	fname=s1
+	sname=getpath(s1,1)+".mub"
+	gosub *selcomp_sub
+	if res {
+		buf="エラーのため作成不可.\n"
+		gosub *updatebuf
+		goto *to_main2
+	}
+	buf="["+sname+"] Saved.\n"
+	gosub *updatebuf
+	goto *to_main2
+
+*selcomp_sub
+	gosub *m_stop
+	;
+	mucomreset MUCOM_RESET_COMPILE
+	if voicefile!=MUCOM_DEFAULT_VOICEFILE {
+		mucomloadvoice voicefile
+	}
+	mucomcomp fname, sname
+	res=stat
+	mucomres result
+	mucomtag tag_pcm,"pcm"
+	return
+
+*to_menusave
+	gosub *file_saveov
+	if file_result : goto *to_editor
+	goto *main2
+
+*to_menusave2
+	gosub *file_save
+	if file_result : goto *to_editor
+	goto *main2
+
+*to_menunew
+	gosub *check_modify
+	if i=0 : goto *menunew
+	dialog "編集内容が破棄されます。\nすべて削除していいですか?",2
+	if stat=6 : goto *menunew
+	goto *main2
+*menunew
+	myfile=""
+	mml=""
+	gosub *exec_addtag
+	editfile="No Title"
+	gosub *update_title
+	goto *to_editor
+
+*menu_tool
+	menu_str="ツール"
+	mes "編集中のMMLを整形します。\n"
+	sw_toollnum=1
+	sw_toolrepl=0
+	sw_tooltag=1
+	objsize 200,24
+	chkbox "行番号を削除する",sw_toollnum
+	chkbox "Gチャンネルのqを@に",sw_toolrepl
+	chkbox "タグを追加する",sw_tooltag
+	objsize 120,24
+	button "実行",*to_toolexec
+
+	mes "\n\nPCMデータファイルを作成します。\n"
+	pcmdir=""
+	sname="mypcm.bin"
+	objsize 300,24
+	sysfont 17
+	mes "作成するファイル名"
+	input sname
+	objsize 240,24
+	button "DATAファイルフォルダ指定",*to_pcmtool
+	button "ファイルリストを指定",*to_pcmtool2
+
+	sysfont 0
+	pos x+320,y
+	mes "編集中のMMLをN88エクスポート\n"
+	n88_line=1000
+	n88_linep=10
+	sysfont 17
+	mes "開始行番号"
+	input n88_line
+	mes "行番号増分"
+	input n88_linep
+	objsize 120,24
+	button "実行",*to_toolexec2
+
+	return
+
+*to_toolexec
+	;	整形ツール
+	gosub *exec_tool
+	compflag=0
+	buf="#Tool executed.\n"
+	goto *to_editor
+
+*to_toolexec2
+	;	n88 Export
+	dialog "n88",17,"n88BASICファイル"
+	if stat=0 : goto *main2
+	fname = refstr
+	exname=getpath(fname,2)		; ファイル名の拡張子を取得
+	if exname="" : fname+=".n88"	; 拡張子がなければ追加
+	notesel mml
+	i=n88_line
+	repeat notemax
+		noteget s1,cnt
+		noteadd ""+i+" '"+s1,cnt,1
+		i+=n88_linep
+	loop
+	notesave fname			; テキストファイルをセーブ
+	goto *main2
+
+*to_pcmtool
+	pcmdir=folderdialog(dir_cur)
+	if pcmdir="" : goto *main2
+	cls 1
+	sysfont 17
+	objsize 200,20
+	button "OK",*to_menu
+	gosub *exec_pcmtool
+	stop
+
+*to_pcmtool2
+	mydir=dir_cur
+	dialog "txt",16,"テキストファイル"
+	if stat=0 : goto *main2
+	fname = refstr
+	;
+	cls 1
+	sysfont 17
+	objsize 200,20
+	button "OK",*to_menu
+	gosub *exec_pcmtool2
+	stop
+
+
+*menu_option
+	menu_str="オプション"
+	mes "ツールの設定を編集します"
+	sysfont 17
+	mes "(*) 一部の設定はツール再起動後に反映されます\n"
+
+	objsize 300,24
+	mes "ユーザー名(タグ設定用)"
+	input author
+	mes "\n標準音色ファイル"
+	input voicefile
+	mes "\n標準ADPCMファイル"
+	input pcmfile
+	mes "\nウインドウサイズ"
+	myx=ginfo_cx:myy=ginfo_cy
+	objsize 92,24
+	button "800x600",*to_sizesel1
+	pos myx+100,myy
+	button "1024x768",*to_sizesel2
+	pos myx+200,myy
+	button "1280x720",*to_sizesel3
+	objsize 60,24
+	pos myx,myy+30
+	input wx
+	pos myx+66,myy+30
+	input wy
+	pos myx+132,myy+30
+	button "変更",*to_sizesel
+	pos myx,myy+60
+
+	mes "\nフォント設定:"+fontname+":"+fontsize
+	button "変更",*to_fontsel
+	mes "\n早送り再生([ctrl]+[F1])速度"
+	objsize 60,24
+	combox fastfw,200,"x2\nx4\nx6\nx8\nx10"
+	mes "\nSCCIデバイス使用スイッチ(*)"
+	objsize 120,24
+	chkbox "SCCIを使用",scci_mode
+
+	return
+
+*to_fontsel
+	dim result, 8
+	fontdlg result, 0
+	if stat=0 : goto *main2
+	fontname=refstr
+	fontsize=result(0)
+	goto *main_menu
+
+*to_sizesel1
+	wx=800:wy=600:goto *to_sizesel
+*to_sizesel2
+	wx=1024:wy=768:goto *to_sizesel
+*to_sizesel3
+	wx=1280:wy=720:goto *to_sizesel
+*to_sizesel
+	if wx<600 : wx=600
+	if wy<400 : wy=400
+	screen 0,wx,wy,0,app_winx,app_winy
+	goto *main_editor
+
+*menu_web
+	menu_str=""
+	pos sx,0
+	axobj ie, "Shell.Explorer.2",wx-sx,wy-80
+	ie->"Navigate" weburl
+	return
+
+*menu_share
+	menu_str="シェア"
+	mes "MMLをネットワークで共有します(準備中)"
+	sysfont 17
+	mes "\n"
+	return
+
+*menu_about
+	menu_str=""
+	pos sx+30,30
+	gmode 6,256,50,255:gcopy 1
+	y=280
+	pos sx+176,y-20
+	gcopy 1,0,64
+	sysfont 17:color 0,0,0
+	pos sx+284,60
+	mes "Windows Version "+APP_VER
+	pos sx+30,y
+	mes "Original MUCOM88"
+	mes "Created and Programmed by"
+	pos sx+34,90
+	mes welcome_mes
+
+	pos sx+30,150
+	gmode 0,256,50:gcopy 1,0,128
+
+	pos sx+34,200
+	mes "Application Icon designed by OXYGEN"
+	mes "\nSpecial thanks to:"
+	mes "WING☆、Makoto Wada (Ancient corp.)"
+
+
+	return
+
+	;---------------------------------------------------------------------------
+
+*cmdkey
+	;	キー割り込み
+	;mes "KEY"+wparam+":"+lparam
+	main_key = iparam
+
+	if main_enter {
+		sendmsg mml_hw, EM_GETSEL,varptr(mml_sptr), varptr(mml_eptr)
+		sendmsg mml_hw, EM_LINEFROMCHAR, mml_sptr, 0
+		i=stat+1
+		msg "line: "+i
+	}
+
+	if iparam=27 {
+		gosub *m_stop
+		return
+	}
+	if iparam='S' {
+		getkey ct_key,17:if ct_key : main_cmd = 2
+		return
+	}
+
+	if wparam=112 {
+		getkey ckey,17
+		if ckey : goto *key_ff
+		main_cmd = 1
+		return
+	}
+	if wparam=116 {
+		main_cmd = 3
+		return
+	}
+	if wparam=123 {
+		main_cmd = 3
+		return
+	}
+	return
+
+*key_ff
+	;	早送り
+	main_cmd = 4
+	return
+
+
+*mmlcomp
+	;	MMLコンパイル
+	compflag=0
+	count_max=0
+	notesel mml
+	notesave TEMPMML
+	mucomreset MUCOM_RESET_COMPILE
+	if voicefile!=MUCOM_DEFAULT_VOICEFILE {
+		mucomloadvoice voicefile
+	}
+	mucomcomp TEMPMML, TEMPBIN
+	res=stat
+	mucomres result
+
+	if res {
+		gosub *getmucomerr
+		return
+	}
+
+	gosub *getmucominfo
+
+	mucomreset MUCOM_RESET_PLAYER
+
+	if pcmfile!="" {
+		mucomloadpcm pcmfile
+	}
+
+	mucomload TEMPBIN
+	mucomres result
+	compflag=1
+
+	gosub *m_play
+	return
+
+*getmucominfo
+	;	コンパイラメッセージを取得する(成功時)
+	buf=""
+	mucomstat count_max,MUCOM_STATUS_MAXCOUNT
+	mucomstat mubsize,MUCOM_STATUS_MUBSIZE
+	mucomstat mubrate,MUCOM_STATUS_MUBRATE
+	mucomstat basicsize,MUCOM_STATUS_BASICSIZE
+	mucomstat basicrate,MUCOM_STATUS_BASICRATE
+	;
+	msg "Compiled Text:"+basicrate+"% Data:"+mubrate+"%"
+	;
+	notesel result
+	i=notefind("[  MUCOM88",1)
+	if i>=0 {
+		repeat 6
+		noteget s1,i+cnt:buf+=s1+"\n"
+		loop
+		gosub *updatebuf
+		return
+	}
+	i=notefind("[  MUSICLALF",1)
+	if i>=0 {
+		repeat 6
+		noteget s1,i+cnt:buf+=s1+"\n"
+		loop
+		gosub *updatebuf
+		return
+	}
+	gosub *updatebuf
+	return
+
+*getmucomerr
+	buf=""
+	s2="#error"
+	notesel result
+	errline=notefind(s2,1)
+	if errline>=0 {
+		errptr=-1
+		noteget s1,errline
+		i=instr(s1,0,"line")
+		if i>0 {
+			errptr=0+strmid(s1,i+4,255)
+		}
+		buf+=s1+"\n"
+		noteget s1,errline+1
+		buf+=s1+"\n\n"
+		if errptr>0 {
+			notesel mml
+			noteget s1,errptr-1
+			buf+=s1+"\n"
+		}
+	}
+	i=notefind("#unknown error",1)
+	if i>=0 {
+		noteget s1,i:buf+=s1+"\n"
+	}
+	gosub *updatebuf
+	msg "Compile Error"
+	return
+
+
+*updatebuf2
+	mucomres buf
+*updatebuf
+	objprm obj_buf,buf
+	return
+
+*m_play
+	;	PLAY
+	if compflag {
+		mucomplay 0
+	}
+	return
+
+*m_stop
+	;	STOP
+	if compflag {
+		mucomstop 0
+		compflag=0
+		count_max=0
+		;mucomfade
+	}
+	return
+
+*file_saveov
+	file_result=0
+	if myfile="" : goto *file_save
+	notesel mml
+	fname=myfile
+	notesave fname
+	goto *file_savedone
+
+*file_save
+	dialog "muc",17,"MUCOM88ファイル"
+	if stat=0 : goto *dlcan
+	fname = refstr
+	editfile=getpath(fname,1+8)
+	exname=getpath(fname,2)		; ファイル名の拡張子を取得
+	if exname="" : fname+=".muc"	; 拡張子がなければ追加
+	myfile=fname
+	s1=getpath(fname,32)
+	s1=strtrim(s1,2,'\\')
+	filedir=s1
+	notesel mml
+	notesave fname			; テキストファイルをセーブ
+	list_update=0
+*file_savedone
+	buf="["+fname+"] Saved."
+	gosub *updatebuf
+	gosub *update_title
+	file_result=1
+*dlcan
+	return
+
+*update_title
+	title editfile+" - "+EDITOR_TITLE
+	return
+
+
+	;---------------------------------------------------------------------------
+
+*check_modify
+	;	元ファイルから変更があるかチェック
+	;	i = 0:同じ  1=変更
+	;
+	i=0
+	if myfile="" : return
+	sdim tmp,$10000
+	notesel tmp
+	noteload myfile
+	if tmp!=mml : i=1
+	sdim tmp,64
+	return
+
+*exec_tool
+	;	行番号除去
+	;
+	file_result=0
+	if sw_toollnum=0 : goto *exec_tool2
+
+	sdim tmp,$10000
+	file_result=1
+	notesel mml
+	repeat notemax
+		noteget s1,cnt
+		i=peek(s1,0)
+		if i<'0' : continue
+		if i>'9' : continue
+		i=instr(s1,0,"'")
+		s2=strmid(s1,i+1,256)
+		;	Gチャンネル q->@
+		if sw_toolrepl {
+			ch=peek(s2,0)
+			if ch='G' {
+				strrep s2,"q","@"
+			}
+		}
+		tmp+=s2+"\n"
+	loop
+	mml=tmp
+	sdim tmp,64
+
+*exec_tool2
+	if sw_tooltag {
+		file_result=1
+		gosub *exec_addtag
+	}
+	return
+
+*exec_addtag
+	;	タグの追加
+	;
+	s1=""
+	mucomstat a1,MUCOM_STATUS_MAJORVER
+	mucomstat a2,MUCOM_STATUS_MINORVER
+	;
+	s1+="#title "+editfile
+	s1+="\n#composer "+author
+	s1+="\n#author "+author
+	s1+="\n#voice "+voicefile
+	s1+="\n#pcm "+pcmfile
+	s1+="\n#date "+gettime(0)+"/"+gettime(1)+"/"+gettime(3)
+	s1+="\n#comment "
+	;
+	s1+="\n"
+	mml=s1+mml
+	return
+
+	;---------------------------------------------------------------------------
+
+*exec_pcmtool
+	;	PCMまとめツール
+	;
+	;sname="mucompcm.bin"
+	mydir=dir_cur
+	chdir pcmdir
+	;
+	sdim buf,$40000
+	sdim info,$400
+
+	infosize=$400
+
+	dstadr=0
+	exist "DATA"
+	if strsize<=0 {
+		mes "DATAファイルがありません。":return
+	}
+
+	bload "DATA",info,infosize
+	gosub　*infoadd
+
+	maxnum=32
+	p=0
+	num=1
+	repeat maxnum
+		p=cnt*32
+		num=cnt+1
+		name="0123456789012345"
+		memcpy name,info,16,0,p
+		adrl=wpeek(info,p+16)
+		adrh=wpeek(info,p+18)
+		whl=adrh-adrl
+		pcmopt=peek(info,p+$1b)
+		wpoke buf,p+30,whl		; ファイルサイズ?
+		pcmstart=(dstadr-infosize)/4
+		wpoke buf,p+28,pcmstart
+		wpoke buf,p+26,pcmopt		; ???
+
+		mes strf("#%d $%05x $%04x $%04x $%04x $%04x $%02x (%s)",cnt+1,dstadr,adrl,adrh,whl,pcmstart,pcmopt,name)
+		gosub *pcmload
+		if er {
+			;mes "No DATA"
+			memset buf,0,32,p
+		}
+	loop
+
+	chdir mydir
+	bsave sname,buf,dstadr
+
+	buf="Saved. ["+sname+"] size:"+dstadr
+	mes buf
+	return
+
+*exec_pcmtool2
+	;	PCMまとめツール2
+	;
+	pcmdir=getpath(fname,32)
+	chdir pcmdir
+	;
+	sdim buf,$40000
+	sdim info,$400
+	;
+	infosize=$400
+	dstadr=0
+	;
+	dstadr+=infosize
+	;
+	notesel pcmlist
+	noteload fname
+	;
+	maxnum=32
+	p=0
+	repeat maxnum
+		noteget fname,cnt
+		if getpath(fname,2+16)=".wav" {
+			; wavファイルならADPCMに変換
+			s1=getpath(fname,1+8)+"_adpcm.bin"
+			mes "convert "+fname+" -> "+s1
+			mucomcnvpcm fname, s1
+			fname=s1
+			if stat {
+				fname=""
+				mes "No data.Convert failed."
+			}
+		}
+
+		if fname!="" {
+			p=cnt*32
+			memcpy buf,fname,16,p,0
+			pcmstart=(dstadr-infosize)/4
+			;wpoke buf,p+26,pcmopt		; ???
+			wpoke buf,p+28,pcmstart
+			gosub *pcmload2
+			wpoke buf,p+30,whl		; ファイルサイズ?
+
+			if er=0 {
+				mes strf("#%d $%04x $%04x (%s)",cnt+1,pcmstart,whl,fname)
+			}
+		}
+	loop
+
+	chdir mydir
+	bsave sname,buf,dstadr
+
+	buf="Saved. ["+sname+"] size:"+dstadr
+	mes buf
+	return
+
+*pcmload
+	er=0
+	fname="VOICE._"+num
+*pcmload2
+	exist fname
+	if strsize<=0 : er=1 : mes "Missing:"+fname : return
+	size=strsize
+	whl=size
+	;if whl>size : mes "Illegal size="+whl+"/"+size : size=whl
+	sdim temp,size+4
+	bload fname,temp
+
+	memcpy buf,temp,size,dstadr,0
+	dstadr+=size+(4*4)
+	return
+
+*infoadd
+	memcpy buf,info,infosize,dstadr,0
+	dstadr+=infosize
+	return
+
+	;---------------------------------------------------------------------------
+
+*to_vedit
+	;	音色エディタ
+	exec dir_exe+"\\FmToneEditor.exe"
+	goto *main
+
+	;---------------------------------------------------------------------------
+
+#deffunc clearmsg
+	color 0,60,120
+	boxf mesx,mesy,wx-80*2,mesy+20
+	return
+
+#deffunc msg str _p1
+	redraw 0
+	clearmsg
+	color 0,255,0:pos mesx+16,mesy+3
+	sysfont 17
+	mes _p1
+	putmusicbar
+
+	;if count_max {
+	;	mucomstat count,MUCOM_STATUS_COUNT
+	;	pos mesx+160,mesy+3:mes ""+count+"/"+count_max
+	;}
+
+	redraw 1
+	return
+
+#deffunc clrmusicbar
+
+	color 0,60,120:mbarx=mesx+208:mbary=mesy+7
+	mbarsx=160:mbarsy=2
+	boxf mbarx,mbary,mbarx+mbarsx,mbary+mbarsy
+	return
+
+#deffunc putmusicbar
+
+	if count_max=0 : return
+	mucomstat count,MUCOM_STATUS_COUNT
+	mbardiv=count*mbarsx/count_max
+	color 0,255,0
+	boxf mbarx,mbary,mbarx+mbardiv,mbary+mbarsy
+	color 0,128,0
+	boxf mbarx+mbardiv,mbary,mbarx+mbarsx,mbary+mbarsy
+	return
+
+*byebye
+	;	ini保存
+	;
+	if wx<640 : wx=640
+	if wy<480 : wy=480
+	get_appdata_path app_dir
+	cfg_init app_dir+INIFILE
+	cfg_seti "wx",wx
+	cfg_seti "wy",wy
+	cfg_seti "winx",ginfo_wx1
+	cfg_seti "winy",ginfo_wy1
+	cfg_sets "voicefile",voicefile
+	cfg_sets "pcmfile",pcmfile
+	cfg_sets "fontname",fontname
+	cfg_seti "fontsize",fontsize
+	cfg_sets "filedir",filedir
+	cfg_sets "author",author
+	cfg_sets "url",url
+	cfg_sets "recent",recent
+	cfg_sets "uuid",uuid
+	cfg_seti "scci_mode",scci_mode
+	cfg_seti "fastfw",fastfw
+	cfg_seti "fgcolor",fgcolor
+	cfg_seti "bgcolor",bgcolor
+	cfg_save
+
+#ifdef EDITOR_DEBUG
+	mucombye
+	end
+#else
+	dialog "終了していいですか?",2
+	if stat=6 {
+		mucombye
+		end
+	}
+#endif
+	stop
+
