@@ -1,65 +1,16 @@
-------------------------------------------------------------------------------
-MUCOM88 Windows document (Japanese Shift_JIS text)
-
-OpenMucom88 Ver.1.7a Copyright 1987-2019(C) Yuzo Koshiro
-Z80 emulation by Yasuo Kuwahara 2002-2018(C)
-FM Sound Generator by cisc 1998, 2003(C)
-Windows version by ONION software/onitama 2018-2019(C)
-------------------------------------------------------------------------------
 
 # OPEN MUCOM88プロジェクトについて
 
 MUCOM88 Windowsは、OPEN MUCOM88プロジェクトの一部として公開されています。
+詳細については、Open MUCOM88 WiKiをご覧ください。
+https://github.com/onitama/mucom88/wiki
 
 MUCOM88は、もともと1987年・古代祐三氏によって開発・発表されたNEC PC-8801プラットフォーム用のMML形式による音楽作成ツール、及び再生用のプログラム(ドライバー)環境です。
 
 OPEN MUCOM88プロジェクトは、オリジナルのMUCOM88ソースコードを公開することで、幅広く活用・継承することを目的としています。無償で公開されたソースコードや資産などは、オープンなライセンスにより自由に活用することが可能です。
 ライセンスの詳細は、「ライセンスおよび連絡先」項目及び「license.txt」にまとめられています。
 
-オリジナルのPC-8801版MUCOM88も、株式会社エインシャント様のサイトでディスクイメージが公開されています。以下を参照してください。
-
-	OPEN MUCOM88 for PC-8801
-	https://www.ancient.co.jp/~mucom88/
-
-
-# 概要
-
-MUCOM88 Windowsは、NECのパソコンPC-8801シリーズで動作していた、古代祐三氏によるFM音源のツール/ドライバーである、MUCOM88をWindows上で動作させるためのシステムです。
-コマンドライン版、GUI版の両方が用意されています。
-
-	mucom88win.exe         Windows GUI版エディタ
-	FmToneEditor.exe       Windows GUI版音色エディタ
-	mucom88DatToTxt.exe    Windows GUI版音色変換ツール
-	mucom88.exe            Windows コマンドライン版
-
-MUCOM88 Windowsを使用することにより、音楽記述に特化したMML言語(Music Macro Language)として記述された音楽を、PC-8801の音源と同様に演奏させることができます。
-また、SCCI(Sound Chip Common Interface)を経由することで実際のFM音源チップ(YM2608)による演奏をサポートしています。
-
-アーカイブには、Open MUCOM88プロジェクトとして公開されているソースコード、サンプル曲データ、HSP(HotSoupProcessor)用プラグインが含まれています。
-アーカイブファイルは、カテゴリごとに以下のようなディレクトリ構成になっています。
-
-	+---hspplugin		HSP(HotSoupProcessor)用プラグイン
-	|
-	+---pc8801src
-	|   +---ver1.0		MUCOM88 PC-8801版ソースコード(ver1.0)
-	|   +---ver1.1		MUCOM88 PC-8801版ソースコード(ver1.1)
-	|
-	+---package		配布用パッケージ及びデータ
-	|
-	+---src         	Windows版ソースコード
-	    +---Z80     	Portable Z80 emulation by Yasuo Kuwahara
-	    +---fmgen   	FM Sound Generator by cisc
-
-
-# 動作環境
-
-MUCOM88 Windowsは、サウンド再生が可能なWindows XP以降のシステム上で動作します。
-Windowsのサウンド再生処理には、DirectX8以降のDirectSoundを使用しています。Windows XP以降の環境では、追加のコンポーネントを用意することなく動作させることができます。
-
-FM音源、PSGサウンドのエミュレーションは32bit/55KHzで合成し、出力されています。古いマシンでは、負荷が大きい場合があります。
-
-MUCOM88 Windowsは、オリジナルのMUCOM88で使用されていたコード(Z80)を仮想的にエミュレーションし、FM音源ジェネレーター(fmgen)を介して演奏します。オリジナルと同様の動作で、MMLの解釈、演奏をさせることが可能になっています。
-動作に際して、PC-8801のBIOSやROM、ディスクイメージは必要ありません。
+オリジナルのPC-8801版MUCOM88も、[株式会社エインシャント様](https://www.ancient.co.jp/~mucom88/)のサイトでディスクイメージが公開されています。以下を参照してください。
 
 
 # ライセンスおよび連絡先
