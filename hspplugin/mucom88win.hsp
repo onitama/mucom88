@@ -23,7 +23,7 @@
 #pack "mucom88.png"
 
 #define INIFILE "\\mucom88win.ini"
-#define APP_VER "0.4"
+#define APP_VER "0.41"
 
 ;#define EDITOR_DEBUG
 
@@ -665,13 +665,28 @@
 	pos myx,myy+60
 
 	mes "\nフォント設定:"+fontname+":"+fontsize
-	button "変更",*to_fontsel
+	objsize 120,24
+	button "変更...",*to_fontsel
+	myx=ginfo_cx+130:myy=ginfo_cy
+	button "文字色の変更...",*to_fgcolor
+	button "背景色の変更...",*to_bgcolor
+
+	a1=(fgcolor>>16)&255:a2=(fgcolor>>8)&255:a3=fgcolor&255
+	color a1,a2,a3
+	boxf myx,myy+2,myx+120,myy+20
+	a1=(bgcolor>>16)&255:a2=(bgcolor>>8)&255:a3=bgcolor&255
+	color a1,a2,a3
+	boxf myx,myy+26,myx+120,myy+24+20
+
+	color 0,0,0
+	objsize 60,24
 	mes "\n早送り再生([ctrl]+[F1])速度"
 	objsize 60,24
 	combox fastfw,200,"x2\nx4\nx6\nx8\nx10"
 	mes "\nSCCIデバイス使用スイッチ(*)"
 	objsize 120,24
 	chkbox "SCCIを使用",scci_mode
+	button "SCCI設定...",*to_sccicfg
 
 	return
 
@@ -694,6 +709,17 @@
 	if wy<400 : wy=400
 	screen 0,wx,wy,0,app_winx,app_winy
 	goto *main_editor
+*to_sccicfg
+	exec dir_exe+"\\scciconfig.exe"
+	goto *main2
+*to_fgcolor
+	dialog "",33:if stat!=1 : goto *main2
+	fgcolor = (ginfo_r<<16)+(ginfo_g<<8)+ginfo_b
+	goto *main_menu
+*to_bgcolor
+	dialog "",33:if stat!=1 : goto *main2
+	bgcolor = (ginfo_r<<16)+(ginfo_g<<8)+ginfo_b
+	goto *main_menu
 
 *menu_web
 	menu_str=""
