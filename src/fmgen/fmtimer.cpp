@@ -73,6 +73,7 @@ bool Timer::Count(int32 us)
 				SetStatus(1);
 		}
 	}
+
 	if (timerb_count)
 	{
 		timerb_count -= us << 12;
@@ -84,6 +85,7 @@ bool Timer::Count(int32 us)
 			
 			if (regtc & 8)
 				SetStatus(2);
+
 		}
 	}
 	return event;

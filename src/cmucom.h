@@ -63,7 +63,8 @@ typedef struct
 	int tagsize;		// TAG data size
 	int pcmdata;		// PCM data offset (0=none)
 	int pcmsize;		// PCM data size
-	int jumpcount;		// Jump count (for skip)
+	short jumpcount;	// Jump count (for skip)
+	short jumpline;		// Jump line number (for skip)
 } MUBHED;
 
 //
@@ -130,6 +131,8 @@ private:
 	int maxcount;
 	int basicsize;
 	int mubsize;
+	short jumpcount;	// Jump count (for skip)
+	short jumpline;		// Jump line number (for skip)
 	unsigned char linebuf[MUCOM_LINE_MAXSTR];
 	char infoname[64];
 	CMemBuf *infobuf;

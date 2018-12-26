@@ -149,6 +149,9 @@ private:
 	int pass_tick;
 	int last_tick;
 
+	LARGE_INTEGER pass_tickl;
+	LARGE_INTEGER last_tickl;
+
 	LONG sending;
 	bool playflag;
 	bool int3flag;

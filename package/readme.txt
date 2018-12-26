@@ -25,6 +25,18 @@ Windows version by ONION software/onitama 2018-2019(C)
 	また、SCCI(Sound Chip Common Interface)を経由することで
 	実際のFM音源チップ(YM2608)による演奏をサポートしています。
 
+	MUCOM88 Windowsの最新情報及び、ファイルのダウンロードは
+	以下のサイトにて行っています。
+
+	MUCOM88 Windows
+	https://onitama.tv/mucom88/
+
+	オリジナルのPC-8801版MUCOM88も、株式会社エインシャント様のサイトで
+	ディスクイメージが公開されています。
+
+	OPEN MUCOM88 for PC-8801
+	https://www.ancient.co.jp/~mucom88/
+
 
 ・動作環境
 
@@ -42,6 +54,9 @@ Windows version by ONION software/onitama 2018-2019(C)
 	演奏します。オリジナルと同様の動作で、MMLの解釈、演奏をさせることが
 	可能になっています。
 	動作に際して、PC-8801のBIOSやROM、ディスクイメージは必要ありません。
+
+	アプリケーションの更新履歴については、同梱されている「history.txt」を
+	参照してください。
 
 
 ・ファイル形式の概要
@@ -182,11 +197,17 @@ Windows version by ONION software/onitama 2018-2019(C)
 	ユーザー名          : タグ設定時に使用される既定のユーザー名
 	標準音色ファイル    : タグ設定時に使用される既定の音色ファイル
 	標準ADPCMファイル   : タグ設定時に使用される既定のADPCMファイル
+
 	ウインドウサイズ    : アプリケーションのウインドウサイズを設定します
 	フォント設定        : フォントを変更します
+	文字色の変更        : エディタ文字色をダイアログで設定します
+	背景色の変更        : エディタ背景色をダイアログで設定します
+
 	早送り再生速度      : 早送り(ctrl+F1)時の速度を変更します
+
 	SCCIを使用          : SCCIによる実チップ演奏を有効にします
 	                      (この設定変更はツール再起動後に有効になります)
+	SCCI設定            : SCCI設定ツール(scciconfig.exe)を起動します
 
 
 ・一時ファイルについて
@@ -368,20 +389,31 @@ Windows version by ONION software/onitama 2018-2019(C)
 
 	MUCOM88 Windowsでは、SCCI(Sound Chip Common Interface)を経由して
 	実際のFM音源チップ(YM2608)による演奏をサポートしています。
-	「SPFM FMの塔」、「SPFM Light」、「RE:Birth」等のYM2608実チップを
-	搭載したハードウェアに対応しています。
-	PCに、ハードウェアを接続した状態で、「scciconfig.exe」により
-	設定を行っておく必要があります。
+	同梱されているSCCIのシステムDLLは、以下のハードウェアに実チップ
+	(YM2608)を搭載したものに対応しています。
+
+	・SPFM FMの塔
+	・SPFM Light
+	・RE:Birth 
+	・G.I.M.I.C
+	・C86BOX
+
+	実チップの使用については、最新のSCCI関連情報を参照ください。
+
+	SCCI(Sound Chip Common Interface)
+	http://www.pyonpyon.jp/~gasshi/fm/scci.html
 
 	MUCOM88 WindowsからSCCIを使用する際は、メニュー→オプションで
 	「SCCI使用」のチェックをONにして、ツールを再起動してください。
 	(SCCIオプションは、ツールを再度起動した際に有効になります)
 
+	実際にに使用する際には、PCにハードウェアを接続した状態で、最初に
+	SCCIの設定を行っておく必要があります。
+	メニュー→オプション「SCCI設定」ボタンから、SCCIの設定メニュー
+	を起動することができます。(scciconfig.exeからも起動できます)
+
 	SCCI使用時は、Windows上でのFM音源再生は行わず、外部のチップのみで
 	再生を行います。
-
-	SCCI(Sound Chip Common Interface)
-	http://www.pyonpyon.jp/~gasshi/fm/scci.html
 
 
 ・コマンドライン版について
@@ -430,13 +462,6 @@ Windows version by ONION software/onitama 2018-2019(C)
 	自由に活用することが可能です。
 	ライセンスの詳細は、「ライセンスおよび連絡先」項目及び「license.txt」
 	にまとめられています。
-
-	オリジナルのPC-8801版MUCOM88も、株式会社エインシャント様のサイトで
-	ディスクイメージが公開されています。
-	以下を参照してください。
-
-	OPEN MUCOM88 for PC-8801
-	https://www.ancient.co.jp/~mucom88/
 
 
 ・ライセンスおよび連絡先

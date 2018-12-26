@@ -19,6 +19,8 @@
 #define baseclock 7987200		// Base Clock
 
 #define USE_SCCI
+#define USE_PERFORMANCE_COUNTER
+
 
 /*------------------------------------------------------------*/
 /*
@@ -437,6 +439,9 @@ int mucomvm::ExecUntilHalt(int times)
 					msgid = id;
 					//Msgf("#%s\r\n", mucom_geterror(msgid),msgid);
 				}
+				else {
+					Msgf("#Unknown message [%s].\r\n", stmp);
+				}
 			}
 			else if (pc == 0x3b3) {
 				Msgf("#Error trap at $%04x.\r\n", pc);
@@ -759,6 +764,8 @@ void mucomvm::UpdateTime(void)
 {
 	//		1ms‚²‚Æ‚ÌŠ„‚è‚İ
 	//
+	int base;
+
 	int curtime;
 	curtime = timeGetTime();
 
@@ -766,9 +773,10 @@ void mucomvm::UpdateTime(void)
 		last_tick = curtime;
 		return;
 	}
-
 	pass_tick = curtime - last_tick;
 	last_tick = curtime;
+
+	base = 1024 * pass_tick;
 
 	bool stream_event = false;
 	bool int3_mode = int3flag;
@@ -778,7 +786,6 @@ void mucomvm::UpdateTime(void)
 #if 1
 	if (int3mask & 128) int3_mode = false;		// Š„‚è‚İƒ}ƒXƒN
 
-	int base = 1024 * pass_tick;
 	if (opn->Count(base)) {
 		if (int3_mode) {
 			stream_event = true;

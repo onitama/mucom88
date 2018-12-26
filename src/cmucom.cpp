@@ -691,6 +691,9 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	int vec = vm->Peekw(0x0eea8);
 	PRINTF("#poll a $%x.\r\n", vec);
 
+	int loopst = 0xf25a;
+	vm->Pokew( loopst, 0x0101 );		// ループ情報スタックを初期化する(ループ外の'/'でエラーを出すため)
+
 	res = vm->CallAndHalt2(vec, 'A');
 	if (res){
 		int line = vm->Peekw(0x0f32e);
@@ -714,7 +717,16 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	maxcount = 0;
 	mubsize = 0;
 
-	PRINTF("Used FM voice:%d\r\n", fmvoice);
+	jumpcount = vm->Peekw(0x8c90);		// JCLOCKの値(Jコマンドのタグ位置)
+	jumpline = vm->Peekw(0x8c92);		// JPLINEの値(Jコマンドの行番号)
+
+	PRINTF("Used FM voice:%d", fmvoice);
+
+	if (jumpcount > 0) {
+		PRINTF("  Jump to line:%d", jumpline);
+	}
+
+	PRINTF("\r\n");
 	PRINTF("[ Total count ]\r\n");
 
 	for (i = 0; i < maxch; i++){
@@ -846,10 +858,8 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	hed.datasize = length;
 	hed.tagdata = hedsize + length;
 	hed.tagsize = footsize;
-	hed.jumpcount = vm->Peekw(0x8c90);		// JCLOCKの値(Jコマンドのタグ位置)
-	if (hed.jumpcount > 0) {
-		PRINTF("#Jump count [%d].\r\n", hed.jumpcount);
-	}
+	hed.jumpcount = jumpcount;
+	hed.jumpline = jumpline;
 
 	if ((option & 2) == 0) {
 		pcmname = GetInfoBufferByName("pcm");

@@ -23,7 +23,7 @@
 //	このオプションを有効にすると ADPCM メモリへのアクセス(特に 8bit モード)が
 //	多少軽くなるかも
 //
-//#define NO_BITTYPE_EMULATION
+#define NO_BITTYPE_EMULATION
 
 #ifdef BUILD_OPNA
 #include "file.h"
