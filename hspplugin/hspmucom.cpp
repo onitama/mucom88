@@ -414,3 +414,23 @@ EXPORT BOOL WINAPI mucomsetvolume(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
+EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomgetchdata var, ch (type$202)
+	//
+	int ep1,ep2;
+	PVal *pv;
+	APTR ap;
+	PCHDATA *pt;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	ep1 = hei->HspFunc_prm_getdi(0);		// パラメータ2:数値
+	if (pv->len[1] < 64) return -1;
+	if (mucom) {
+		pt = (PCHDATA *)pv->pt;
+		ep2 = mucom->GetChannelData( ep1,pt );
+		if (ep2 != 0) return -1;
+	}
+	return 0;
+}
+
+

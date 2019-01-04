@@ -160,20 +160,22 @@
 	objmode 1
 	pos 0,wy-80
 	mesbox buf,wx,80,0:obj_buf=stat
-	sx=160:sy=20:x=0:y=yy
-	objsize 160,20
+	sx=120:sy=20:x=0:y=yy
+	objsize sx,20
 	pos x,y:button "MENU [F1]",*to_menu
 	x+=sx
 	pos x,y:button "SAVE [ctrl+S]",*to_save
 	x+=sx
 	pos x,y:button "PLAY [F5]",*to_mmlcomp
+	x+=sx
+	pos x,y:button gosub "STOP [ESC]",*m_stop
 
 	mesx=x+sx:mesy=y
 	clrmusicbar
 	msg "Ready."
 
 	objsize 80,20
-	pos wx-80,y:button gosub "STOP [ESC]",*m_stop
+	pos wx-80,y:button "SMON",*to_smon
 	pos wx-80*2,y:button "V.EDIT",*to_vedit
 
 	mucomsetfastfw 2*(fastfw+1)		; 早送りを設定
@@ -203,7 +205,10 @@
 	goto *to_main
 
 *to_mmlcomp
+	getkey key_shift,16
 	gosub *mmlcomp
+	;
+	if key_shift : goto *to_smon
 	goto *to_main
 
 *to_keyff
@@ -391,6 +396,8 @@
 	objsize 120,22
 	pos x+220,y-4
 	button "フォルダを参照...",*update_folder
+	pos x+350,y-4
+	button "プレイヤー...",*to_vplayer
 
 	objsel obj_list
 	return
@@ -662,8 +669,19 @@
 	input wy
 	pos myx+132,myy+30
 	button "変更",*to_sizesel
-	pos myx,myy+60
 
+	pos myx,myy+60
+	color 0,0,0
+	objsize 60,24
+	mes "\n早送り再生([ctrl]+[F1])速度"
+	objsize 60,24
+	combox fastfw,200,"x2\nx4\nx6\nx8\nx10"
+	mes "\nSCCIデバイス使用スイッチ(*)"
+	objsize 120,24
+	chkbox "SCCIを使用",scci_mode
+	button "SCCI設定...",*to_sccicfg
+
+	pos myx+280,myy+60
 	mes "\nフォント設定:"+fontname+":"+fontsize
 	objsize 120,24
 	button "変更...",*to_fontsel
@@ -677,16 +695,6 @@
 	a1=(bgcolor>>16)&255:a2=(bgcolor>>8)&255:a3=bgcolor&255
 	color a1,a2,a3
 	boxf myx,myy+26,myx+120,myy+24+20
-
-	color 0,0,0
-	objsize 60,24
-	mes "\n早送り再生([ctrl]+[F1])速度"
-	objsize 60,24
-	combox fastfw,200,"x2\nx4\nx6\nx8\nx10"
-	mes "\nSCCIデバイス使用スイッチ(*)"
-	objsize 120,24
-	chkbox "SCCIを使用",scci_mode
-	button "SCCI設定...",*to_sccicfg
 
 	return
 
@@ -809,6 +817,7 @@
 
 *mmlcomp
 	;	MMLコンパイル
+	;
 	compflag=0
 	count_max=0
 	notesel mml
@@ -1166,6 +1175,111 @@
 	;	音色エディタ
 	exec dir_exe+"\\FmToneEditor.exe"
 	goto *main
+
+	;---------------------------------------------------------------------------
+
+*to_smon
+	;	smon
+
+	main_cmd=0
+	menu_mode=0
+	main_enter=0
+	main_key=0
+
+	cls 4
+	syscolor 15:boxf
+	objmode 1
+	pos 0,wy-80
+	mesbox buf,wx,80,0:obj_buf=stat
+
+	yy=wy-100
+	sx=120:sy=20:x=0:y=yy
+	objsize sx,20
+	pos x,y:button "MENU [F1]",*to_menu
+	x+=sx
+	pos x,y:button "EDITOR",*to_editor
+	x+=sx
+
+	dim chdata,64
+	note="C C+D D+E F F+G G+A A+B "
+
+*main_smon
+	if main_cmd = 1 : goto *to_menu
+	if main_key = 27 : goto *to_editor
+
+	mucomstat count, MUCOM_STATUS_COUNT
+	mucomstat maxcount, MUCOM_STATUS_MAXCOUNT
+
+	redraw 0
+	syscolor 15
+	boxf 0,0,640,280
+	color 0,0,0
+	pos 0,0
+	mes "INTCOUNT:"+count+"/"+maxcount
+	mes ""
+	mes "   Mut @   Vol Det   Adr  Key LFO Rev p qtz"
+	;s1 ="A   0  000 000 00000 0000 000  0   0  C 000"
+	panstr=' ','R','L','C'
+	chkey="   "
+
+	ch=0
+	repeat 11
+		mucomgetchdata chdata,ch
+		lfo_flag=0
+		mute_flag=0
+		rev_flag=0
+
+		flag=chdata(MUCOM_CHDATA_FLAG)
+		flag2=chdata(MUCOM_CHDATA_FLAG2)
+		wadr=chdata(MUCOM_CHDATA_WADR)
+		vnum=chdata(MUCOM_CHDATA_VNUM)
+		code=chdata(MUCOM_CHDATA_CODE)
+		vol=chdata(MUCOM_CHDATA_VOL)&15
+		detune=chdata(MUCOM_CHDATA_DETUNE)
+		qtz=chdata(MUCOM_CHDATA_QUANTIZE)
+		pan=chdata(MUCOM_CHDATA_PAN)
+		poke chkey,0,$31+(code>>4)
+		wpoke chkey,1,wpeek(note,2*(code&15))
+
+		if flag&8 : mute_flag=1
+		if flag&128 : lfo_flag=1
+		if flag2&32 : rev_flag=1
+
+		mes strf("%c   %d  %03d %03d %05d %04x %s  %d   %d  %c %03d",65+ch,mute_flag,vnum,vol,detune,wadr,chkey,lfo_flag,rev_flag,panstr(pan),qtz)
+	ch++
+	loop
+
+	redraw 1
+	await 1000/30
+	goto *main_smon
+
+
+*to_vplayer
+	gosub *m_stop
+
+	get_appdata_path app_dir
+	cfg_init app_dir+INIFILE
+	cfg_seti "wx",wx
+	cfg_seti "wy",wy
+	cfg_seti "winx",ginfo_wx1
+	cfg_seti "winy",ginfo_wy1
+	cfg_sets "voicefile",voicefile
+	cfg_sets "pcmfile",pcmfile
+	cfg_sets "fontname",fontname
+	cfg_seti "fontsize",fontsize
+	cfg_sets "filedir",filedir
+	cfg_sets "author",author
+	cfg_sets "url",url
+	cfg_sets "recent",recent
+	cfg_sets "uuid",uuid
+	cfg_seti "scci_mode",scci_mode
+	cfg_seti "fastfw",fastfw
+	cfg_seti "fgcolor",fgcolor
+	cfg_seti "bgcolor",bgcolor
+	cfg_save
+
+	exec dir_exe+"\\aplayer.exe"
+	goto *main2
 
 	;---------------------------------------------------------------------------
 

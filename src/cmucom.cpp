@@ -225,16 +225,14 @@ void CMucom::Reset(int option)
 		vm->SendMem(bin_music2, 0xb000, music2_size);
 	}
 
-	vm->SetPlayFlag(true);
-
 	DeleteInfoBuffer();
 
-	//vm->LoadPcm("mucompcm.bin");
-	//vm->LoadMem("of7.muc", 0xc200, 0);
-	//vm->LoadMem("sampl1.muc", 0xc200, 0);
-	//vm->LoadMem("sampl2.muc", 0xc200, 0);
-	//vm->LoadMem("sampl3.muc", 0xc200, 0);
-	//vm->LoadMem("sc012.muc", 0xc200, 0);
+	int i,adr;
+	vm->InitChData(MUCOM_MAXCH,MUCOM_CHDATA_SIZE);
+	for (i = 0; i < MUCOM_MAXCH; i++){
+		adr = vm->CallAndHaltWithA(0xb00c, i);
+		vm->SetChDataAddress( i,adr );
+	}
 }
 
 void CMucom::SetUUID(char *uuid)
@@ -267,7 +265,7 @@ int CMucom::Play(int num)
 
 	if ((num < 0) || (num >= MUCOM_MUSICBUFFER_MAX)) return -1;
 
-	if (playflag) Stop();
+	Stop();
 
 	LoadTagFromMusic(num);
 
@@ -299,7 +297,7 @@ int CMucom::Play(int num)
 	//int vec = vm->Peekw(0xf308);
 	//PRINTF("#INT3 $%x.\r\n", vec);
 
-	vm->StartIN3();
+	vm->StartINT3();
 	vm->SetIntCount(0);
 
 	int jcount = hed->jumpcount;
@@ -345,12 +343,12 @@ int CMucom::Stop(int option)
 	//
 	playflag = false;
 	if (option & 1) {
-		vm->SetINT3Flag(false);
+		vm->StopINT3();
 		vm->CallAndHalt(0xb003);
 		vm->ResetFM();
 	}
 	else {
-		vm->SetINT3Flag(false);
+		vm->StopINT3();
 		vm->CallAndHalt(0xb003);
 	}
 	return 0;
@@ -408,6 +406,10 @@ int CMucom::LoadMusic(const char * fname, int num)
 		delete buf;
 		return -1;
 	}
+
+	if (musbuf[num] != NULL) {
+		delete musbuf[num];
+	}
 	musbuf[num] = buf;
 	//if (vm->LoadMem(fname, 0xc200, 0) >= 0) return 0;
 	return 0;
@@ -457,7 +459,7 @@ int CMucom::GetStatus(int option)
 	case MUCOM_STATUS_COUNT:
 		i = vm->GetIntCount();
 		if (maxcount) {
-			if (i >= maxcount) i = maxcount - 1;
+			i = i % maxcount;
 		}
 		return i;
 	case MUCOM_STATUS_MAXCOUNT:
@@ -614,6 +616,7 @@ int CMucom::ProcessHeader(char *text)
 			infobuf->PutCR();
 		}
 	}
+	infobuf->Put((char)0);
 	return 0;
 }
 
@@ -976,3 +979,65 @@ void CMucom::SetFastFW(int value)
 {
 	vm->SetFastFW(value);
 }
+
+
+int CMucom::GetChannelData(int ch, PCHDATA *result)
+{
+	int i;
+	int size;
+	int *ptr;
+	unsigned char *src;
+	unsigned char *srcp;
+	bool ready = playflag;
+	if ((ch < 0) || (ch >= MUCOM_MAXCH)) ready = false;
+	if (!ready){
+		memset(result, 0, sizeof(PCHDATA));
+		return -1;
+	}
+
+	size = sizeof(PCHDATA)/sizeof(int);
+	src = (unsigned char *)vm->GetChData(ch);
+	srcp = src;
+	ptr = (int *)result;
+
+	if (src == NULL) return -1;
+
+	for (i = 0; i < size; i++){
+		*ptr++ = (int)*src++;
+	}
+
+	result->wadr = srcp[2] + (srcp[3] << 8);
+	result->tadr = srcp[4] + (srcp[5] << 8);
+	result->detune = srcp[9] + (srcp[10] << 8);
+	result->lfo_diff = srcp[23] + (srcp[24] << 8);
+
+	//	Check pan
+	int pan = 0;
+	unsigned char chwork;
+	switch (ch) {
+	case MUCOM_CH_PSG:
+	case MUCOM_CH_PSG+1:
+	case MUCOM_CH_PSG+2:
+	case MUCOM_CH_RHYTHM:
+		pan = 3;
+		break;
+	case MUCOM_CH_ADPCM:
+		chwork = vm->GetChWork(15);
+		pan = chwork & 3;
+		break;
+	default:
+		if (ch >= MUCOM_CH_FM2) {
+			chwork = vm->GetChWork(8 + 4 + (ch - MUCOM_CH_FM2));
+		}
+		else {
+			chwork = vm->GetChWork(8 + ch);
+		}
+		pan = (int)(chwork & 0xc0);
+		pan = pan >> 6;
+		break;
+	}
+	result->pan = pan;
+
+	return 0;
+}
+

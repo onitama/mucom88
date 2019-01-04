@@ -1,0 +1,387 @@
+#include "hgimg4.as"
+
+title "MUCOM88 Visual Player"
+
+#include "hspmucom.as"
+#include "mod_appconfig.as"
+
+#packopt name "vplayer"
+#packopt xsize 960
+#packopt ysize 640
+;#packopt icon "mucom88win.ico"
+
+#define INIFILE "\\mucom88win.ini"
+#define APP_VER "0.2"
+
+;#define DEMOSONG
+
+	scci_mode=0
+	initopt=0
+	filedir=dir_exe	;dir_mydoc
+
+	get_appdata_path app_dir
+	cfg_init app_dir+INIFILE
+	cfg_load:modcfg=stat
+	if modcfg {	; iniファイル読み込み
+		filedir=cfg_getvar("filedir")
+		scci_mode=0+cfg_getvar("scci_mode")
+	}
+
+#ifdef DEMOSONG
+	filedir=dir_exe+"\\demosong\\"
+#endif
+
+	if scci_mode>0 : initopt=MUCOM_OPTION_FMMUTE|MUCOM_OPTION_SCCI
+
+	mucominit hwnd,initopt
+	onexit *byebye
+
+	mucomreset MUCOM_RESET_PLAYER
+	fname="sampl1"
+
+	randomize
+
+	gpreset
+	celload "res/mucom88.png",3
+
+	setcls CLSMODE_SOLID, 0		; 画面クリア設定
+	setpos GPOBJ_CAMERA, 0,0,6	; カメラ位置を設定
+
+	gpbox id_model, 1		; 箱ノードを追加
+
+	sx=ginfo_sx:sy=ginfo_sy
+	buffer 1,sx,sy,screen_offscreen	; オフスクリーンバッファを初期化
+	buffer 2,sx,sy,screen_offscreen	; オフスクリーンバッファを初期化
+
+	bufid=1				; 描画先のID
+	oldbuf=-1			; 以前の描画先ID
+
+	chdir filedir
+	sdim flist,$10000
+	sdim s1,$100
+	sdim s2,$100
+	dirlist flist,"*.muc"
+	autoflag=0
+	notesel flist
+	fmax=notemax
+
+	if fmax=0 : dialog "No file to play" : goto *byebye
+
+	flimit=16
+	fcur=0
+	mysel=0
+	fcurmax=fmax-flimit:if fcurmax<0 : fcurmax=0
+
+#ifdef DEMOSONG
+	autoflag=1
+	goto *vstart
+#endif
+
+
+*selinit
+	mysel=0
+
+*selmain
+
+	;	メイン画面
+	;
+	;
+	gsel 0
+	redraw 0
+
+	font "",24
+	color 255,255,255
+
+	pos 0,0
+	mes "File Selection : "+fmax
+
+	i=fcur:x=60:y=40:py=28
+	notesel flist
+	repeat flimit
+		noteget s1,i+cnt
+		pos x,y:mes s1
+		y+=py
+	loop
+	pos 30,40+mysel*py
+	mes "->"
+
+	redraw 1			; 描画終了
+	await 1000/60			; 待ち時間
+
+	;	入力チェック
+	stick key
+
+	if key&128 : goto *byebye
+	if key&32 : goto *vstart
+
+	if key&2 : goto *selup
+	if key&8 : goto *seldown
+
+	goto *selmain
+
+*selup
+	if mysel=0 {
+		if fcur>0 : fcur--
+	}
+	mysel--
+	goto *selmain
+*seldown
+	if mysel>=12 {
+		if fcur<fcurmax : fcur++ : goto *selmain
+	}
+	mysel++
+	if mysel>=flimit : mysel=flimit-1
+	goto *selmain
+*autoplay
+	if mysel>=12 {
+		if fcur<fcurmax : fcur++ : goto *autoplay2
+	}
+	mysel++
+*autoplay2
+	if mysel>=flimit : mysel=0 : fcur=0
+	goto *vstart
+
+*vstart
+	notesel flist
+	noteget fname,fcur+mysel
+
+	mucomreset MUCOM_RESET_COMPILE
+	mucomcomp fname,"mmlbin"
+	res=stat
+	mucomres buf
+	if res {
+		goto *selmain
+	}
+
+	mucomreset MUCOM_RESET_PLAYER
+	mucomload "mmlbin"
+
+	mucomplay 0
+
+	vmode = 0
+	vauto = 1
+	vmodemax = 6
+	vcount = 0
+	vtimer = 60*120		; 2分最大
+	vmaxcount = 192*2
+
+	dim chdata,64
+	note="C C+D D+E F F+G G+A A+B "
+	panstr=' ','R','L','C'
+	chkey="  "
+
+	vpkeymax=12*8:vppx=120:vppy=120
+	vpsx=192*vppx:vpsy=vpkeymax*vppy
+
+	vpcx=sx/2
+	vpcy=sy/2
+	vprr=1.0/192
+	dim vplev,16
+	dim vpprev,16
+
+*main
+
+	mucomstat count, MUCOM_STATUS_INTCOUNT
+	mucomstat maxcount, MUCOM_STATUS_MAXCOUNT
+
+	;	サブ画面
+	gsel bufid
+	font "",120,1
+	redraw 0			; 描画開始
+
+	if oldbuf>=0 {
+		on vmode gosub *vmode0_copy,*vmode1_copy,*vmode2_copy,*vmode3_copy,*vmode4_copy,*vmode5_copy
+	}
+
+	addang id_model,0,0.02,0.01	; ノード回転
+	gpdraw				; シーンの描画
+
+
+	color 0,0,0
+	ch=0:x=sx/2
+	repeat 10
+		if cnt=6 : continue	; Skip G channel
+
+		mucomgetchdata chdata,ch
+
+		vpkey=chdata(MUCOM_CHDATA_KEYON)
+		code=chdata(MUCOM_CHDATA_CODE)
+
+		if vpprev(cnt)!=vpkey {
+			vplev(cnt)=32
+			vpprev(cnt)=vpkey
+		} else {
+			if vplev(cnt) : vplev(cnt)--
+		}
+		if vpkey>0 {
+			on vmode gosub *vmode0_draw,*vmode1_draw,*vmode2_draw,*vmode3_draw,*vmode4_draw,*vmode5_draw
+		}
+	ch++
+	loop
+
+	redraw 1			; 描画終了
+
+	;	メイン画面
+	gsel 0
+	redraw 0
+
+	pos 0,0:gmode 0
+	celput bufid			; オリジナルを表示
+
+	font "",18
+	color 255,255,255
+
+	pos 0,0
+	gmode 5,256,64,255
+	gzoom 128,32, 3,0,0
+
+	pos 0,24
+	mes "Visual Player : "+fname
+	;mes "INTCOUNT:"+count+"/"+maxcount
+
+	redraw 1			; 描画終了
+	await 1000/60			; 待ち時間
+
+	;	入力チェック
+	stick key
+
+	vcount++
+	if vauto {
+		if vcount>=vmaxcount {
+			vcount=0
+			vmode++:if vmode>=vmodemax : vmode=0
+			vmaxcount = 96*rnd(8)+192
+		}
+	}
+
+	if key&128 {
+		mucomstop 0
+		goto *selinit
+	}
+
+	if autoflag {
+		vtimer--
+		if (maxcount*3/2)<count : vtimer=0
+		if vtimer<=0 {
+			mucomstop 0
+			goto *autoplay
+		}
+	}
+
+	if key&(16+4) {
+		vmode++:if vmode>=vmodemax : vmode=0
+	}
+	if key&1 {
+		vmode--:if vmode<0 : vmode=vmodemax-1
+	}
+	if key&32 : vauto=vauto^1
+
+	oldbuf=bufid
+	bufid++
+	if bufid>2 : bufid=1
+
+	goto *main
+
+*vmode0_copy
+	setpos GPOBJ_CAMERA, 0,0,4	; カメラ位置を設定
+	return
+*vmode0_draw
+	hsvcolor cnt*10,255,255
+	px=80:py=10:x=80+cnt*px
+	y=480-py*(vplev(cnt)&$fc)
+	;y=rnd(40)*10+100
+	wpoke chkey,0,wpeek(note,2*(code&15))
+	pos x-8,500:mes chkey
+	boxf x,y,x+px-4,480
+	return
+
+*vmode1_copy
+	zm=8
+	pos -zm/2,-zm/2:gmode 3,sx,sy,255
+	gzoom sx+zm,sy+zm,oldbuf,0,0,sx,sy
+
+	;pos 0,0:gmode 3,sx,sy,254
+	;gcopy oldbuf		; 以前の画面を表示
+	setpos GPOBJ_CAMERA, 0,0,6	; カメラ位置を設定
+	return
+
+*vmode1_draw
+	hsvcolor cnt*20,255,255-vplev(cnt)*6
+	rr=vprr*vpkey*120
+	x=sin(rr)*vppx+vpcx
+	y=cos(rr)*vppy+vpcy
+	;pos x,y:mes chkey
+	boxf x,y,x+16,y+16
+	return
+
+*vmode2_copy
+	zm=4
+	pos 0,-zm/2:gmode 3,sx,sy,255
+	gzoom sx+zm,sy+zm,oldbuf,0,0,sx,sy
+	setpos GPOBJ_CAMERA, 4,0,6	; カメラ位置を設定
+	return
+
+*vmode2_draw
+	hsvcolor cnt*20,255,255
+	;rr=vprr*vpkey*120
+	;x=sin(rr)*vppx+vpcx
+	;y=cos(rr)*vppy+vpcy
+	;pos x,y:mes chkey
+	i=sy
+	x=80:y=(vprr*vpkey*i)+150
+	boxf x,y,x+8,y+8
+	return
+
+*vmode3_copy
+	zm=2
+	pos -3,-zm*2:gmode 3,sx,sy,254
+	gzoom sx+zm*2+1,sy+zm*2,oldbuf,0,0,sx,sy
+	setpos GPOBJ_CAMERA, 0,6,6	; カメラ位置を設定
+	return
+*vmode3_draw
+	hsvcolor cnt*10,255,255
+	px=60:py=10:x=160+cnt*px
+	;y=sy-50-py*vplev(cnt)
+	y=rnd(40)*10+100
+	wpoke chkey,0,wpeek(note,2*(code&15))
+	pos x,y:mes chkey
+	;boxf x,y,x+px-4,sy-50
+	return
+
+*vmode4_copy
+	zm=2
+	pos -3,-zm*2:gmode 3,sx,sy,255
+	gzoom sx+zm*2+1,sy+zm*2,oldbuf,0,0,sx,sy
+	setpos GPOBJ_CAMERA, 0,2.6,6	; カメラ位置を設定
+	return
+*vmode4_draw
+	hsvcolor cnt*20,vplev(cnt)*6,255
+	;rr=vprr*vpkey*120
+	;x=sin(rr)*vppx+vpcx
+	;y=cos(rr)*vppy+vpcy
+	;pos x,y:mes chkey
+	i=sx*2
+	x=(vprr*vpkey*i)-50:y=500
+	boxf x,y,x+8,y+20
+	return
+
+*vmode5_copy
+	zm=2
+	pos -3,-zm*2:gmode 3,sx,sy,254
+	gzoom sx+zm*2+1,sy+zm*2,oldbuf,0,0,sx,sy
+	setpos GPOBJ_CAMERA, 0,2.6,6	; カメラ位置を設定
+	return
+*vmode5_draw
+	hsvcolor cnt*20,255,255
+	px=60:py=10:x=160+cnt*px
+	y=sy-50-py*vplev(cnt)
+	boxf x,y,x+px-4,sy-50
+	return
+
+
+
+
+*byebye
+	mucombye
+	end
+

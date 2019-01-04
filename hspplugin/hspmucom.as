@@ -32,6 +32,10 @@
 #func mucomsetfastfw mucomsetfastfw $202
 #func mucomsetvolume mucomsetvolume $202
 
+#func mucomgetchdata mucomgetchdata $202
+
+
+
 #define MUCOM_DEFAULT_PCMFILE "mucompcm.bin"
 #define MUCOM_DEFAULT_VOICEFILE "voice.dat"
 
@@ -58,6 +62,30 @@
 #define MUCOM_OPTION_FMMUTE 1
 #define MUCOM_OPTION_SCCI 2
 #define MUCOM_OPTION_FASTFW 4
+
+#define MUCOM_CHDATA_LENGTH 0
+#define MUCOM_CHDATA_VNUM 1
+#define MUCOM_CHDATA_WADR 2
+#define MUCOM_CHDATA_TADR 4
+#define MUCOM_CHDATA_VOL 6
+#define MUCOM_CHDATA_ALG 7
+#define MUCOM_CHDATA_CH 8
+#define MUCOM_CHDATA_DETUNE 9
+#define MUCOM_CHDATA_TLLFO 11
+#define MUCOM_CHDATA_REVERB 12
+#define MUCOM_CHDATA_QUANTIZE 18
+#define MUCOM_CHDATA_LFODELAY 19
+#define MUCOM_CHDATA_LFOCOUNT 21
+#define MUCOM_CHDATA_LFODIFF 23
+#define MUCOM_CHDATA_LFOPEAK 27
+#define MUCOM_CHDATA_FNUM1 29
+#define MUCOM_CHDATA_FNUM2 30
+#define MUCOM_CHDATA_FLAG 31
+#define MUCOM_CHDATA_CODE 32
+#define MUCOM_CHDATA_FLAG2 33
+#define MUCOM_CHDATA_PAN 36
+#define MUCOM_CHDATA_KEYON 37
+
 
 #endif
 

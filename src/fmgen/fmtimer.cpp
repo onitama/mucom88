@@ -48,7 +48,8 @@ void Timer::SetTimerA(uint addr, uint data)
 void Timer::SetTimerB(uint data)
 {
 	timerb = (256-data) * timer_step;
-//	LOG2("Timer B = %d   %d us\n", data, timerb >> 12);
+	printf("Timer B = %d   %d us  %d\n", data, timerb >> 12, timer_step>>12);
+	//	LOG2("Timer B = %d   %d us\n", data, timerb >> 12);
 }
 
 // ---------------------------------------------------------------------------

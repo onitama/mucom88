@@ -44,6 +44,7 @@ public:
 	void SetPC(uint16_t adr);
 	void CallAndHalt(uint16_t adr);
 	int CallAndHalt2(uint16_t adr, uint8_t code);
+	int CallAndHaltWithA(uint16_t adr, uint8_t areg);
 
 	//		仮想マシンコントロール
 	void Reset(void);
@@ -55,7 +56,6 @@ public:
 	int SaveMem(const char *fname,int adr, int size);
 	int SaveMemExpand(const char *fname, int adr, int size, char *header, int hedsize, char *footer, int footsize, char *pcm, int pcmsize);
 	char *LoadAlloc(const char *fname, int *sizeout);
-	void StartIN3(void);
 	void SetVolume(int fmvol, int ssgvol);
 	void SetFastFW(int value);
 	void SkipPlay(int count);
@@ -72,8 +72,8 @@ public:
 	void BackupMem(uint8_t *mem_bak);
 	void RestoreMem(uint8_t *mem_bak);
 
-	void SetINT3Flag(bool fl) { int3flag = fl; }
-	void SetPlayFlag(bool fl) { playflag = fl; }
+	void StartINT3(void);
+	void StopINT3(void);
 	void SetStreamTime(int time) { time_stream = time; }
 	void SetWindow(void *window) { master_window = (HWND)window; }
 	void SetIntCount(int value) { time_intcount = value; }
@@ -99,6 +99,13 @@ public:
 	//		BANK切り替え
 	void ClearBank(void);
 	void ChangeBank(int bank);
+
+	//		CHDATA用
+	void InitChData(int chmax, int chsize);
+	void SetChDataAddress(int ch, int adr);
+	uint8_t *GetChData(int ch);
+	uint8_t GetChWork(int index);
+	void ProcessChData(void);
 
 private:
 	//		Z80
@@ -134,10 +141,21 @@ private:
 	uint8_t chstat[OPNACH_MAX];
 	uint8_t regmap[OPNAREG_MAX];
 
+	//		CH情報スタック
+	int channel_max, channel_size;
+	uint16_t pchadr[64];
+	uint8_t *pchdata;
+	uint8_t pchwork[16];
+
 	//		タイマー
 	static void CALLBACK TimeProc(UINT, UINT, DWORD, DWORD, DWORD);
+	static DWORD WINAPI vThreadFunc(LPVOID pParam);
+
+	int StartThread(void);
+	int StopThread(void);
 	void UpdateTime(void);
 	void StreamSend(void);
+	void ThreadFunc(void);
 
 	UINT timer_period;
 	UINT timerid;
@@ -149,10 +167,21 @@ private:
 	int pass_tick;
 	int last_tick;
 
-	LARGE_INTEGER pass_tickl;
-	LARGE_INTEGER last_tickl;
+	int64_t last_ft;
+
+	void resetElapsedTime(void);
+	int getElapsedTime(void);
+	void checkThreadBusy(void);
+
+	//__int64 ;
+
+	HANDLE hevent;
+	HANDLE hthread;
+	DWORD threadid;
 
 	LONG sending;
+	bool busyflag;
+	bool threadflag;
 	bool playflag;
 	bool int3flag;
 	int predelay;

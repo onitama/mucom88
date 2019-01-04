@@ -1,0 +1,242 @@
+;
+;	MUCOM88 test
+;
+title "MUCOM88 Auto Player"
+
+#include "hspmucom.as"
+#include "mod_appconfig.as"
+
+#packopt name "aplayer"
+#packopt xsize 800
+#packopt ysize 600
+#packopt icon "mucom88win.ico"
+
+#pack "mucom88.png"
+
+#define INIFILE "\\mucom88win.ini"
+#define APP_VER "0.3"
+
+;#define DEMOSONG
+
+	scci_mode=0
+	initopt=0
+	filedir=dir_exe	;dir_mydoc
+
+	get_appdata_path app_dir
+	cfg_init app_dir+INIFILE
+	cfg_load:modcfg=stat
+	if modcfg {	; iniファイル読み込み
+		filedir=cfg_getvar("filedir")
+		scci_mode=0+cfg_getvar("scci_mode")
+	}
+
+#ifdef DEMOSONG
+	filedir=dir_exe+"\\demosong\\"
+#endif
+
+	if scci_mode>0 : initopt=MUCOM_OPTION_FMMUTE|MUCOM_OPTION_SCCI
+
+	mucominit hwnd,initopt
+	onexit *byebye
+
+	mucomreset MUCOM_RESET_PLAYER
+	fname="sampl1"
+
+	wx=800:wy=600
+	screen 0,wx,wy
+	celload "mucom88.png",3
+
+	sdim buf,$10000
+	pos 0,wy-80
+	mesbox buf,wx,80,0
+
+	chdir filedir
+	sdim flist,$10000
+	sdim s1,$100
+	sdim s2,$100
+	dirlist flist,"*.muc"
+
+	notesel flist
+	fmax=notemax
+	mysel=0
+
+	if fmax=0 : dialog "No file for play" : goto *byebye
+
+	autoflag=1
+	chview=0
+
+*vstart
+	notesel flist
+	noteget fname,mysel
+
+	mucomreset MUCOM_RESET_COMPILE
+	mucomcomp fname,"mmlbin"
+	res=stat
+	mucomres buf
+	if res {
+		goto *autoplay
+	}
+	objprm 0,buf
+
+	mucomreset MUCOM_RESET_PLAYER
+	mucomload "mmlbin"
+
+	mucomtag t_title,"title"
+	if t_title="" : t_title="NO TITLE"
+	mucomtag t_author,"author"
+	mucomtag t_composer,"composer"
+	mucomtag t_voice,"voice"
+	mucomtag t_pcm,"pcm"
+	mucomtag t_date,"date"
+	mucomtag s1,"comment"
+	mes t_title
+
+	syscolor 15
+	boxf 0,0,wx,wy-80
+	pos 8,30
+	font msgothic,22,1:color 0,0,0
+	mes "Title:"+t_title
+	font msgothic,16
+	mes "Author:"+t_author+"  Composer:"+t_composer
+	mes "Date:"+t_date+"  Voice:"+t_voice+"  PCM:"+t_pcm
+	mes "Comment:"+s1
+
+	pos wx-256,50
+	mes "               Windows version"
+	mes "     1987-2019(C) Yuzo Koshiro"
+
+	mucomplay 0
+
+	dim chdata,64
+	note="C C+D D+E F F+G G+A A+B "
+	panstr=' ','R','L','C'
+	chkey="   "
+	vtimer = 60*120		; 2分最大
+
+	vpkeymax=12*8:vppx=1:vppy=1
+	vpsx=192*vppx:vpsy=vpkeymax*vppy
+	buffer 2,vpsx,vpsy
+	color 64,64,64:boxf
+	gsel 0
+
+	vpwx=wx:vpwy=wy-80-120
+	vpx=vpsx-vppx
+
+*main_smon
+	mucomstat count, MUCOM_STATUS_INTCOUNT
+	mucomstat maxcount, MUCOM_STATUS_MAXCOUNT
+
+	redraw 0
+
+	gsel 2
+	x=vpx
+	color 64,64,64
+	boxf x,0,x+vppx,vpsy
+
+	color 0,0,0
+	ch=0
+	ilev=192
+	repeat 10
+		if cnt=6 : continue	; Skip G channel
+
+		mucomgetchdata chdata,ch
+
+		hsvcolor cnt*12,255,ilev
+		vpkey=chdata(MUCOM_CHDATA_KEYON)
+		if vpkey>0 {
+			y=(vpkeymax-vpkey-1)*vpsy/vpkeymax
+			boxf x,y,x+vppx,y+vppy
+		}
+	ch++
+	loop
+
+	gsel 0
+	zoomr=(double(vpwy))/vpsy
+	pos 0,120
+	gzoom zoomr*vpsx,zoomr*vpsy,2,0,0,vpsx,vpsy
+
+	syscolor 15
+	boxf 0,0,wx,24
+	color 0,0,0
+	pos 8,0
+	mes "INTCOUNT:"+count+"/"+maxcount
+
+	if chview=0 : goto *skipchview
+
+	color 255,255,255
+	pos 16,136
+	mes "   Mut @   Vol Det   Adr  Key LFO Rev p qtz"
+	ch=0
+	repeat 11
+		mucomgetchdata chdata,ch
+		lfo_flag=0
+		mute_flag=0
+		rev_flag=0
+
+		flag=chdata(MUCOM_CHDATA_FLAG)
+		flag2=chdata(MUCOM_CHDATA_FLAG2)
+		wadr=chdata(MUCOM_CHDATA_WADR)
+		vnum=chdata(MUCOM_CHDATA_VNUM)
+		code=chdata(MUCOM_CHDATA_CODE)
+		vol=chdata(MUCOM_CHDATA_VOL)&15
+		detune=chdata(MUCOM_CHDATA_DETUNE)
+		qtz=chdata(MUCOM_CHDATA_QUANTIZE)
+		pan=chdata(MUCOM_CHDATA_PAN)
+		poke chkey,0,$31+(code>>4)
+		wpoke chkey,1,wpeek(note,2*(code&15))
+
+		if flag&8 : mute_flag=1
+		if flag&128 : lfo_flag=1
+		if flag2&32 : rev_flag=1
+
+		mes strf("%c   %d  %03d %03d %05d %04x %s  %d   %d  %c %03d",65+ch,mute_flag,vnum,vol,detune,wadr,chkey,lfo_flag,rev_flag,panstr(pan),qtz)
+	ch++
+	loop
+
+*skipchview
+	vpx++
+	if vpx>vpsx : vpx=0
+
+	pos wx-256,0
+	gmode 6,256,64,255
+	gcopy 3
+	;gzoom 128,32, 3,0,0
+
+	redraw 1
+	await 1000/60
+
+	;	入力チェック
+	stick key
+
+	if key&128 {
+		mucomstop 0
+		goto *byebye
+	}
+	if key&$30 {
+		mucomstop 0
+		goto *autoplay
+	}
+	if key&1024 {
+		chview^=1
+	}
+	if autoflag {
+		vtimer--
+		if (maxcount*3/2)<count { vtimer=0 }
+		if vtimer<=0 {
+			mucomstop 0
+			goto *autoplay
+		}
+	}
+
+	goto *main_smon
+
+*autoplay
+	mysel++
+	if mysel>=fmax : mysel=0
+	goto *vstart
+
+
+*byebye
+	mucombye
+	end
+

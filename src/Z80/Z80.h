@@ -108,9 +108,11 @@ public:
 	void INT(int data_bus) { intdata = data_bus; intreq = true; }
 	void NMI() { nmireq = true; }
 	void SetSP(uint16_t adr) { sp = adr; }
+	void SetHL(uint16_t adr);
 	void SetIntVec(uint8_t data) { IntVec = data; }
 	uint16_t GetHL(void);
 	uint8_t GetA(void);
+	uint16_t GetIX(void);
 #if BUILTIN_MEMORY
 	void SetMemoryPtr(uint8_t *p) { m = p; }
 #endif

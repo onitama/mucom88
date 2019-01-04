@@ -283,11 +283,22 @@ uint16_t Z80::GetHL(void)
 }
 
 
+void Z80::SetHL(uint16_t adr)
+{
+	HL = adr;
+}
+
+
 uint8_t Z80::GetA(void)
 {
 	return A;
 }
 
+
+uint16_t Z80::GetIX(void)
+{
+	return (*(uint16_t *)&r[4 + OFS_IX]);
+}
 
 int32_t Z80::Execute(int32_t n) {
 	int32_t tmp, tmp2, cy;
@@ -1205,7 +1216,7 @@ void Z80::DDCB_FDCB() {
 }
 
 int Z80::ResolvC() {
-	uint32_t sw;
+	uint32_t sw = 0;
 	FlagDecision *p;
 	for (p = fp - 1; p >= fbuf && !(sw = p->dm & 0xf); p--)
 		;
@@ -1239,7 +1250,7 @@ int Z80::ResolvC() {
 }
 
 int Z80::ResolvN() {
-	uint32_t sw;
+	uint32_t sw = 0;
 	FlagDecision *p;
 	for (p = fp - 1; p >= fbuf && !(sw = p->dm & 0xf0); p--)
 		;
@@ -1265,7 +1276,7 @@ int Z80::ResolvN() {
 }
 
 int Z80::ResolvPV() {
-	uint32_t sw;
+	uint32_t sw = 0;
 	FlagDecision *p;
 	for (p = fp - 1; p >= fbuf && !(sw = p->dm & 0xf00); p--)
 		;
@@ -1312,7 +1323,7 @@ int Z80::ResolvPV() {
 }
 
 int Z80::ResolvH() {
-	uint32_t sw;
+	uint32_t sw = 0;
 	FlagDecision *p;
 	for (p = fp - 1; p >= fbuf && !(sw = p->dm & 0xf0000); p--)
 		;
@@ -1346,7 +1357,7 @@ int Z80::ResolvH() {
 }
 
 int Z80::ResolvZ() {
-	uint32_t sw;
+	uint32_t sw = 0;
 	FlagDecision *p;
 	for (p = fp - 1; p >= fbuf && !(sw = p->dm & 0xf000000); p--)
 		;
@@ -1372,7 +1383,7 @@ int Z80::ResolvZ() {
 }
 
 int Z80::ResolvS() {
-	uint32_t sw;
+	uint32_t sw = 0;
 	FlagDecision *p;
 	for (p = fp - 1; p >= fbuf && !(sw = p->dm & 0xf0000000); p--)
 		;
