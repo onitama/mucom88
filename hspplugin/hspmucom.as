@@ -34,6 +34,7 @@
 
 #func mucomgetchdata mucomgetchdata $202
 
+#func mucomrecord mucomrecord $202
 
 
 #define MUCOM_DEFAULT_PCMFILE "mucompcm.bin"
@@ -62,6 +63,7 @@
 #define MUCOM_OPTION_FMMUTE 1
 #define MUCOM_OPTION_SCCI 2
 #define MUCOM_OPTION_FASTFW 4
+#define MUCOM_OPTION_STEP 8
 
 #define MUCOM_CHDATA_LENGTH 0
 #define MUCOM_CHDATA_VNUM 1
@@ -85,6 +87,8 @@
 #define MUCOM_CHDATA_FLAG2 33
 #define MUCOM_CHDATA_PAN 36
 #define MUCOM_CHDATA_KEYON 37
+#define MUCOM_CHDATA_VNUMORIG 38
+#define MUCOM_CHDATA_VOLORIG 39
 
 
 #endif

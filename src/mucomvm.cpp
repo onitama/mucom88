@@ -10,16 +10,17 @@
 #include <stdio.h>
 #include <stdio.h>
 #include "mucomvm.h"
-#include "soundds.h"
+
 #include "adpcm.h"
 #include "mucomerror.h"
 
-#define RATE 55467				// Sampling Rate 55K
-#define BUFSIZE 200				// Stream Buffer 200ms
+#define BUFSIZE 200			// Stream Buffer 200ms
 #define baseclock 7987200		// Base Clock
 
-#define USE_SCCI
-#define USE_HIGH_LEVEL_COUNTER
+
+#ifdef MUCOM88WIN
+#include "win32/osdep_win.h"		// とりあえず仮作成中
+#endif
 
 /*------------------------------------------------------------*/
 /*
@@ -35,50 +36,36 @@ mucomvm::mucomvm(void)
 	m_fmvol = 0;
 	m_ssgvol = -3;
 
-	snddrv = NULL;
 	opn = NULL;
 	membuf = NULL;
+	osd = NULL;
 	master_window = NULL;
-	m_pChip = NULL;
 
 	channel_max = 0;
 	channel_size = 0;
 	pchdata = NULL;
+
+	playflag = false;
 }
 
 mucomvm::~mucomvm(void)
 {
-	if (playflag) {
-		for (int i = 0; i < 300 && sending; i++) Sleep(10);
-		playflag = false;
+	if (osd) {
+		osd->FreeTimer();
+		osd->FreeAudio();
+		osd->FreeRealChip();
+		osd = NULL;
 	}
-	if (timerid)
-	{
-		timeKillEvent(timerid);
-		timeEndPeriod(timer_period);
-		timerid = 0;
-	}
-	//	スレッドを停止する
-	StopThread();
 
 	if (opn) {
 		delete opn;
 		opn = NULL;
 	}
-	if (snddrv != NULL) delete snddrv;
 	if (membuf) delete membuf;
 
 	if (pchdata) {
 		free(pchdata);
 	}
-
-#ifdef USE_SCCI
-	// リアルチップ用クラス開放
-	if (m_pChip) {
-		m_pChip->UnInitialize();
-		delete m_pChip;
-	}
-#endif
 
 }
 
@@ -108,65 +95,96 @@ void mucomvm::SetFastFW(int value)
 }
 
 
+static void RunAudioCallback(void *CallbackInstance, void *MethodInstance);
+static void RunTimerCallback(void *CallbackInstance, void *MethodInstance);
+
+// オーディオコールバック
+static void RunAudioCallback(void *CallbackInstance, void *MethodInstance) {
+	AudioCallback *acb = (AudioCallback *)CallbackInstance;
+	((mucomvm *)MethodInstance)->AudioCallback(acb->mix, acb->size);
+}
+
+// タイマーコールバック
+static void RunTimerCallback(void *CallbackInstance, void *MethodInstance) {
+	TimerCallback *tcb = (TimerCallback *)CallbackInstance;
+	((mucomvm *)MethodInstance)->UpdateCallback(tcb->tick);
+}
+
+
 void mucomvm::ResetFM(void)
 {
 	//	VMのリセット(FM部のみ)
 	//
 	if (playflag) {
-		for (int i = 0; i < 300 && sending; i++) Sleep(10);
+		osd->WaitSendingAudio();
 	}
 
 	int i;
 	for (i = 0; i < OPNACH_MAX; i++) {
 		chmute[i] = 0; chstat[i] = 0;
 	}
-	memset(regmap,0,OPNAREG_MAX);
+	memset(regmap, 0, OPNAREG_MAX);
 
 	if (opn) {
 		int3mask = 0;
 		int3flag = false;
 		opn->Reset();
-		opn->SetRate(baseclock, RATE, false);
+		opn->SetRate(baseclock, Rate, false);
 		opn->SetReg(0x2d, 0);
 		opn->SetVolumeFM(m_fmvol);
 		opn->SetVolumePSG(m_ssgvol);
 	}
 
-#ifdef USE_SCCI
-	if (m_pChip) {
-		m_pChip->Reset();
-		m_pChip->SetRegister(0x2d, 0);
+	if (m_option & VM_OPTION_SCCI) {
+		osd->ResetRealChip();
+		osd->OutputRealChip(0x2d, 0);
 	}
-#endif
-
 }
 
-void mucomvm::InitSoundSystem(void)
+void mucomvm::InitSoundSystem(int rate)
 {
+	// レート設定
+	Rate = rate;
+
 	//	サウンドの初期化(初回のみでOK)
 	//
 	playflag = false;
 	predelay = 0;
-	sending = false;
-	threadflag = false;
-	busyflag = false;
- 
-	//		SCCI対応
-	//
-#ifdef USE_SCCI
-	if (m_option & VM_OPTION_SCCI) {
-		// リアルチップ用クラス生成
-		m_pChip = new realchip();
-		m_pChip->Initialize();
-		if (m_pChip->IsRealChip() == false) {
-			m_pChip = NULL;				// 初期化に失敗したら使用しない
-		}
+
+#ifdef MUCOM88WIN
+	{
+		OsDependentWin32 *osdwin32 = new OsDependentWin32();
+		osd = osdwin32;
 	}
 #endif
 
-	snddrv = new WinSoundDriver::DriverDS;
-	if (master_window) snddrv->SetHWND(master_window);
-	snddrv->Init(RATE, 2, BUFSIZE);
+	if (osd == NULL) return;
+
+	//		COM初期化
+	//
+	osd->CoInitialize();
+
+	//		SCCI対応
+	//
+	if (m_option & VM_OPTION_SCCI) {
+		osd->InitRealChip();
+	}
+
+	//		オーディオ
+	if (!(m_option & VM_OPTION_STEP)) {
+		osd->UserAudioCallback->Set(this, &RunAudioCallback);
+		osd->UserTimerCallback->Set(this, &RunTimerCallback);
+		osd->InitAudio(master_window, rate, BUFSIZE);
+	}
+
+	//		タイマー初期化
+	//
+	ResetTimer();
+
+	if (!(m_option & VM_OPTION_STEP)) {
+		osd->InitTimer();
+		osd->ResetTime();
+	}
 
 	opn = new FM::OPNA;
 	if (opn) {
@@ -181,99 +199,9 @@ void mucomvm::InitSoundSystem(void)
 		ResetFM();
 	}
 
-	//		先行するサウンドバッファを作っておく
-	//
-	int size;
-	size = RATE * 40 / 1000 * 2;
-	snddrv->GetSoundBuffer()->PrepareBuffer(size);
-	snddrv->GetSoundBuffer()->UpdateBuffer(size);
-	//pooltime = snddrv->GetSoundBuffer()->GetPoolSize();
-
-	//		タイマー初期化
-	//
-	timerid = 0;
-	time_master = 0;
-	time_stream = 20;// buffer_length / num_blocks;
-	time_scount = 0;
-	time_intcount = 0;
-	time_interrupt = 10;
-	resetElapsedTime();
-
-	TIMECAPS caps;
-	if (timeGetDevCaps(&caps, sizeof(TIMECAPS)) == TIMERR_NOERROR) {
-		// マルチメディアタイマーのサービス精度を最大に
-		HANDLE myth = GetCurrentThread();
-		SetThreadPriority(myth, THREAD_PRIORITY_HIGHEST);
-
-		timer_period = caps.wPeriodMin;
-		timeBeginPeriod(timer_period);
-		timerid = timeSetEvent(timer_period, caps.wPeriodMin, TimeProc, reinterpret_cast<DWORD>(this), (UINT)TIME_PERIODIC);
-		if (!timerid)
-		{
-			timeEndPeriod(timer_period);
-		}
-	}
-	else {
-		//	失敗した時
-		timer_period = -1;
-		timerid = 0;
-		MessageBox(NULL, "Unable to start timer.", "Error", 0);
-	}
-
-	//	ストリーム用スレッド
-	StartThread();
 	playflag = true;
 	//printf("#Stream update %dms.\n", time_stream);
 }
-
-int mucomvm::StartThread(void)
-{
-	// ストリームスレッドを開始する
-
-	// イベントオブジェクトを作成する
-	hevent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	// スレッドを生成する
-	hthread = CreateThread(NULL, 0x40000, (LPTHREAD_START_ROUTINE)mucomvm::vThreadFunc, (LPVOID)this, NULL, &threadid);
-	if (hthread == NULL) {
-		return -1;
-	}
-	// スレッドの優先順位を変更する
-	SetThreadPriority(hthread, THREAD_PRIORITY_TIME_CRITICAL);
-	return 0;
-}
-
-
-DWORD WINAPI mucomvm::vThreadFunc(LPVOID pParam) {
-	mucomvm *pThis = (mucomvm *)pParam;
-	pThis->ThreadFunc();
-	return 0;
-}
-
-int mucomvm::StopThread(void)
-{
-	// ストリームスレッドを停止する
-	if (threadflag == FALSE) return -1;
-
-	// イベントオブジェクト破棄
-	threadflag = FALSE;
-	SetEvent(hevent);
-	CloseHandle(hevent);
-	hevent = NULL;
-	// スレッド停止を待つ
-	DWORD	dActive = 0;
-	GetExitCodeThread(hthread, &dActive);
-	if (dActive == STILL_ACTIVE) {
-		WaitForSingleObject(hthread, INFINITE);
-	}
-	// スレッド破棄
-	CloseHandle(hthread);
-
-	hthread = NULL;
-	threadid = 0;
-
-	return 0;
-}
-
 
 void mucomvm::Reset(void)
 {
@@ -310,12 +238,9 @@ int mucomvm::DeviceCheck(void)
 {
 	//	デバイスの正常性をチェック
 	//
-#ifdef USE_SCCI
 	if (m_option & VM_OPTION_SCCI) {
-		// リアルチップが正しく動作するか?
-		if (m_pChip == NULL) return -1;
+		return osd->CheckRealChip();
 	}
-#endif
 	return 0;
 }
 
@@ -735,14 +660,9 @@ int mucomvm::LoadPcmFromMem(const char *buf, int sz, int maxpcm)
 	pcmmem = (char *)opn->GetADPCMBuffer();
 	memcpy(pcmmem, pcmdat, sz - infosize);
 
-#ifdef USE_SCCI
-	// リアルチップ対応
-	if (m_pChip) {
-		if (m_pChip->IsRealChip()) {
-			m_pChip->SendAdpcmData(pcmdat, sz - infosize);
-		}
+	if (m_option & VM_OPTION_SCCI) {
+		osd->OutputRealChipAdpcm(pcmdat, sz - infosize);
 	}
-#endif
 
 	return 0;
 }
@@ -803,40 +723,6 @@ int mucomvm::SaveMemExpand(const char *fname, int adr, int size, char *header, i
 }
 
 
-void mucomvm::checkThreadBusy(void)
-{
-	//		スレッドがVMを使用しているかチェック
-	//
-	for (int i = 0; i < 300 && sending; i++) Sleep(10);
-	int3flag = false;
-	for (int i = 0; i < 300 && busyflag; i++) Sleep(10);
-}
-
-
-void mucomvm::StartINT3(void)
-{
-	//		INT3割り込みを開始
-	//
-	if (int3flag) {
-		checkThreadBusy();
-	}
-	getElapsedTime();
-	SetIntCount(0);
-	predelay = 4;
-	int3flag = true;
-}
-
-
-void mucomvm::StopINT3(void)
-{
-	//		INT3割り込みを停止
-	//
-	checkThreadBusy();
-	SetIntCount(0);
-	getElapsedTime();
-	predelay = 4;
-}
-
 void mucomvm::SkipPlay(int count)
 {
 	//		再生のスキップ
@@ -852,69 +738,51 @@ void mucomvm::SkipPlay(int count)
 		CallAndHalt(vec);
 		jcount--;
 		time_intcount++;
-#ifdef USE_SCCI
-		if (m_pChip) {
-			if ((jcount & 3) == 0) Sleep(1);	// ちょっと待ちます
+		if (m_option & VM_OPTION_SCCI) {
+			if ((jcount & 3) == 0) osd->Delay(1);	// ちょっと待ちます
 		}
-#endif
 	}
 	SetChMuteAll(false);
 }
 
 
-int mucomvm::getElapsedTime(void)
+/*------------------------------------------------------------*/
+/*
+Timer
+*/
+/*------------------------------------------------------------*/
+
+void mucomvm::ResetTimer(void)
 {
-#ifdef USE_HIGH_LEVEL_COUNTER
+	busyflag = false;
+	predelay = 0;
 
-	int64_t cur_ft;		// 100ナノ秒単位の時間
-	int64_t pass_ft;
-	double ms;
-	GetSystemTimeAsFileTime((FILETIME *)&cur_ft);
-	pass_ft = cur_ft - last_ft;
-	last_ft = cur_ft;
+	time_master = 0;
+	time_scount = 0;
+	time_intcount = 0;
 
-	ms = ((double)pass_ft) * 0.0001f;	// ミリ秒単位に直す
-	//printf( "(%f)\n",ms );
-
-	pass_tick = (int)ms;
-	return (int)(ms * 1024.0);
-
-#else
-	int curtime;
-	curtime = timeGetTime();
-	pass_tick = curtime - last_tick;
-	last_tick = curtime;
-	return 1024 * pass_tick;
-#endif
-}
-
-
-void mucomvm::resetElapsedTime(void)
-{
 	pass_tick = 0;
 	last_tick = 0;
+
+	osd->ResetTime();
 }
 
 
-void mucomvm::UpdateTime(void)
+void mucomvm::UpdateTime(int base)
 {
 	//		1msごとの割り込み
+	//		base値は、1024=1msで経過時間が入る
 	//
-	int base;
-
-	base = getElapsedTime();
+	int tick;
 	if (playflag == false) {
 		return;
 	}
 
-#ifndef USE_HIGH_LEVEL_COUNTER
-	if (pass_tick <= 0) return;
-#endif
-
 	bool stream_event = false;
 	bool int3_mode = int3flag;
-	time_master += pass_tick;//timer_period;
-	time_scount += pass_tick;//timer_period;
+	tick = (base + (int)TICK_FACTOR - 1) >> TICK_SHIFT;
+	time_master += tick;
+	time_scount += tick;
 
 	if (int3mask & 128) int3_mode = false;		// 割り込みマスク
 
@@ -943,14 +811,16 @@ void mucomvm::UpdateTime(void)
 
 	if ((stream_event == false) && (int3_mode == false)) {
 		// INT3が無効な場合もストリーム再生は続ける
-		if (time_scount > 20 ) {
+		if (time_scount > 10) {
 			stream_event = true;
-			time_scount = 0;
 		}
 	}
 
 	if (stream_event) {
-		SetEvent(hevent);
+		time_scount = 0;
+		stream_event = false;
+		osd->SendAudio();
+		//SetEvent(hevent);
 		//StreamSend();
 	}
 
@@ -959,55 +829,63 @@ void mucomvm::UpdateTime(void)
 }
 
 
-void mucomvm::ThreadFunc() {
-	// ストリームスレッドループ
-	threadflag = true;
-	while (threadflag) {
-		if (WaitForSingleObject(hevent, 20) == WAIT_TIMEOUT) {
-			continue;
-		}
-		StreamSend();
-	}
-}
-
-
-void mucomvm::StreamSend(void)
+void mucomvm::StartINT3(void)
 {
-	//		ストリーム更新(別スレッド)
+	//		INT3割り込みを開始
 	//
-	if (!InterlockedExchange(&sending, true))
-	{
-		int writelength;
-		writelength = snddrv->PrepareSend();
-		if (writelength) {
-			FM::Sample *smp;
-			int size;
-			size = writelength >> 2;
-			smp = snddrv->GetSoundBuffer()->PrepareBuffer(size * 2);
-			if ((m_option & VM_OPTION_FMMUTE) == 0) {
-				opn->Mix(smp, size);
-			}
-			snddrv->GetSoundBuffer()->UpdateBuffer(size * 2);
-		}
-		snddrv->Send();
-
-	// 終了
-	InterlockedExchange(&sending, false);
-	time_scount = 0;
+	if (int3flag) {
+		osd->WaitSendingAudio();
+		checkThreadBusy();
 	}
-
+	osd->ResetTime();
+	SetIntCount(0);
+	predelay = 4;
+	int3flag = true;
 }
 
-//  TimeProc
-//
-void CALLBACK mucomvm::TimeProc(UINT uid, UINT, DWORD user, DWORD, DWORD)
+
+void mucomvm::StopINT3(void)
 {
-	mucomvm* inst = reinterpret_cast<mucomvm*>(user);
-	if (inst){
-		//SetEvent(inst->hevent);
-		inst->UpdateTime();
+	//		INT3割り込みを停止
+	//
+	osd->WaitSendingAudio();
+	int3flag = false;
+	checkThreadBusy();
+
+	SetIntCount(0);
+	predelay = 0;
+}
+
+
+void mucomvm::checkThreadBusy(void)
+{
+	//		スレッドがVMを使用しているかチェック
+	//
+	for (int i = 0; i < 300 && busyflag; i++) Sleep(10);
+}
+
+
+void mucomvm::PlayLoop() {
+	while (1) {
+		osd->Delay(20);
 	}
 }
+
+void mucomvm::RenderAudio(void *mix, int size) {
+	opn->Mix((FM::Sample *)mix, size);
+}
+
+void mucomvm::UpdateCallback(int tick) {
+	if (m_option & VM_OPTION_STEP) return;
+	UpdateTime(tick);
+}
+
+
+void mucomvm::AudioCallback(void *mix, int size) {
+	if (m_option & VM_OPTION_FMMUTE || m_option & VM_OPTION_STEP) return;
+	RenderAudio(mix, size);
+}
+
 
 /*------------------------------------------------------------*/
 /*
@@ -1041,13 +919,10 @@ void mucomvm::FMOutData(int data)
 	}
 	opn->SetReg(sound_reg_select, data);
 
-#ifdef USE_SCCI
-	if (m_pChip) {
+	if (m_option & VM_OPTION_SCCI) {
 		// リアルチップ出力
-		m_pChip->SetRegister(sound_reg_select, data);
+		osd->OutputRealChip(sound_reg_select, data);
 	}
-#endif
-
 }
 
 //	データ出力(OPNA側)
@@ -1062,12 +937,10 @@ void mucomvm::FMOutData2(int data)
 
 	opn->SetReg(sound_reg_select2 | 0x100, data);
 
-#ifdef USE_SCCI
-	if (m_pChip) {
+	if (m_option & VM_OPTION_SCCI) {
 		// リアルチップ出力
-		m_pChip->SetRegister(sound_reg_select2 | 0x100, data);
+		osd->OutputRealChip(sound_reg_select2 | 0x100, data);
 	}
-#endif
 }
 
 //	データ入力

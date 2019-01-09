@@ -7,10 +7,10 @@
 #if !defined(win32_soundds_h)
 #define win32_soundds_h
 
-#include "headers.h"
-#include "fmgen/types.h"
-#include "fmgen/opna.h"
-#include "soundbuf.h"
+#include "../headers.h"
+#include "../fmgen/types.h"
+#include "../fmgen/opna.h"
+#include "../soundbuf.h"
 
 typedef int16 Sample;
 

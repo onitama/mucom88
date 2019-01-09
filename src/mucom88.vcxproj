@@ -52,7 +52,7 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;MUCOM88WIN;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -68,7 +68,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;MUCOM88WIN;_CONSOLE;_CRT_SECURE_NO_WARNINGS;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -80,6 +80,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="adpcm.cpp" />
+    <ClCompile Include="callback.cpp" />
     <ClCompile Include="cmucom.cpp" />
     <ClCompile Include="fmgen\file.cpp" />
     <ClCompile Include="fmgen\fmgen.cpp" />
@@ -92,10 +93,13 @@
     <ClCompile Include="membuf.cpp" />
     <ClCompile Include="mucomerror.cpp" />
     <ClCompile Include="mucomvm.cpp" />
-    <ClCompile Include="plugin.cpp" />
-    <ClCompile Include="realchip.cpp" />
+    <ClCompile Include="osdep.cpp" />
+    <ClCompile Include="plugin\plugin.cpp" />
     <ClCompile Include="soundbuf.cpp" />
-    <ClCompile Include="soundds.cpp" />
+    <ClCompile Include="wavout.cpp" />
+    <ClCompile Include="win32\osdep_win.cpp" />
+    <ClCompile Include="win32\realchip.cpp" />
+    <ClCompile Include="win32\soundds.cpp" />
     <ClCompile Include="Z80\Z80.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -108,6 +112,7 @@
     <ClInclude Include="bin_ssgdat.h" />
     <ClInclude Include="bin_time.h" />
     <ClInclude Include="bin_voice.h" />
+    <ClInclude Include="callback.h" />
     <ClInclude Include="cmucom.h" />
     <ClInclude Include="fmgen\diag.h" />
     <ClInclude Include="fmgen\file.h" />
@@ -122,15 +127,19 @@
     <ClInclude Include="fmgen\types.h" />
     <ClInclude Include="md5.h" />
     <ClInclude Include="membuf.h" />
-    <ClInclude Include="mucom88if.h" />
+    <ClInclude Include="mucom88config.h" />
     <ClInclude Include="mucomerror.h" />
     <ClInclude Include="mucomvm.h" />
-    <ClInclude Include="plugin.h" />
-    <ClInclude Include="realchip.h" />
-    <ClInclude Include="scci.h" />
-    <ClInclude Include="SCCIDefines.h" />
+    <ClInclude Include="osdep.h" />
+    <ClInclude Include="plugin\mucom88if.h" />
+    <ClInclude Include="plugin\plugin.h" />
     <ClInclude Include="soundbuf.h" />
-    <ClInclude Include="soundds.h" />
+    <ClInclude Include="wavout.h" />
+    <ClInclude Include="win32\osdep_win.h" />
+    <ClInclude Include="win32\realchip.h" />
+    <ClInclude Include="win32\scci.h" />
+    <ClInclude Include="win32\SCCIDefines.h" />
+    <ClInclude Include="win32\soundds.h" />
     <ClInclude Include="Z80\Z80.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

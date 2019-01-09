@@ -326,7 +326,7 @@
 	i=stat
 	if i>obj_menumax : goto *main2
 	if i<obj_menu : goto *main2
-	i-==obj_menu
+	i-=obj_menu
 
 	if i=1 : goto *to_load
 	if i=2 : goto *to_menusave
@@ -556,7 +556,7 @@
 
 *menu_tool
 	menu_str="ツール"
-	mes "編集中のMMLを整形します。\n"
+	mes "編集中のMMLを整形\n"
 	sw_toollnum=1
 	sw_toolrepl=0
 	sw_tooltag=1
@@ -567,7 +567,7 @@
 	objsize 120,24
 	button "実行",*to_toolexec
 
-	mes "\n\nPCMデータファイルを作成します。\n"
+	mes "\n\nPCMデータファイルを作成\n"
 	pcmdir=""
 	sname="mypcm.bin"
 	objsize 300,24
@@ -578,6 +578,7 @@
 	button "DATAファイルフォルダ指定",*to_pcmtool
 	button "ファイルリストを指定",*to_pcmtool2
 
+	y-=10
 	sysfont 0
 	pos x+320,y
 	mes "編集中のMMLをN88エクスポート\n"
@@ -591,6 +592,15 @@
 	objsize 120,24
 	button "実行",*to_toolexec2
 
+	sysfont 0
+	mes "\n\nWAVファイルとして保存\n"
+	wavout_time = 90
+	sysfont 17
+	mes "録音する時間(秒)"
+	input wavout_time
+	objsize 240,24
+	button "ファイルに出力",*to_wavout
+
 	return
 
 *to_toolexec
@@ -602,7 +612,7 @@
 
 *to_toolexec2
 	;	n88 Export
-	dialog "n88",17,"n88BASICファイル"
+	dialog "n88",17,"n88-BASIC file"
 	if stat=0 : goto *main2
 	fname = refstr
 	exname=getpath(fname,2)		; ファイル名の拡張子を取得
@@ -615,7 +625,8 @@
 		i+=n88_linep
 	loop
 	notesave fname			; テキストファイルをセーブ
-	goto *main2
+	chdir filedir
+	goto *to_main2
 
 *to_pcmtool
 	pcmdir=folderdialog(dir_cur)
@@ -640,6 +651,32 @@
 	gosub *exec_pcmtool2
 	stop
 
+*to_wavout
+	;	wav Export
+	dialog "wav",17,"WAV sound file"
+	if stat=0 : goto *main2
+	fname = refstr
+	exname=getpath(fname,2)		; ファイル名の拡張子を取得
+	if exname="" : fname+=".wav"	; 拡張子がなければ追加
+	wavout_fname=fname
+
+	chdir filedir
+	gosub *mmlcomp
+	gosub *m_stop
+
+	s1=dir_exe+"\\mucom88.exe"
+	exist s1
+	if strsize>0 {
+		exec s1+" -x -w "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
+	}
+	;mucomrecord wavout_fname, wavout_time
+
+	buf="["+wavout_fname+"] Saved.\n"
+	gosub *updatebuf
+	goto *main_menu
+
+*to_wavout2
+	goto *to_main2
 
 *menu_option
 	menu_str="オプション"
@@ -767,7 +804,6 @@
 	mes "\nSpecial thanks to:"
 	mes "WING☆、Makoto Wada (Ancient corp.)"
 
-
 	return
 
 	;---------------------------------------------------------------------------
@@ -818,6 +854,8 @@
 *mmlcomp
 	;	MMLコンパイル
 	;
+	gosub *m_stop
+	;
 	compflag=0
 	count_max=0
 	notesel mml
@@ -838,16 +876,15 @@
 	gosub *getmucominfo
 
 	mucomreset MUCOM_RESET_PLAYER
-
 	if pcmfile!="" {
 		mucomloadpcm pcmfile
 	}
-
 	mucomload TEMPBIN
 	mucomres result
 	compflag=1
 
 	gosub *m_play
+
 	return
 
 *getmucominfo
@@ -1232,9 +1269,9 @@
 		flag=chdata(MUCOM_CHDATA_FLAG)
 		flag2=chdata(MUCOM_CHDATA_FLAG2)
 		wadr=chdata(MUCOM_CHDATA_WADR)
-		vnum=chdata(MUCOM_CHDATA_VNUM)
+		vnum=chdata(MUCOM_CHDATA_VNUMORIG)
 		code=chdata(MUCOM_CHDATA_CODE)
-		vol=chdata(MUCOM_CHDATA_VOL)&15
+		vol=chdata(MUCOM_CHDATA_VOLORIG)
 		detune=chdata(MUCOM_CHDATA_DETUNE)
 		qtz=chdata(MUCOM_CHDATA_QUANTIZE)
 		pan=chdata(MUCOM_CHDATA_PAN)

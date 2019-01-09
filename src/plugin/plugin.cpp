@@ -11,11 +11,11 @@
 #include <string.h>
 
 #include "plugin.h"
-#include "cmucom.h"
-#include "mucomvm.h"
+#include "../cmucom.h"
+#include "../mucomvm.h"
 
 
-int Mucom88Plugin_Init(HWND hwnd, mucomvm *vm, CMucom *mucom)
+int Mucom88Plugin_Init(void *hwnd, mucomvm *vm, CMucom *mucom)
 {
 	return 0;
 }

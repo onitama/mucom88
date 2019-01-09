@@ -6,9 +6,9 @@
 //			onion software/onitama 2018/11
 //
 
-#include "mucomvm.h"
+#include "../mucomvm.h"
 #include "soundds.h"
-#include "fmgen/opna.h"
+#include "../fmgen/opna.h"
 
 #if defined( _MSC_VER )
 #pragma comment(lib,"winmm.lib")
@@ -58,7 +58,8 @@ bool DriverDS::Init(uint rate, uint ch, uint buflen)
 	buffersize = (rate * ch * sizeof(Sample) * buffer_length / 1000) & ~7;
 
 	// DirectSound object ì¬
-	if (FAILED(CoCreateInstance(CLSID_DirectSound, 0, CLSCTX_ALL, IID_IDirectSound, (void**) &lpds)))
+	HRESULT result = CoCreateInstance(CLSID_DirectSound, 0, CLSCTX_ALL, IID_IDirectSound, (void**) &lpds);
+	if (FAILED(result))
 		return false;
 	if (FAILED(lpds->Initialize(0)))
 		return false;

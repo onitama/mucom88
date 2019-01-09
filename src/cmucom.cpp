@@ -16,7 +16,7 @@
 #include "mucomerror.h"
 #include "md5.h"
 
-#include "plugin.h"
+#include "plugin/plugin.h"
 
 #include "bin_music2.h"
 
@@ -28,7 +28,6 @@
 #include "bin_time.h"
 #include "bin_voice.h"
 #include "bin_smon.h"
-
 
 #define PRINTF vm->Msgf
 
@@ -104,6 +103,21 @@ static int strpick_spc(char *target,char *dest,int strmax)
 	return len;
 }
 
+
+//
+//		windows debug support
+//
+void Alertf(const char *format, ...)
+{
+	char textbf[4096];
+	va_list args;
+	va_start(args, format);
+	vsprintf(textbf, format, args);
+	va_end(args);
+	MessageBox(NULL, textbf, "error", MB_ICONINFORMATION | MB_OK);
+}
+
+
 /*------------------------------------------------------------*/
 /*
 		interface
@@ -129,7 +143,7 @@ CMucom::~CMucom( void )
 }
 
 
-void CMucom::Init(void *window, int option)
+void CMucom::Init(void *window, int option, int rate)
 {
 	//		MUCOM88の初期化(初回だけ呼び出してください)
 	//		window : 0   = ウインドウハンドル(HWND)
@@ -139,20 +153,28 @@ void CMucom::Init(void *window, int option)
 	vm = new mucomvm;
 	flag = 1;
 
+	// レート設定
+	int myrate = rate;
+	if (rate == 0) myrate = MUCOM_AUDIO_RATE;
+	SetAudioRate(myrate);
+
 	if (window != NULL) {
 		vm->SetWindow(window);
 	}
-	else {
-		//OleInitialize(NULL);
-	}
-	if (FAILED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED))) {
-		return;
-	}
 	vm->SetOption(option);
-	vm->InitSoundSystem();
+	vm->InitSoundSystem(myrate);
 	MusicBufferInit();
 
 	Mucom88Plugin_Init((HWND)window,vm,this);
+}
+
+
+void CMucom::SetAudioRate(int rate)
+{
+	//		外部レンダリング用の出力レート設定
+	//
+	AudioStep = (double)1000.0 / rate;
+	AudioLeftMs = 0.0;
 }
 
 
@@ -173,8 +195,8 @@ void CMucom::Reset(int option)
 		PRINTF("#Device error(%d)\r\n", devres);
 	}
 
-	if (option & 2) {
-		if (option & 1) {
+	if (option & MUCOM_CMPOPT_COMPILE) {
+		if (option & MUCOM_CMPOPT_USE_EXTROM) {
 			//	コンパイラをファイルから読む
 			vm->LoadMem("expand", 0xab00, 0);
 			vm->LoadMem("errmsg", 0x8800, 0);
@@ -216,7 +238,7 @@ void CMucom::Reset(int option)
 
 		return;
 	}
-	if (option & 1) {
+	if (option & MUCOM_CMPOPT_USE_EXTROM) {
 		//	プレイヤーをファイルから読む
 		vm->LoadMem("music", 0xb000, 0);
 	}
@@ -256,7 +278,6 @@ int CMucom::Play(int num)
 	//		num : 0   = 音楽No. (0～15)
 	//		(戻り値が0以外の場合はエラー)
 	//
-	MUBHED *hed;
 	char *data;
 	char *pcmdata;
 	char *pcmname;
@@ -267,16 +288,21 @@ int CMucom::Play(int num)
 
 	Stop();
 
-	LoadTagFromMusic(num);
+	hedmusic = NULL;
 
 	CMemBuf *buf = musbuf[num];
 	if (buf == NULL) return -1;
 
-	hed = (MUBHED *)buf->GetBuffer();
-	data = MUBGetData(hed, datasize);
-	if (data == NULL) return -1;
+	hedmusic = (MUBHED *)buf->GetBuffer();
+	mubver = MUBGetHeaderVersion(hedmusic);
+	if (mubver < 0) return -2;
 
-	if (hed->pcmdata) {
+	LoadTagFromMusic(num);
+
+	data = MUBGetData(hedmusic, datasize);
+	if (data == NULL) return -3;
+
+	if (hedmusic->pcmdata) {
 		int skippcm = 0;
 		pcmname = GetInfoBufferByName("pcm");
 		if (pcmname[0] != 0) {
@@ -285,7 +311,7 @@ int CMucom::Play(int num)
 		}
 		if (skippcm==0) {
 			//	埋め込みPCMを読み込む
-			pcmdata = MUBGetPCMData(hed, pcmsize);
+			pcmdata = MUBGetPCMData(hedmusic, pcmsize);
 			vm->LoadPcmFromMem(pcmdata, pcmsize);
 		}
 	}
@@ -300,12 +326,35 @@ int CMucom::Play(int num)
 	vm->StartINT3();
 	vm->SetIntCount(0);
 
-	int jcount = hed->jumpcount;
+	int jcount = hedmusic->jumpcount;
 	vm->SkipPlay(jcount);
 
 	playflag = true;
 
 	return 0;
+}
+
+
+void CMucom::PlayLoop() {
+	vm->PlayLoop();
+}
+
+
+// 時間を進めてレンダリングを行う
+void CMucom::RenderAudio(void *mix, int size) {
+	AudioLeftMs += size * AudioStep;
+	int ms = (int)AudioLeftMs;
+	if (ms > 0) UpdateTime(ms);
+	AudioLeftMs -= ms;
+
+	memset(mix, 0, size * 2 * sizeof(int));
+	vm->RenderAudio(mix, size);
+}
+
+
+// 時間のみ更新
+void CMucom::UpdateTime(int tick_ms) {
+	vm->UpdateTime(tick_ms << TICK_SHIFT);
 }
 
 
@@ -316,18 +365,28 @@ int CMucom::LoadTagFromMusic(int num)
 	//		(戻り値が0以外の場合はエラー)
 	//
 	MUBHED *hed;
+	int ver;
 	int tagsize;
 
 	if ((num < 0) || (num >= MUCOM_MUSICBUFFER_MAX)) return -1;
 
+	DeleteInfoBuffer();
+	infobuf = new CMemBuf();
+
 	CMemBuf *buf = musbuf[num];
-	if (buf == NULL) return -1;
+	if (buf == NULL) {
+		infobuf->Put((int)0);
+		return -1;
+	}
 
 	hed = (MUBHED *)buf->GetBuffer();
+	ver = MUBGetHeaderVersion(hed);
+	if (ver < 0) {
+		infobuf->Put((int)0);
+		return -1;
+	}
 
 	if (hed->tagdata) {
-		DeleteInfoBuffer();
-		infobuf = new CMemBuf();
 		infobuf->PutStr(MUBGetTagData(hed, tagsize));
 		infobuf->Put((int)0);
 	}
@@ -410,6 +469,7 @@ int CMucom::LoadMusic(const char * fname, int num)
 	if (musbuf[num] != NULL) {
 		delete musbuf[num];
 	}
+
 	musbuf[num] = buf;
 	//if (vm->LoadMem(fname, 0xc200, 0) >= 0) return 0;
 	return 0;
@@ -450,7 +510,7 @@ int CMucom::GetStatus(int option)
 	case MUCOM_STATUS_INTCOUNT:
 		return vm->GetIntCount();
 	case MUCOM_STATUS_PASSTICK:
-		return vm->GetPassTick();
+		return vm->GetMasterCount();
 	case MUCOM_STATUS_MAJORVER:
 		return MAJORVER;
 	case MUCOM_STATUS_MINORVER:
@@ -837,6 +897,7 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	int hedsize;
 	int footsize;
 	int pcmsize;
+	int i;
 	if (fname == NULL) return -1;
 
 	header = (char *)&hed;
@@ -844,7 +905,7 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	memset(header,0,hedsize);
 	header[0] = 'M';
 	header[1] = 'U';
-	header[2] = 'C';
+	header[2] = 'B';	// 'C'=1.0 Header, 'B'=2.0 Header
 	header[3] = '8';
 
 	footer = NULL;
@@ -863,6 +924,18 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	hed.tagsize = footsize;
 	hed.jumpcount = jumpcount;
 	hed.jumpline = jumpline;
+
+	//	2.0 Header option
+	hed.ext_flags = MUCOM_FLAG_UTF8TAG;
+	hed.ext_system = MUCOM_SYSTEM_PC88;
+	hed.ext_target = MUCOM_TARGET_YM2608;
+	hed.ext_channel_num = maxch;
+	hed.ext_fmvoice_num = fmvoice;
+	hed.ext_player = 0;					// not use (reserved)
+
+	for (i = 0; i < fmvoice; i++) {
+		hed.ext_fmvoice[i] = (unsigned char)vm->Peek(0x8c50+i);
+	}
 
 	if ((option & 2) == 0) {
 		pcmname = GetInfoBufferByName("pcm");
@@ -889,11 +962,20 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 }
 
 
+int CMucom::MUBGetHeaderVersion(MUBHED *hed)
+{
+	char *p;
+	p = (char *)hed;
+	if ((p[0] == 'M') && (p[1] == 'U') && (p[2] == 'C') && (p[3] == '8')) return MUCOM_HEADER_VERSION1;
+	if ((p[0] == 'M') && (p[1] == 'U') && (p[2] == 'B') && (p[3] == '8')) return MUCOM_HEADER_VERSION2;
+	return -1;
+}
+
+
 char *CMucom::MUBGetData(MUBHED *hed, int &size)
 {
 	char *p;
 	p = (char *)hed;
-	if ((p[0] != 'M') || (p[1] != 'U') || (p[2] != 'C') || (p[3] != '8')) return NULL;
 	p += hed->dataoffset;
 	size = hed->datasize;
 	return p;
@@ -983,6 +1065,10 @@ void CMucom::SetFastFW(int value)
 
 int CMucom::GetChannelData(int ch, PCHDATA *result)
 {
+	//		指定されたチャンネルのリアルタイム演奏情報を取得する
+	//			ch = チャンネルNo (0～maxch)(A～Kチャンネルの順)
+	//			result = 結果を出力するPCHDATA形式のポインタ(あらかじめ確保が必要)
+	//
 	int i;
 	int size;
 	int *ptr;
@@ -995,7 +1081,7 @@ int CMucom::GetChannelData(int ch, PCHDATA *result)
 		return -1;
 	}
 
-	size = sizeof(PCHDATA)/sizeof(int);
+	size = MUCOM_PCHDATA_PC88_SIZE;
 	src = (unsigned char *)vm->GetChData(ch);
 	srcp = src;
 	ptr = (int *)result;
@@ -1011,19 +1097,27 @@ int CMucom::GetChannelData(int ch, PCHDATA *result)
 	result->detune = srcp[9] + (srcp[10] << 8);
 	result->lfo_diff = srcp[23] + (srcp[24] << 8);
 
-	//	Check pan
+	//	Check data (チャンネルごとに値の加工が必要)
 	int pan = 0;
+	int v_orig = 0;
+	int vol_org = 0;
 	unsigned char chwork;
 	switch (ch) {
 	case MUCOM_CH_PSG:
 	case MUCOM_CH_PSG+1:
 	case MUCOM_CH_PSG+2:
+		vol_org = result->volume & 15;
+		pan = 3;
+		break;
 	case MUCOM_CH_RHYTHM:
+		vol_org = result->volume;
 		pan = 3;
 		break;
 	case MUCOM_CH_ADPCM:
 		chwork = vm->GetChWork(15);
 		pan = chwork & 3;
+		vol_org = result->volume - 4;
+		if (vol_org < 0) vol_org = 0;
 		break;
 	default:
 		if (ch >= MUCOM_CH_FM2) {
@@ -1032,11 +1126,19 @@ int CMucom::GetChannelData(int ch, PCHDATA *result)
 		else {
 			chwork = vm->GetChWork(8 + ch);
 		}
+		vol_org = result->volume - 4;
+		if (vol_org < 0) vol_org = 0;
 		pan = (int)(chwork & 0xc0);
 		pan = pan >> 6;
+		if (mubver == MUCOM_HEADER_VERSION2) {
+			v_orig = (int)hedmusic->ext_fmvoice[result->vnum] - 1;
+			if (v_orig < 0) v_orig = 0;
+		}
 		break;
 	}
 	result->pan = pan;
+	result->vnum_org = v_orig;
+	result->vol_org = vol_org;
 
 	return 0;
 }
