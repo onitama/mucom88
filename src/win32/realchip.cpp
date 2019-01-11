@@ -39,16 +39,22 @@ void realchip::Initialize()
 	m_pManager->reset();
 
 	// サウンドチップ取得
-	m_pSoundChip = m_pManager->getSoundChip(SC_TYPE_YM2608, SC_CLOCK_7987200);
+	m_chiptype = SC_TYPE_YM2608;
+	m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_7987200);
 
 	// サウンドチップの取得が出来ない場合
 	if (m_pSoundChip == NULL)
 	{
-		// サウンドマネージャーを解放して終了
-		m_pManager->releaseInstance();
-		::FreeLibrary(m_hScci);
-		m_hScci = NULL;
-		return;
+		m_chiptype = SC_TYPE_YM2608;
+		m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_7987200);	// 2203も探す
+		if (m_pSoundChip == NULL) {
+			// サウンドマネージャーを解放して終了
+			m_pManager->releaseInstance();
+			::FreeLibrary(m_hScci);
+			m_hScci = NULL;
+			m_chiptype = SC_TYPE_NONE;
+			return;
+		}
 	}
 	// チップが取得できたのでリアルチップで動作させる
 	m_IsRealChip = true;
@@ -92,12 +98,18 @@ bool realchip::IsRealChip(){
 // レジスタ設定
 void realchip::SetRegister(DWORD reg, DWORD data) {
 	if (m_pSoundChip) {
+		if (reg & 0x100) {
+			if (m_chiptype != SC_TYPE_YM2608) return;
+		}
 		m_pSoundChip->setRegister(reg, data);
 	}
 }
 
 // ADPCMの転送
 void realchip::SendAdpcmData(void *pData, DWORD size) {
+
+	if (m_chiptype != SC_TYPE_YM2608) return;
+
 	// 差分があるかチェック
 	if (memcmp(m_bADPCMBuff, pData, size) == 0) {
 		// 差分が無い場合は転送しない

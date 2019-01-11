@@ -10,13 +10,12 @@
 #include <stdarg.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 
 #include "cmucom.h"
 #include "mucomvm.h"
 #include "mucomerror.h"
 #include "md5.h"
-
-#include "plugin/plugin.h"
 
 #include "bin_music2.h"
 
@@ -104,20 +103,6 @@ static int strpick_spc(char *target,char *dest,int strmax)
 }
 
 
-//
-//		windows debug support
-//
-void Alertf(const char *format, ...)
-{
-	char textbf[4096];
-	va_list args;
-	va_start(args, format);
-	vsprintf(textbf, format, args);
-	va_end(args);
-	MessageBox(NULL, textbf, "error", MB_ICONINFORMATION | MB_OK);
-}
-
-
 /*------------------------------------------------------------*/
 /*
 		interface
@@ -136,7 +121,6 @@ CMucom::CMucom( void )
 CMucom::~CMucom( void )
 {
 	Stop(1);
-	Mucom88Plugin_Term();
 	DeleteInfoBuffer();
 	MusicBufferTerm();
 	if (vm != NULL) delete vm;
@@ -164,8 +148,6 @@ void CMucom::Init(void *window, int option, int rate)
 	vm->SetOption(option);
 	vm->InitSoundSystem(myrate);
 	MusicBufferInit();
-
-	Mucom88Plugin_Init((HWND)window,vm,this);
 }
 
 

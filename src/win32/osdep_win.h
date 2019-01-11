@@ -44,6 +44,10 @@ public:
 	int GetMilliseconds();
 	void Delay(int ms);
 
+	// プラグイン拡張
+	int InitPlugin(Mucom88Plugin *plg, char *filename);
+	int ExecPluginVMCommand( int, int, int, void *, void *);
+	int ExecPluginEditorCommand( int, int, int, void *, void *);
 
 private:
 	//		親のVMインスタンス

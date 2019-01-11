@@ -4,10 +4,15 @@
 #ifndef _OS_DEP_H_
 #define _OS_DEP_H_
 
+#include <vector>
 #include "callback.h"
+#include "plugin/mucom88if.h"
 
 #define TICK_SHIFT 10
 #define TICK_FACTOR 1024.0
+
+//	Debug用
+void Alertf(const char *format, ...);
 
 class OsDependent  {
 public:
@@ -45,6 +50,19 @@ public:
 	// 時間
 	virtual int GetMilliseconds() = 0;
 	virtual void Delay(int ms)=0;
+
+	// プラグイン拡張
+	virtual int InitPlugin(Mucom88Plugin *plg, char *filename) = 0;
+	virtual int ExecPluginVMCommand(int, int, int, void *, void *) = 0;
+	virtual int ExecPluginEditorCommand(int, int, int, void *, void *) = 0;
+
+protected:
+	// プラグイン拡張(内部用)
+	std::vector<Mucom88Plugin *> plugins;
+
+	int AddPlugins(char *filename);
+	void FreePlugins(void);
+	void NoticePlugins(int cmd);
 
 };
 

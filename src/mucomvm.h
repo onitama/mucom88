@@ -13,9 +13,6 @@
 #include "osdep.h"
 #include "membuf.h"
 
-#include "win32/soundds.h"
-#include "win32/realchip.h"
-
 //#define DEBUGZ80_TRACE
 
 enum {

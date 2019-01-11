@@ -23,6 +23,8 @@ public:
 	void SetRegister(DWORD reg, DWORD data);
 	// ADPCMの転送
 	void SendAdpcmData(void *pData, DWORD size);
+	// 認識しているチップのタイプ
+	SC_CHIP_TYPE GetChipType(void) { return m_chiptype; }
 
 private:
 	// SCCI関連
@@ -33,4 +35,6 @@ private:
 	bool					m_IsRealChip;
 	// ADPCM用
 	BYTE					m_bADPCMBuff[0x40000];
+	// type情報
+	SC_CHIP_TYPE			m_chiptype;
 };

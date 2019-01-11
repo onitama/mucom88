@@ -15,6 +15,22 @@
 #define USE_SCCI
 #define USE_HIGH_LEVEL_COUNTER
 
+/*-------------------------------------------------------------------------------*/
+
+//
+//		windows debug support
+//
+void Alertf(const char *format, ...)
+{
+	char textbf[4096];
+	va_list args;
+	va_start(args, format);
+	vsprintf(textbf, format, args);
+	va_end(args);
+	MessageBox(NULL, textbf, "error", MB_ICONINFORMATION | MB_OK);
+}
+
+/*-------------------------------------------------------------------------------*/
 
 OsDependentWin32::OsDependentWin32(void)
 {
@@ -333,4 +349,27 @@ void OsDependentWin32::StreamSend(void)
 	InterlockedExchange(&sending, 0);
 	return;
 }
+
+
+
+//	MUCOMプラグイン処理用
+//
+
+int OsDependentWin32::InitPlugin(Mucom88Plugin *plg, char *filename)
+{
+	return 0;
+}
+
+
+int OsDependentWin32::ExecPluginVMCommand(int, int, int, void *, void *)
+{
+	return 0;
+}
+
+
+int OsDependentWin32::ExecPluginEditorCommand(int, int, int, void *, void *)
+{
+	return 0;
+}
+
 
