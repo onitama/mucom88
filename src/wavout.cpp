@@ -51,7 +51,7 @@ static void WriteWavHeader(FILE *fp, int frequency, int bits, int channels, long
   fseek(fp, 0, SEEK_END);
 }
 
-void RecordWave(CMucom *m, char *fname, int rate, int seconds) {
+void RecordWave(CMucom *m, const char *fname, int rate, int seconds) {
 	int buf[512];
 	short out[512];
 
@@ -67,7 +67,6 @@ void RecordWave(CMucom *m, char *fname, int rate, int seconds) {
 
 	WriteWavHeader(fp, rate, bits, channels, total_samples);
 
-	long ms = 0;
 	while (total_samples < rate * seconds) {
 		int samples = 16;
 		m->RenderAudio(buf, samples);

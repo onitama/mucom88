@@ -118,7 +118,7 @@ void PSG::MakeEnvelopTable()
 		2,2, 2,0, 2,1, 2,3, 1,1, 1,3, 1,2, 1,0,
 	};
 	static uint8 table2[4] = {  0,  0, 31, 31 };
-	static uint8 table3[4] = {  0,  1, -1,  0 };
+	static uint8 table3[4] = {  0,  1, (uint8)-1,  0 };
 
 	uint* ptr = enveloptable[0];
 
@@ -358,4 +358,4 @@ void PSG::Mix(Sample* dest, int nsamples)
 //
 uint	PSG::noisetable[noisetablesize] = { 0, };
 int		PSG::EmitTable[0x20] = { -1, };
-uint	PSG::enveloptable[16][64] = { 0, };
+uint	PSG::enveloptable[16][64] = { {0}, };

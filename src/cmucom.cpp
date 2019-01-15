@@ -58,6 +58,7 @@ static int htoi(char *str)
 	return conv;
 }
 
+#if 0
 static void strcase(char *target)
 {
 	//		strをすべて小文字に(全角対応版)
@@ -74,6 +75,7 @@ static void strcase(char *target)
 		}
 	}
 }
+#endif
 
 static int strpick_spc(char *target,char *dest,int strmax)
 {
@@ -249,7 +251,7 @@ void CMucom::SetUUID(char *uuid)
 }
 
 
-char *CMucom::GetMessageBuffer(void)
+const char *CMucom::GetMessageBuffer(void)
 {
 	return vm->GetMessageBuffer();
 }
@@ -262,7 +264,6 @@ int CMucom::Play(int num)
 	//
 	char *data;
 	char *pcmdata;
-	char *pcmname;
 	int datasize;
 	int pcmsize;
 
@@ -286,7 +287,7 @@ int CMucom::Play(int num)
 
 	if (hedmusic->pcmdata) {
 		int skippcm = 0;
-		pcmname = GetInfoBufferByName("pcm");
+		const char *pcmname = GetInfoBufferByName("pcm");
 		if (pcmname[0] != 0) {
 			//	既に同名のPCMが読み込まれているか?
 			if (strcmp(pcmname, pcmfilename) == 0) skippcm = 1;
@@ -528,11 +529,11 @@ Compiler support
 */
 /*------------------------------------------------------------*/
 
-char *CMucom::GetTextLine(char *text)
+const char *CMucom::GetTextLine(const char *text)
 {
 	//	1行分のデータを格納
 	//
-	unsigned char *p = (unsigned char *)text;
+	const unsigned char *p = (const unsigned char *)text;
 	unsigned char a1;
 	int mptr = 0;
 
@@ -559,25 +560,25 @@ char *CMucom::GetTextLine(char *text)
 		linebuf[mptr++] = a1;
 	}
 	linebuf[mptr++] = 0;
-	return (char *)p;
+	return (const char *)p;
 }
 
 
-char *CMucom::GetInfoBuffer(void)
+const char *CMucom::GetInfoBuffer(void)
 {
 	if (infobuf == NULL) return "";
 	return infobuf->GetBuffer();
 }
 
 
-char *CMucom::GetInfoBufferByName(char *name)
+const char *CMucom::GetInfoBufferByName(const char *name)
 {
 	//		infobuf内の指定タグ項目を取得
 	//		name = タグ名(英小文字)
 	//		(結果が""の場合は該当項目なし)
 	//
 	int len;
-	char *src = GetInfoBuffer();
+	const char *src = GetInfoBuffer();
 	while (1) {
 		if (src == NULL) break;
 		src = GetTextLine(src);
@@ -646,7 +647,7 @@ int CMucom::ProcessHeader(char *text)
 	//		#comment ----
 	//		#url ----
 	//
-	char *src = text;
+	const char *src = text;
 	DeleteInfoBuffer();
 	infobuf = new CMemBuf();
 	while (1) {
@@ -667,7 +668,7 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 {
 	//	BASICソースの形式でリストを作成
 	//
-	char *src = text;
+	const char *src = text;
 	int ln = line;
 	int mptr = 1;
 	int linkptr;
@@ -875,7 +876,7 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	char *header;
 	char *footer;
 	char *pcmdata;
-	char *pcmname;
+	const char *pcmname;
 	int hedsize;
 	int footsize;
 	int pcmsize;

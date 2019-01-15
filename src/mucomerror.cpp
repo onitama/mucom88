@@ -21,7 +21,7 @@
 */
 /*------------------------------------------------------------*/
 
-static char *orgmsg[]={
+static const char *orgmsg[]={
 	"",
 	"ﾌﾞﾝﾎﾟｳ ﾆ ｱﾔﾏﾘ ｶﾞ ｱﾘﾏｽ",
 	"ﾊﾟﾗﾒｰﾀﾉ ｱﾀｲ ｶﾞ ｲｼﾞｮｳﾃﾞｽ",
@@ -42,7 +42,7 @@ static char *orgmsg[]={
 	"ﾏｸﾛｴﾝﾄﾞｺｰﾄﾞ ｶﾞ ｱﾘﾏｾﾝ",
 };
 
-static char *err[]={
+static const char *err[]={
 	"",												// 0
 	"Syntax error",									// 1 'ﾌﾞﾝﾎﾟｳ ﾆ ｱﾔﾏﾘ ｶﾞ ｱﾘﾏｽ',0
 	"Illegal parameter",							// 2 'ﾊﾟﾗﾒｰﾀﾉ ｱﾀｲ ｶﾞ ｲｼﾞｮｳﾃﾞｽ',0
@@ -64,7 +64,7 @@ static char *err[]={
 	"*"
 };
 
-static char *err_jpn[] = {
+static const char *err_jpn[] = {
 	"",
 	"文法に誤りがあります",
 	"パラメーターの値が異常です",
@@ -85,24 +85,23 @@ static char *err_jpn[] = {
 	"マクロエンドコードがありません",
 };
 
-char *mucom_geterror(int error)
+const char *mucom_geterror(int error)
 {
 	if ((error<0)||(error>=MUCOMERR_MAX)) return err[0];
 	return err[error];
 }
 
-char *mucom_geterror_j(int error)
+const char *mucom_geterror_j(int error)
 {
 	if ((error<0) || (error >= MUCOMERR_MAX)) return err[0];
 	return err_jpn[error];
 }
 
-int mucom_geterror(char *orgerror)
+int mucom_geterror(const char *orgerror)
 {
 	int i;
 	for (i = 1; i < MUCOMERR_MAX; i++) {
-		char *p = orgmsg[i];
-		if (strcmp(p, orgerror) == 0) return i;
+		if (strcmp(orgmsg[i], orgerror) == 0) return i;
 	}
 	return 0;
 }

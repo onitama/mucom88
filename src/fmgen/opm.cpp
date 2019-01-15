@@ -14,7 +14,7 @@
 namespace FM
 {
 
-int OPM::amtable[4][OPM_LFOENTS] = { -1, };
+int OPM::amtable[4][OPM_LFOENTS] = { {-1}, };
 int OPM::pmtable[4][OPM_LFOENTS];
 
 // ---------------------------------------------------------------------------

@@ -1,5 +1,5 @@
 #pragma once
 
-void RecordWave(CMucom *m, char *fname, int rate, int seconds);
+void RecordWave(CMucom *m, const char *fname, int rate, int seconds);
 
 

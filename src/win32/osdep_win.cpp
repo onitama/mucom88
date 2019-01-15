@@ -172,6 +172,7 @@ int OsDependentWin32::GetMilliseconds() {
 void OsDependentWin32::Delay(int ms) {
 	Sleep(ms);
 }
+
 int OsDependentWin32::StartThread(void)
 {
 	// ストリームスレッドを開始する
@@ -179,7 +180,7 @@ int OsDependentWin32::StartThread(void)
 	// イベントオブジェクトを作成する
 	hevent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	// スレッドを生成する
-	hthread = CreateThread(NULL, 0x40000, (LPTHREAD_START_ROUTINE)OsDependentWin32::vThreadFunc, (LPVOID)this, NULL, &threadid);
+	hthread = CreateThread(NULL, 0x40000, (LPTHREAD_START_ROUTINE)OsDependentWin32::vThreadFunc, (LPVOID)this, 0, &threadid);
 	if (hthread == NULL) {
 		return -1;
 	}
@@ -312,7 +313,7 @@ void OsDependentWin32::WaitSendingAudio() {
 	for (int i = 0; i < 300 && sending; i++) Sleep(10);
 }
 
-bool OsDependentWin32::SendAudio()
+bool OsDependentWin32::SendAudio(int ms)
 {
 	//StreamSend();
 	SetEvent(hevent);

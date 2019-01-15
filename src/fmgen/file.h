@@ -3,7 +3,11 @@
 #if !defined(win32_file_h)
 #define win32_file_h
 
+#include <stdio.h>
+
 #include "types.h"
+
+#define _MAXPATH 2048
 
 // ---------------------------------------------------------------------------
 
@@ -51,11 +55,11 @@ public:
 	void SetLogicalOrigin(int32 origin) { lorigin = origin; }
 
 private:
-	HANDLE hfile;
+	FILE *fp;
 	uint flags;
 	uint32 lorigin;
 	Error error;
-	char path[MAX_PATH];
+	char path[_MAXPATH];
 	
 	FileIO(const FileIO&);
 	const FileIO& operator=(const FileIO&);

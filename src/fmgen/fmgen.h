@@ -181,7 +181,7 @@ namespace FM
 
 	//	friends --------------------------------------------------------------
 		friend class Channel4;
-		friend void __stdcall FM_NextPhase(Operator* op);
+		friend void _STDCALL FM_NextPhase(Operator* op);
 
 	public:
 		int		dbgopout_;
@@ -258,7 +258,7 @@ namespace FM
 		uint	aml_;
 		uint	pml_;
 		int		pmv_;
-		OpType	optype_;
+		// OpType	optype_;
 		uint32	multable_[4][16];
 	};
 }

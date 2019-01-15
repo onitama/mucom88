@@ -22,7 +22,7 @@ public:
 	// サウンド
 	bool InitAudio(void *hwnd, int Rate, int BufferSize);
 	void FreeAudio();
-	bool SendAudio();
+	bool SendAudio(int ms);
 	void WaitSendingAudio();
 
 	// 実チップ

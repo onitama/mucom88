@@ -26,7 +26,7 @@ public:
 	AudioCallback *UserAudioCallback;
 	virtual bool InitAudio(void *hwnd, int Rate, int BufferSize) = 0;
 	virtual void FreeAudio() = 0;
-	virtual bool SendAudio() = 0;
+	virtual bool SendAudio(int ms) = 0;
 	virtual void WaitSendingAudio() = 0;
 	bool MuteAudio;
 	

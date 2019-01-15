@@ -19,4 +19,10 @@ typedef signed char int8;
 typedef signed short int16;
 typedef signed int int32;
 
+#ifdef _WIN32
+#define _STDCALL __stdcall
+#else
+#define _STDCALL
+#endif
+
 #endif // win32_types_h

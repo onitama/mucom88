@@ -71,7 +71,7 @@ public:
 	//	(*) = DLL側で書き換え可
 	//
 	int	type;							// プラグインタイプ(*)
-	char *info;							// プラグイン情報テキストのポインタ(*)
+	const char *info;				// プラグイン情報テキストのポインタ(*)
 
 	//	コールバックファンクション
 	MUCOM88IF_CALLBACK if_init;			// 初期化(最初の1回のみ)

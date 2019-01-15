@@ -10,8 +10,8 @@
 #define MUCOMERR_NONE 0
 #define MUCOMERR_MAX 17
 
-char *mucom_geterror(int error);
-char *mucom_geterror_j(int error);
-int mucom_geterror(char *orgerror);
+const char *mucom_geterror(int error);
+const char *mucom_geterror_j(int error);
+int mucom_geterror(const char *orgerror);
 
 #endif

@@ -502,9 +502,10 @@ void OPNABase::SetChannelMask(uint mask)
 void OPNABase::SetReg(uint addr, uint data)
 {
 	int	c = addr & 3;
+    uint modified;
+
 	switch (addr)
 	{
-		uint modified;
 
 	// Timer -----------------------------------------------------------------
 		case 0x24: case 0x25:
@@ -1271,20 +1272,20 @@ bool OPNA::LoadRhythmSample(const char* path)
 	{
 		FileIO file;
 		uint32 fsize;
-		char buf[MAX_PATH] = "";
+		char buf[_MAXPATH] = "";
 		if (path)
-			strncpy(buf, path, MAX_PATH);
-		strncat(buf, "2608_", MAX_PATH);
-		strncat(buf, rhythmname[i], MAX_PATH);
-		strncat(buf, ".WAV", MAX_PATH);
+			strncpy(buf, path, _MAXPATH);
+		strncat(buf, "2608_", _MAXPATH);
+		strncat(buf, rhythmname[i], _MAXPATH);
+		strncat(buf, ".WAV", _MAXPATH);
 
 		if (!file.Open(buf, FileIO::readonly))
 		{
 			if (i != 5)
 				break;
 			if (path)
-				strncpy(buf, path, MAX_PATH);
-			strncpy(buf, "2608_RYM.WAV", MAX_PATH);
+				strncpy(buf, path, _MAXPATH);
+			strncpy(buf, "2608_RYM.WAV", _MAXPATH);
 			if (!file.Open(buf, FileIO::readonly))
 				break;
 		}
@@ -1417,7 +1418,7 @@ void OPNA::RhythmMix(Sample* buffer, uint count)
 		for (int i=0; i<6; i++)
 		{
 			Rhythm& r = rhythm[i];
-			if ((rhythmkey & (1 << i)) && r.level < 128)
+			if ((rhythmkey & (1 << i)) && (int)r.level < 128)
 			{
 				int db = Limit(rhythmtl+rhythmtvol+r.level+r.volume, 127, -31);
 				int vol = tltable[FM_TLPOS+(db << (FM_TLBITS-7))] >> 4;
@@ -1787,7 +1788,7 @@ void OPNB::ADPCMAMix(Sample* buffer, uint count)
 		for (int i=0; i<6; i++)
 		{
 			ADPCMA& r = adpcma[i];
-			if ((adpcmakey & (1 << i)) && r.level < 128)
+			if ((adpcmakey & (1 << i)) && (int)r.level < 128)
 			{
 				uint maskl = r.pan & 2 ? -1 : 0;
 				uint maskr = r.pan & 1 ? -1 : 0;

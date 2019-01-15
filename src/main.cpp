@@ -13,6 +13,11 @@
 #include "cmucom.h"
 #include "wavout.h"
 
+// main‚ðSDL_main‚É‚·‚é‚½‚ß‚É•K—v
+#ifdef USE_SDL
+#include <SDL.h>
+#endif
+
 //#define DEBUG_MUCOM
 
 #define DEFAULT_OUTFILE "mucom88.mub"
@@ -25,7 +30,7 @@
 
 static void usage1( void )
 {
-static 	char *p[] = {
+static const char *p[] = {
 	"usage: mucom88 [options] [filename]",
 	"       -p [filename] setload PCM file name",
 	"       -v [filename] set load voice file name",
@@ -54,10 +59,15 @@ int main( int argc, char *argv[] )
 	int cmpopt,ppopt;
 	int scci_opt;
 	char fname[1024];
-	char *pcmfile;
-	char *outfile;
-	char *wavfile;
-	char *voicefile;
+	const char *pcmfile;
+	const char *outfile;
+	const char *wavfile;
+	const char *voicefile;
+
+#if defined(USE_SDL) && defined(_WIN32)
+	freopen( "CON", "w", stdout );
+	freopen( "CON", "w", stderr );
+#endif
 
 	//	check switch and prm
 

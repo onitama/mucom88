@@ -1,0 +1,10 @@
+
+# Win32
+WIN32 = 0
+# SDL使用
+OS_SDL = 1
+# Win32ネイティブ
+OS_WIN32 = 0
+
+# static
+STATIC = 1

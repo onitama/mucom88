@@ -25,7 +25,11 @@
 
 #define MUCOM_DATA_ADDRESS 0xc200
 
+#ifndef USE_SDL
 #define MUCOM_AUDIO_RATE 55467		// Sampling Rate 55K
+#else
+#define MUCOM_AUDIO_RATE 44100
+#endif
 
 #define MUCOM_RESET_PLAYER 0
 #define MUCOM_RESET_EXTFILE 1
@@ -196,13 +200,13 @@ public:
 	int LoadTagFromMusic(int num);
 	void AddExtraInfo(char *mmlsource);
 
-	char *GetMessageBuffer(void);
+	const char *GetMessageBuffer(void);
 	int GetStatus(int option);
 	void SetVMOption(int option, int mode);
 	void SetAudioRate(int rate);
 
-	char *GetInfoBuffer(void);
-	char *GetInfoBufferByName(char *name);
+	const char *GetInfoBuffer(void);
+	const char *GetInfoBufferByName(const char *name);
 	void DeleteInfoBuffer(void);
 	void PrintInfoBuffer(void);
 
@@ -244,7 +248,7 @@ private:
 	CMemBuf *infobuf;
 	char user_uuid[64];
 
-	char *GetTextLine(char *text);
+	const char *GetTextLine(const char *text);
 	int StoreBasicSource(char *text, int line, int add);
 
 	//		Virtual Machine

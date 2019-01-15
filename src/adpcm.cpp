@@ -17,15 +17,15 @@ BYTE* Adpcm::waveToAdpcm(void *pData,DWORD dSize,DWORD &dAdpcmSize,DWORD dRate,D
 		return NULL;
 	}
 	// WAVEヘッダチェック(CHUNK_HED流用)
-	CHUNK_HED *pChunk = reinterpret_cast<CHUNK_HED*>(static_cast<BYTE*>(pData) + 0x00000008);
+	CHUNK_HED *pChunk = (CHUNK_HED *)((BYTE*)pData + 0x08);
 	if(pChunk->bID[0] != 'W' && pChunk->bID[1] != 'A' && pChunk->bID[2] != 'V' && pChunk->bID[3] != 'E'){
 		return NULL;
 	}
 	// 先頭チャンクを設定
-	pChunk = reinterpret_cast<CHUNK_HED*>(reinterpret_cast<DWORD>(pChunk) + 4);
+	pChunk = (CHUNK_HED *)((BYTE*)pChunk + 4);
 	m_pWaveChunk = NULL;
 	m_pDataChunk = NULL;
-	while(reinterpret_cast<DWORD>(pChunk) < reinterpret_cast<DWORD>(pData) + dSize)
+	while((DWORD *)(pChunk) < (DWORD *)(pData) + dSize)
 	{
 		// fmtチャンクの場合
 		if(pChunk->bID[0] == 'f' && pChunk->bID[1] == 'm' && pChunk->bID[2] == 't' && pChunk->bID[3] == ' '){
@@ -38,7 +38,7 @@ BYTE* Adpcm::waveToAdpcm(void *pData,DWORD dSize,DWORD &dAdpcmSize,DWORD dRate,D
 			m_pDataChunk = reinterpret_cast<DATA_CHUNK*>(pChunk);
 		}
 		// 次のチャンクへアドレスを加算する
-		pChunk = reinterpret_cast<CHUNK_HED*>(reinterpret_cast<DWORD>(pChunk) + pChunk->dChunkSize + 8);
+		pChunk = (CHUNK_HED *)((BYTE*)pChunk + 8);
 	}
 	// fmtチャンク及びdataチャンクが存在するか
 	if(m_pWaveChunk == NULL || m_pDataChunk == NULL){
@@ -114,7 +114,7 @@ short* Adpcm::resampling(DWORD &dSize,DWORD dRate,DWORD dPadSize){
 	int iResampleBuffSize = iSampleSize;
 	if(iSampleSize % (dPadSize * 2) > 0) iResampleBuffSize += ((dPadSize * 2) - (iSampleSize % (dPadSize * 2)));
 	short *pResampleBuff = new short[iResampleBuffSize];
-	ZeroMemory(pResampleBuff,sizeof(short) * iResampleBuffSize);
+	memset(pResampleBuff,0, sizeof(short) * iResampleBuffSize);
 	// リサンプリング処理を実施する
 	short iSampleCnt = 0;
 	int iSmple = 0;
@@ -175,7 +175,7 @@ int Adpcm::encode(short *pSrc,unsigned char *pDis,DWORD iSampleSize){
 		// エンコード処理
 		dn = *pSrc - xn;		// 差分抽出
 		pSrc++;
-		i = (abs(dn) << 16) / (stepSize << 14);
+		i = (abs((int)dn) << 16) / (stepSize << 14);
 		if(i > 7){
 			i = 7;
 		}

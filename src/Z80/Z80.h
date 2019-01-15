@@ -103,6 +103,7 @@ struct FlagDecision {
 class Z80 {
 public:
 	Z80();
+	virtual ~Z80() {}
 	void Reset();
 	int32_t Execute(int32_t = 1);
 	void INT(int data_bus) { intdata = data_bus; intreq = true; }
