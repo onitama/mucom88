@@ -248,8 +248,15 @@ private:
 	CMemBuf *infobuf;
 	char user_uuid[64];
 
+
+	int htoi_sub(char hstr);
+	int htoi(char *str);
+	int strpick_spc(char *target, char *dest, int strmax);
+
+	int GetMultibyteCharacter(const unsigned char *text);
 	const char *GetTextLine(const char *text);
 	int StoreBasicSource(char *text, int line, int add);
+	bool hasMacro(char *text);
 
 	//		Virtual Machine
 	//

@@ -224,7 +224,7 @@ EXPORT BOOL WINAPI mucomres(HSPEXINFO *hei, int p1, int p2, int p3)
 	//
 	PVal *pv;
 	APTR ap;
-	char *res;
+	const char *res;
 	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
 	res = "";
 	if (mucom) {
@@ -283,7 +283,7 @@ EXPORT BOOL WINAPI mucomtag(HSPEXINFO *hei, int p1, int p2, int p3)
 	//
 	PVal *pv;
 	APTR ap;
-	char *res;
+	const char *res;
 	char *p;
 	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
 	p = hei->HspFunc_prm_getds("");			// パラメータ2:文字列
@@ -306,7 +306,7 @@ EXPORT BOOL WINAPI mucomloadtag(HSPEXINFO *hei, int p1, int p2, int p3)
 	//	DLL mucomloadtag var,"mmlfile" (type$202)
 	//
 	int res;
-	char *p;
+	const char *p;
 	PVal *pv;
 	APTR ap;
 	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数

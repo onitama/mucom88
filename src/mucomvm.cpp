@@ -768,16 +768,14 @@ void mucomvm::UpdateTime(int base)
 	//		1msごとの割り込み
 	//		base値は、1024=1msで経過時間が入る
 	//
-	int tick;
 	if (playflag == false) {
 		return;
 	}
 
 	bool stream_event = false;
 	bool int3_mode = int3flag;
-	tick = (base + (int)TICK_FACTOR - 1) >> TICK_SHIFT;
-	time_master += tick;
-	time_scount += tick;
+	time_master += base;
+	time_scount += base;
 
 	if (int3mask & 128) int3_mode = false;		// 割り込みマスク
 
@@ -806,21 +804,17 @@ void mucomvm::UpdateTime(int base)
 
 	if ((stream_event == false) && (int3_mode == false)) {
 		// INT3が無効な場合もストリーム再生は続ける
-		if (time_scount > 10) {
+		if (time_scount > (10<< TICK_SHIFT)) {
 			stream_event = true;
 		}
 	}
 
 	if (stream_event) {
 		stream_event = false;
-		osd->SendAudio(time_scount);
-		time_scount = 0;
-
-		//SetEvent(hevent);
-		//StreamSend();
+		pass_tick = time_scount >> TICK_SHIFT;
+		time_scount = ( time_scount & ((int)TICK_FACTOR - 1) );
+		osd->SendAudio(pass_tick);
 	}
-
-	//if (pass_tick>1) printf("INT%d (%d) %d\n", time_scount, pass_tick, time_master);
 
 }
 

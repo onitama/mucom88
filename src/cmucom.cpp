@@ -30,7 +30,7 @@
 
 #define PRINTF vm->Msgf
 
-static int htoi_sub(char hstr)
+int CMucom::htoi_sub(char hstr)
 {
 	//	exchange hex to int
 
@@ -42,7 +42,7 @@ static int htoi_sub(char hstr)
 }
 
 
-static int htoi(char *str)
+int CMucom::htoi(char *str)
 {
 	//	16進->10進変換
 	//
@@ -58,26 +58,7 @@ static int htoi(char *str)
 	return conv;
 }
 
-#if 0
-static void strcase(char *target)
-{
-	//		strをすべて小文字に(全角対応版)
-	//
-	unsigned char *p;
-	unsigned char a1;
-	p = (unsigned char *)target;
-	while (1) {
-		a1 = *p; if (a1 == 0) break;
-		*p = tolower(a1);
-		p++;							// 検索位置を移動
-		if (a1 >= 129) {					// 全角文字チェック
-			if ((a1 <= 159) || (a1 >= 224)) p++;
-		}
-	}
-}
-#endif
-
-static int strpick_spc(char *target,char *dest,int strmax)
+int CMucom::strpick_spc(char *target, char *dest, int strmax)
 {
 	//		strの先頭からspaceまでを小文字として取り出す
 	//
@@ -85,19 +66,24 @@ static int strpick_spc(char *target,char *dest,int strmax)
 	unsigned char *dst;
 	unsigned char a1;
 	int len = 0;
+	int mulchr;
 	p = (unsigned char *)target;
 	dst = (unsigned char *)dest;
 	while (1) {
 		if (len >= strmax) break;
-		a1 = *p++; if (a1 == 0) return 0;
+		a1 = *p; if (a1 == 0) return 0;
 		if (a1 == 32) break;
 
-		*dst++ = tolower(a1);
-		len++;
-		if (a1 >= 129) {					// 全角文字チェック
-			if ((a1 <= 159) || (a1 >= 224)) {
-				p++; len++;
-			}
+		mulchr = GetMultibyteCharacter(p);
+		if (mulchr == 1) {
+			*dst++ = tolower(a1);
+			p++;
+			len++;
+			continue;
+		}
+		while (mulchr > 0) {
+			*dst++ = *p++;
+			len++;
 		}
 	}
 	*dst++ = 0;
@@ -529,6 +515,40 @@ Compiler support
 */
 /*------------------------------------------------------------*/
 
+int CMucom::GetMultibyteCharacter(const unsigned char *text)
+{
+	//		マルチバイト文字のサイズを得る
+	//
+	const unsigned char *p = text;
+	unsigned char a1;
+	int mulchr = 1;
+
+	a1 = *p;
+
+#ifndef MUCOM88UTF8
+	if (a1 >= 129) {				// 全角文字チェック(SJIS)
+		if ((a1 <= 159) || (a1 >= 224)) {
+			mulchr++;
+		}
+	}
+#endif
+
+#ifdef MUCOM88UTF8
+	if (a1 >= 128) {				// 全角文字チェック(UTF8)
+		int utf8cnt = 0;
+		if ((a1 >= 192) && (p[1] != 0)) utf8cnt++;
+		if ((a1 >= 224) && (p[2] != 0)) utf8cnt++;
+		if ((a1 >= 240) && (p[3] != 0)) utf8cnt++;
+		if ((a1 >= 248) && (p[4] != 0)) utf8cnt++;
+		if ((a1 >= 252) && (p[5] != 0)) utf8cnt++;
+		mulchr += utf8cnt;
+	}
+#endif
+
+	return mulchr;
+}
+
+
 const char *CMucom::GetTextLine(const char *text)
 {
 	//	1行分のデータを格納
@@ -536,28 +556,35 @@ const char *CMucom::GetTextLine(const char *text)
 	const unsigned char *p = (const unsigned char *)text;
 	unsigned char a1;
 	int mptr = 0;
+	int mulchr;
 
 	while (1) {
-		a1 = *p++;
+		a1 = *p;
 		if (a1 == 0) {
 			p = NULL;  break;			// End of text
 		}
-		if (a1 == 9) {					// TAB->space
-			a1 = 32;
+		if (a1 == 10) {					// LF
+			p++;
+			break;
 		}
-		if (a1 == 10) break;			// LF
 		if (a1 == 13) {
+			p++;
 			if (*p == 10) p++;
 			break;						// CR/LF
 		}
-
-		if (a1 >= 129) {				// 全角文字チェック
-			if ((a1 <= 159) || (a1 >= 224)) {
-				linebuf[mptr++] = a1;
-				a1 = *p++;
-			}
+		if (a1 == 9) {					// TAB->space
+			a1 = 32;
+			linebuf[mptr++] = a1;
+			p++;
+			continue;
 		}
-		linebuf[mptr++] = a1;
+
+		mulchr = GetMultibyteCharacter(p);
+		while (mulchr>0) {
+			linebuf[mptr++] = *p++;
+			mulchr--;
+		}
+
 	}
 	linebuf[mptr++] = 0;
 	return (const char *)p;
@@ -614,7 +641,7 @@ void CMucom::PrintInfoBuffer(void)
 int CMucom::ProcessFile(const char *fname)
 {
 	//		MUCOM88 MMLソースファイル内のタグを処理
-	//		fname = MML書式のテキストデータファイル(SJIS)
+	//		fname = MML書式のテキストデータファイル(UTF8)
 	//		(結果は、infobufに入ります)
 	//		(戻り値が0以外の場合はエラー)
 	//
@@ -631,10 +658,44 @@ int CMucom::ProcessFile(const char *fname)
 }
 
 
+bool CMucom::hasMacro(char *text)
+{
+	//		MMLソースの行にマクロ定義(*nn{})が含まれるか調べる
+	//		(タグ定義との切り分けをする)
+	//		(戻り値がtrueの場合はマクロ定義)
+	//
+	const unsigned char *p = (const unsigned char *)text;
+	unsigned char a1;
+	int mulchr;
+	bool flag_marco = false;
+
+	if (p[0] != '#') return flag_marco;
+
+	while (1) {
+		a1 = *p;
+		if (a1 == 0) {
+			return flag_marco;
+		}
+		if ( a1=='*' ) {
+			p++;
+			break;
+		}
+		mulchr = GetMultibyteCharacter(p);
+		while (mulchr > 0) {
+			p++;
+			mulchr--;
+		}
+	}
+	a1 = *p++;
+	if ((a1 >= '0') && (a1 <= '9')) flag_marco = true;
+	return flag_marco;
+}
+
+
 int CMucom::ProcessHeader(char *text)
 {
 	//		MUCOM88 MMLソース内のタグを処理
-	//		text         = MML書式のテキストデータ(SJIS)(終端=0)
+	//		text         = MML書式のテキストデータ(UTF8)(終端=0)
 	//		(戻り値が0以外の場合はエラー)
 	//
 	//		#mucom88 1.5
@@ -653,10 +714,12 @@ int CMucom::ProcessHeader(char *text)
 	while (1) {
 		if (src == NULL) break;
 		src = GetTextLine(src);
-		if (linebuf[0] == '#') {
-			//printf("[%s]\n", linebuf);
-			infobuf->PutStr((char *)linebuf);
-			infobuf->PutCR();
+		if (linebuf[0] == '#'){							// タグか?
+			if (hasMacro((char *)linebuf)==false) {		// マクロか?
+				//printf("[%s]\n", linebuf);
+				infobuf->PutStr((char *)linebuf);
+				infobuf->PutCR();
+			}
 		}
 	}
 	infobuf->Put((char)0);
@@ -672,6 +735,7 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 	int ln = line;
 	int mptr = 1;
 	int linkptr;
+	int mulchr;
 	int i;
 	unsigned char a1;
 
@@ -690,9 +754,16 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 		src = GetTextLine(src);
 		i = 0;
 		while (1) {
-			a1 = linebuf[i++];
-			vm->Poke(mptr++, a1);
-			if (a1 == 0) break;
+			a1 = linebuf[i];
+			if (a1 == 0) {
+				vm->Poke(mptr++, 0);
+				break;
+			}
+			mulchr = GetMultibyteCharacter(linebuf+i);
+			i += mulchr;
+			if ( mulchr==1) {
+				vm->Poke(mptr++, a1);	// 半角の文字のみ登録する
+			}
 		}
 		vm->Pokew(linkptr, mptr);		// 次のポインタを保存する
 		ln += add;
@@ -706,7 +777,7 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 int CMucom::Compile(char *text, const char *filename, int option)
 {
 	//		MUCOM88コンパイル(Resetが必要)
-	//		text         = MML書式のテキストデータ(SJIS)(終端=0)
+	//		text         = MML書式のテキストデータ(UTF8)(終端=0)
 	//		filename     = 出力される音楽データファイル
 	//		option : 1   = #タグによるvoice設定を無視
 	//		         2   = PCM埋め込みをスキップ
@@ -816,7 +887,7 @@ int CMucom::Compile(char *text, const char *filename, int option)
 int CMucom::CompileFile(const char *fname, const char *sname, int option)
 {
 	//		MUCOM88コンパイル(Resetが必要)
-	//		fname     = MML書式のテキストファイル(SJIS)
+	//		fname     = MML書式のテキストファイル(UTF8)
 	//		sname     = 出力される音楽データファイル
 	//		option : 1   = #タグによるvoice設定を無視
 	//		(戻り値が0以外の場合はエラー)

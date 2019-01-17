@@ -63,11 +63,13 @@ private:
 
 	int StartThread(void);
 	int StopThread(void);
-	void StreamSend(void);
+	void StreamSend(int ms);
 	void ThreadFunc(void);
 
 	UINT timer_period;
 	UINT timerid;
+	double SamplePerTick;
+	double UpdateSamples;
 
 	bool threadflag;
 

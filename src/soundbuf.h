@@ -29,6 +29,7 @@ public:
 
 	int32 *PrepareBuffer(int size);
 	void UpdateBuffer(int size);
+	void PrepareReadBuffer(void);
 
 private:
 	//		Settings

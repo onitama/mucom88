@@ -195,6 +195,8 @@ void DriverDS::Send()
 	void* a1, * a2;
 	DWORD al1, al2;
 
+	sndbuf->PrepareReadBuffer();
+
 	// Lock
 	if (DS_OK != lpdsb->Lock(nextwrite, writelength,
 		(void**)&a1, &al1, (void**)&a2, &al2, 0)) return;
@@ -208,6 +210,7 @@ void DriverDS::Send()
 			sndbuf->GetBuffer16(a2, (al2 >> sampleshift)*2);
 		}
 	}
+	//printf( "SendPut%d\n", ((al1+al2) >> sampleshift) * 2);
 
 	// Unlock
 	lpdsb->Unlock(a1, al1, a2, al2);
