@@ -214,13 +214,15 @@ void OsDependentSdl::Delay(int ms) {
 }
 
 // プラグイン拡張
-int OsDependentSdl::InitPlugin(Mucom88Plugin *plg, char *filename) {
+int OsDependentDummy::InitPlugin(Mucom88Plugin *plg, const char *filename, int bootopt) {
 	return 0;
 }
-int OsDependentSdl::ExecPluginVMCommand( int, int, int, void *, void *) {
+void OsDependentDummy::FreePlugin(Mucom88Plugin *plg) {
+}
+int OsDependentDummy::ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *) {
 	return 0;
 }
-int OsDependentSdl::ExecPluginEditorCommand( int, int, int, void *, void *) {
+int OsDependentDummy::ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *) {
 	return 0;
 }
 

@@ -52,17 +52,12 @@ public:
 	virtual void Delay(int ms)=0;
 
 	// プラグイン拡張
-	virtual int InitPlugin(Mucom88Plugin *plg, char *filename) = 0;
-	virtual int ExecPluginVMCommand(int, int, int, void *, void *) = 0;
-	virtual int ExecPluginEditorCommand(int, int, int, void *, void *) = 0;
+	virtual int InitPlugin(Mucom88Plugin *plg, const char *filename, int bootopt) = 0;
+	virtual void FreePlugin(Mucom88Plugin *plg) = 0;
+	virtual int ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *) = 0;
+	virtual int ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *) = 0;
 
 protected:
-	// プラグイン拡張(内部用)
-	std::vector<Mucom88Plugin *> plugins;
-
-	int AddPlugins(char *filename);
-	void FreePlugins(void);
-	void NoticePlugins(int cmd);
 
 };
 

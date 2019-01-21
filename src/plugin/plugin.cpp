@@ -11,13 +11,9 @@
 
 #include "plugin.h"
 
-int dummyCommand(void *instance, int cmd, int prm1, int prm2, void *prm3, void *prm4)
+int dummyCallback(void *instance, int cmd, void *p1, void *p2)
 {
-	return 0;
-}
-
-int dummyCallback(void *instance, int cmd)
-{
+	Mucom88Plugin *plg = (Mucom88Plugin *)instance;
 	return 0;
 }
 
@@ -32,14 +28,12 @@ Mucom88Plugin::Mucom88Plugin()
 	info = "";							// プラグイン情報テキストのポインタ(*)
 
 	//	コールバックファンクション
-	if_init = dummyCallback;
-	if_term = dummyCallback;
 	if_notice = dummyCallback;
 
 	//	汎用ファンクション
 	//
-	if_mucomvm = dummyCommand;
-	if_editor = dummyCommand;
+	if_mucomvm = NULL;
+	if_editor = NULL;
 
 	//	クラス情報 (バージョンで内容変更の可能性があります)
 	vm = NULL;

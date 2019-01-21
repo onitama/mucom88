@@ -303,7 +303,9 @@ bool OsDependentWin32::InitAudio(void *hwnd, int Rate, int BufferSize) {
 	//		タイマー初期化
 	//
 	//	ストリーム用スレッド
-	StartThread();
+	if (RealChipInstance == NULL) {
+		StartThread();
+	}
 
 	return true;
 }
@@ -368,23 +370,57 @@ void OsDependentWin32::StreamSend(int ms)
 
 
 
-//	MUCOMプラグイン処理用
+//	MUCOM88Winプラグイン処理用
 //
-
-int OsDependentWin32::InitPlugin(Mucom88Plugin *plg, char *filename)
+int OsDependentWin32::InitPlugin(Mucom88Plugin *plg, const char *filename, int bootopt)
 {
+	//		DLLをリンクして初期化する
+	//
+	HMODULE	hInst = NULL;
+	plg->instance = NULL;
+
+	//	DLL読み込み
+	hInst = ::LoadLibrary(filename);
+	if (hInst == NULL) {
+		return GetLastError();
+	}
+	//	初期化関数アドレス取得
+	MUCOM88IF_STARTUP initalize = (MUCOM88IF_STARTUP)(::GetProcAddress(hInst, "InitalizePlugin"));
+
+	if (initalize == NULL) {
+		::FreeLibrary(hInst);
+		return GetLastError();
+	}
+
+	//	初期化する
+	return initalize(plg,bootopt);
+}
+
+
+void OsDependentWin32::FreePlugin(Mucom88Plugin *plg)
+{
+	//		DLLを解放する
+	//
+	HMODULE	hInst = (HMODULE)plg->instance;
+	if (hInst == NULL) return;
+
+	::FreeLibrary(hInst);
+	plg->instance = NULL;
+}
+
+
+int OsDependentWin32::ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *)
+{
+	//		OS依存のプラグインVMコマンド処理
+	//
 	return 0;
 }
 
 
-int OsDependentWin32::ExecPluginVMCommand(int, int, int, void *, void *)
+int OsDependentWin32::ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *)
 {
-	return 0;
-}
-
-
-int OsDependentWin32::ExecPluginEditorCommand(int, int, int, void *, void *)
-{
+	//		OS依存のプラグインエディタコマンド処理
+	//
 	return 0;
 }
 

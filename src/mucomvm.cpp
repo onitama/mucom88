@@ -19,6 +19,8 @@
 
 #include "mucomvm_os.h"
 
+static OsDependent *master_osd = NULL;
+
 /*------------------------------------------------------------*/
 /*
 interface
@@ -47,6 +49,8 @@ mucomvm::mucomvm(void)
 
 mucomvm::~mucomvm(void)
 {
+	FreePlugins();
+
 	if (osd) {
 		osd->FreeTimer();
 		osd->FreeAudio();
@@ -64,6 +68,12 @@ mucomvm::~mucomvm(void)
 		free(pchdata);
 	}
 
+}
+
+
+void mucomvm::SetMucomInstance(CMucom *mucom)
+{
+	p_cmucom = mucom;
 }
 
 
@@ -149,11 +159,9 @@ void mucomvm::InitSoundSystem(int rate)
 	predelay = 0;
 
 	// OS依存部分
-	{
-		osd = new OSDEP_CLASS();
-	}
-
+	osd = new OSDEP_CLASS();
 	if (osd == NULL) return;
+	master_osd = osd;					// プラグイン用
 
 	//		COM初期化
 	//
@@ -728,6 +736,7 @@ void mucomvm::SkipPlay(int count)
 	int vec = Peekw(0xf308);		// INT3 vectorを取得
 
 	SetChMuteAll(true);
+	busyflag = true;				// Z80VMの2重起動を防止する
 	while (1) {
 		if (jcount <= 0) break;
 		CallAndHalt(vec);
@@ -737,6 +746,7 @@ void mucomvm::SkipPlay(int count)
 			if ((jcount & 3) == 0) osd->Delay(1);	// ちょっと待ちます
 		}
 	}
+	busyflag = false;
 	SetChMuteAll(false);
 }
 
@@ -795,6 +805,7 @@ void mucomvm::UpdateTime(int base)
 				}
 				busyflag = false;
 				ProcessChData();
+				NoticePlugins(MUCOM88IF_NOTICE_INTDONE, NULL, NULL);		// プラグインに通知する
 			}
 			else {
 				predelay--;
@@ -883,10 +894,22 @@ FM synth
 */
 /*------------------------------------------------------------*/
 
+void mucomvm::FMRegDataOut(int reg, int data)
+{
+	regmap[reg] = (uint8_t)data;			// 内部レジスタ保持用
+	opn->SetReg(reg, data);
+
+	if (m_option & VM_OPTION_SCCI) {
+		// リアルチップ出力
+		osd->OutputRealChip(reg, data);
+	}
+}
+
 //	データ出力
 void mucomvm::FMOutData(int data)
 {
 	//printf("FMReg: %04x = %02x\n", sound_reg_select, data);
+
 	switch (sound_reg_select) {
 	case 0x28:
 	{
@@ -907,12 +930,8 @@ void mucomvm::FMOutData(int data)
 	default:
 		break;
 	}
-	opn->SetReg(sound_reg_select, data);
 
-	if (m_option & VM_OPTION_SCCI) {
-		// リアルチップ出力
-		osd->OutputRealChip(sound_reg_select, data);
-	}
+	FMRegDataOut(sound_reg_select, data);
 }
 
 //	データ出力(OPNA側)
@@ -925,12 +944,7 @@ void mucomvm::FMOutData2(int data)
 		if (data & 0x80) chstat[OPNACH_ADPCM] = 1; else chstat[OPNACH_ADPCM] = 0;
 	}
 
-	opn->SetReg(sound_reg_select2 | 0x100, data);
-
-	if (m_option & VM_OPTION_SCCI) {
-		// リアルチップ出力
-		osd->OutputRealChip(sound_reg_select2 | 0x100, data);
-	}
+	FMRegDataOut(sound_reg_select2 | 0x100, data);
 }
 
 //	データ入力
@@ -1092,6 +1106,62 @@ void mucomvm::ProcessChData(void)
 		memcpy(dst, src , channel_size);
 	}
 	memcpy( pchwork, mem + pchadr[0] - 16, 16 );	// CHDATAの前にワークがある
+}
+
+
+/*------------------------------------------------------------*/
+/*
+plugin interface
+*/
+/*------------------------------------------------------------*/
+
+int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, void *prm4);
+int MUCOM88IF_EDITOR_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, void *prm4);
+
+int mucomvm::AddPlugins(const char *filename, int bootopt)
+{
+	//		プラグインを追加する
+	//		filename = プラグインDLL名
+	//		bootopt = 起動オプション(未使用)
+	//		終了コード : 0=OK
+	//
+	int res;
+	Mucom88Plugin *plg = new Mucom88Plugin;
+	plg->if_mucomvm = (MUCOM88IF_COMMAND)MUCOM88IF_VM_COMMAND;
+	plg->if_editor = (MUCOM88IF_COMMAND)MUCOM88IF_EDITOR_COMMAND;
+	plg->mucom = p_cmucom;
+	plg->vm = this;
+	plg->hwnd = master_window;
+	strncpy( plg->filename, filename, MUCOM88IF_FILENAME_MAX-1 );
+	plugins.push_back(plg);
+	res = osd->InitPlugin(plg, filename, bootopt);
+	if (res) return res;
+	plg->if_notice(plg, MUCOM88IF_NOTICE_BOOT,NULL,NULL);				// 初期化を通知する
+	return 0;
+}
+
+
+void mucomvm::FreePlugins(void)
+{
+	//		プラグインをすべて破棄する
+	//
+	Mucom88Plugin *plg;
+	for (auto it = begin(plugins); it != end(plugins); ++it) {
+		plg = *it;
+		plg->if_notice(plg, MUCOM88IF_NOTICE_TERMINATE, NULL, NULL);	// 破棄する前に通知する
+		osd->FreePlugin(plg);
+	}
+	plugins.clear();			// すべて削除
+}
+
+
+void mucomvm::NoticePlugins(int cmd, void *p1, void *p2)
+{
+	Mucom88Plugin *plg;
+	for (auto it = begin(plugins); it != end(plugins); ++it) {
+		plg = *it;
+		plg->if_notice(plg, cmd, p1, p2);
+	}
 }
 
 

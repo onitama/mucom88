@@ -38,6 +38,9 @@ static const char *p[] = {
 	"       -w [filename] set output WAV file name",
 	"       -c [filename] compile mucom88 MML file name",
 	"       -i [filename] info print mucom88 MML file name",
+#ifdef MUCOM88WIN
+	"       -a [filename] add external plugin",
+#endif
 	"       -e Use external ROM files",
 	"       -s Use SCCI device",
 	"       -k Skip PCM load",
@@ -63,6 +66,7 @@ int main( int argc, char *argv[] )
 	const char *outfile;
 	const char *wavfile;
 	const char *voicefile;
+	const char *pluginfile;
 
 #if defined(USE_SDL) && defined(_WIN32)
 	freopen( "CON", "w", stdout );
@@ -108,6 +112,7 @@ int main( int argc, char *argv[] )
 	outfile = DEFAULT_OUTFILE;
 	wavfile = DEFAULT_OUTWAVE;
 	voicefile = NULL;
+	pluginfile = NULL;
 	fname[0] = 0;
 
 	int song_length = RENDER_SECONDS;
@@ -130,6 +135,9 @@ int main( int argc, char *argv[] )
 				break;
 			case 'w':
 				wavfile = argv[b + 1]; b++;
+				break;
+			case 'a':
+				pluginfile = argv[b + 1]; b++;
 				break;
 			case 'l':
 				song_length = atoi(argv[b + 1]); b++;
@@ -174,6 +182,14 @@ int main( int argc, char *argv[] )
 	if (scci_opt) {
 		printf("Use SCCI.\n");
 		mucom.SetVMOption(MUCOM_OPTION_SCCI | MUCOM_OPTION_FMMUTE, 1);
+	}
+
+	if (pluginfile) {
+		printf("#Adding plugin %s.\n", pluginfile);
+		int plgres = mucom.AddPlugins(pluginfile,0);
+		if (plgres) {
+			printf( "#Error adding plugin.(%d)\n", plgres );
+		}
 	}
 
 	mucom.Reset(cmpopt);

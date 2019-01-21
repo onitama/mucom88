@@ -136,6 +136,25 @@ void CMucom::Init(void *window, int option, int rate)
 	vm->SetOption(option);
 	vm->InitSoundSystem(myrate);
 	MusicBufferInit();
+	vm->SetMucomInstance(this);			// Mucomのインスタンスを通知する(プラグイン用)
+}
+
+
+int CMucom::AddPlugins(const char *filename, int bootopt)
+{
+	//		プラグイン追加
+	//		filename = DLLファイル名(今のところWinのみ)
+	//		bootopt = 起動オプション
+	//
+	return vm->AddPlugins(filename, bootopt);
+}
+
+
+void CMucom::NoticePlugins(int cmd, void *p1, void *p2)
+{
+	//		プラグイン通知
+	//
+	vm->NoticePlugins(cmd,p1,p2);
 }
 
 
@@ -225,6 +244,8 @@ void CMucom::Reset(int option)
 		adr = vm->CallAndHaltWithA(0xb00c, i);
 		vm->SetChDataAddress( i,adr );
 	}
+
+	NoticePlugins(MUCOM88IF_NOTICE_RESET);
 }
 
 void CMucom::SetUUID(char *uuid)
@@ -285,18 +306,27 @@ int CMucom::Play(int num)
 		}
 	}
 
+	//	voiceファイルをロードしておく(音色エディット用)
+	char voicefile[MUCOM_FILE_MAXSTR];
+	strncpy(voicefile, GetInfoBufferByName("voice"), MUCOM_FILE_MAXSTR);
+	if (voicefile[0]) {
+		LoadFMVoice(voicefile);
+	}
+
 	vm->SendMem((const unsigned char *)data, 0xc200, datasize);
+
+	NoticePlugins(MUCOM88IF_NOTICE_PREPLAY);
 
 	PRINTF("#Play[%d]\r\n", num);
 	vm->CallAndHalt(0xb000);
 	//int vec = vm->Peekw(0xf308);
 	//PRINTF("#INT3 $%x.\r\n", vec);
 
-	vm->StartINT3();
-	vm->SetIntCount(0);
+	NoticePlugins(MUCOM88IF_NOTICE_PLAY);
 
 	int jcount = hedmusic->jumpcount;
 	vm->SkipPlay(jcount);
+	vm->StartINT3();
 
 	playflag = true;
 
@@ -379,6 +409,7 @@ int CMucom::Stop(int option)
 		vm->StopINT3();
 		vm->CallAndHalt(0xb003);
 	}
+	NoticePlugins(MUCOM88IF_NOTICE_STOP);
 	return 0;
 }
 
@@ -441,6 +472,9 @@ int CMucom::LoadMusic(const char * fname, int num)
 
 	musbuf[num] = buf;
 	//if (vm->LoadMem(fname, 0xc200, 0) >= 0) return 0;
+
+	NoticePlugins(MUCOM88IF_NOTICE_LOADMUB);
+
 	return 0;
 }
 
@@ -803,7 +837,10 @@ int CMucom::Compile(char *text, const char *filename, int option)
 		}
 	}
 
+	NoticePlugins(MUCOM88IF_NOTICE_MMLSEND);
+
 	basicsize = StoreBasicSource( text, 1, 1 );
+
 	vm->CallAndHalt(0x9600);
 	int vec = vm->Peekw(0x0eea8);
 	PRINTF("#poll a $%x.\r\n", vec);
@@ -879,6 +916,8 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	PRINTF("#MaxCount:%d Basic:%04x Data:%04x\r\n", maxcount, basicsize, mubsize);
 
 	if (tcount[maxch-1]==0) pcmflag = 2;	// PCM chが使われてなければPCM埋め込みはスキップ
+
+	NoticePlugins(MUCOM88IF_NOTICE_COMPEND);
 
 	return SaveMusic(filename,start,length,option| pcmflag);
 }
@@ -1196,4 +1235,48 @@ int CMucom::GetChannelData(int ch, PCHDATA *result)
 
 	return 0;
 }
+
+/*------------------------------------------------------------*/
+/*
+plugin interface
+*/
+/*------------------------------------------------------------*/
+
+int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, void *prm4)
+{
+	//		VM用プラグインコマンド
+	Mucom88Plugin *plg = (Mucom88Plugin *)ifptr;
+	mucomvm *vm = plg->vm;				// vmインスタンスを得る
+	CMucom *mucom = plg->mucom;			// mucomインスタンスを得る
+	switch (cmd) {
+	case MUCOM88IF_MUCOMVM_CMD_FMWRITE:			// prm1=reg, prm2=data
+		vm->FMRegDataOut( prm1, prm2 );
+		return 0;
+	case MUCOM88IF_MUCOMVM_CMD_FMREAD:
+		break;
+	case MUCOM88IF_MUCOMVM_CMD_GETCHDATA:		// prm1=ch, prm3=PCHDATA出力先
+		return mucom->GetChannelData(prm1, (PCHDATA *)prm3);
+	case MUCOM88IF_MUCOMVM_CMD_CHDATA:
+		break;
+	case MUCOM88IF_MUCOMVM_CMD_TAGDATA:			// prm3=タグ名, prm4=出力先(max255chr)
+		{
+		char *result= (char *)prm4;
+		const char *src = (const char *)prm3;
+		const char *p = mucom->GetInfoBufferByName( src );
+		if (p == NULL) return -1;
+		strncpy(result,p,255 );
+		return 0;
+		}
+	}
+	return -1;
+}
+
+
+int MUCOM88IF_EDITOR_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, void *prm4)
+{
+	//		エディタ用プラグインコマンド
+	Mucom88Plugin *plg = (Mucom88Plugin *)ifptr;
+	return -1;
+}
+
 

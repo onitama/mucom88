@@ -1,6 +1,6 @@
 
 #ifdef MUCOM88WIN
-#include "win32/osdep_win.h"		// とりあえず仮作成中
+#include "win32/osdep_win.h"
 #define OSDEP_CLASS OsDependentWin32
 #elif defined USE_SDL
 #include "sdl/osdep_sdl.h"

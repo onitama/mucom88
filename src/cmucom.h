@@ -178,6 +178,8 @@ public:
 	~CMucom();
 
 	void Init(void *window = NULL, int option = 0, int Rate = 0);
+	int AddPlugins(const char *filename, int bootopt);
+	void NoticePlugins(int cmd, void *p1=NULL, void *p2=NULL);
 	void Reset(int option=0);
 
 	int Play(int num=0);

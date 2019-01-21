@@ -65,6 +65,7 @@ public:
 	void PlayLoop(void);
 
 	//		仮想マシンステータス
+	uint8_t *GetMemoryMap(void) { return mem; }
 	int GetFlag(void) { return m_flag; }
 	int Peek(uint16_t adr);
 	int Peekw(uint16_t adr);
@@ -84,10 +85,12 @@ public:
 	int GetPassTick(void) { return pass_tick; }
 
 	//		YM2608ステータス
+	void FMRegDataOut(int reg, int data);
 	void SetChMuteAll(bool sw);
 	void SetChMute(int ch, bool sw);
 	bool GetChMute(int ch);
 	int GetChStatus(int ch);
+	uint8_t *GetRegisterMap(void) { return regmap;  }
 
 	//		デバッグ用
 	void Msgf(const char *format, ...);
@@ -115,6 +118,12 @@ public:
 	void AudioCallback(void *mix, int size);
 	void UpdateTime(int tick);
 	void UpdateCallback(int tick);
+
+	//		プラグインコントロール
+	void SetMucomInstance(CMucom *mucom);
+	int AddPlugins(const char *filename, int bootopt);
+	void FreePlugins(void);
+	void NoticePlugins(int cmd, void *p1 = NULL, void *p2=NULL);
 
 private:
 	//		Z80
@@ -177,6 +186,12 @@ private:
 	//		OS依存部分
 	OsDependent *osd;
 	void *master_window;
+
+	// プラグイン拡張(内部用)
+	std::vector<Mucom88Plugin *> plugins;
+
+	//		親のインスタンス(参照)
+	CMucom *p_cmucom;
 
 };
 
