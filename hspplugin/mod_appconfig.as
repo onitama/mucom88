@@ -84,6 +84,40 @@
 	loop
 	return res
 
+#deffunc cfg_getvari var v1, str varname
+
+	res=""
+	notesel sbuf
+	repeat notemax
+	noteget s1,cnt
+	if wpeek(s1,0)=$253b {
+		getstr s2,s1,2,'='
+		if s2=varname {
+			getstr res,s1,2+strsize
+			v1=0+res
+			break
+		}
+	}
+	loop
+	return
+
+#deffunc cfg_getvars var v1, str varname
+
+	res=""
+	notesel sbuf
+	repeat notemax
+	noteget s1,cnt
+	if wpeek(s1,0)=$253b {
+		getstr s2,s1,2,'='
+		if s2=varname {
+			getstr res,s1,2+strsize
+			v1=res
+			break
+		}
+	}
+	loop
+	return
+
 #deffunc cfg_load
 
 	exist cfg_name

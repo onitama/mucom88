@@ -5,7 +5,10 @@
 #ifndef __CMucom_h
 #define __CMucom_h
 
+#include <vector>
+#include <string>
 #include "membuf.h"
+#include "voiceformat.h"
 
 /*------------------------------------------------------------*/
 
@@ -83,6 +86,28 @@
 #define MUCOM_CMPOPT_COMPILE 2
 #define MUCOM_CMPOPT_STEP 8
 #define MUCOM_CMPOPT_INFO 0x100
+
+#define MUCOM_FMVOICE_ADR 0x6000
+#define MUCOM_FMVOICE_SIZE 0x2000
+#define MUCOM_FMVOICE_MAXNO 256
+
+#define MUCOM_FMVOICE_MODE_EXTERNAL 0		// 音色ファイルをオリジナルファイルから読み込んで使用
+#define MUCOM_FMVOICE_MODE_INTERNAL 1		// 音色ファイルを一時ファイルから読み込んで使用
+
+#define MUCOM_NOTICE_MMLCHANGE 1	// MMLコード変更の通知
+#define MUCOM_NOTICE_VOICECHANGE 2	// 音色変更の通知
+#define MUCOM_NOTICE_PCMCHANGE 4	// PCM変更の通知
+#define MUCOM_NOTICE_MMLERROR 0x100	// MMLが原因のエラー通知
+
+#define MUCOM_NOTICE_SYSERROR 0x1000	// 不明なシステムエラー通知
+
+#define MUCOM_EDIT_STATUS_NONE 0	// 編集中MMLなし
+#define MUCOM_EDIT_STATUS_SAVED 1	// 編集中MML(保存済み)
+#define MUCOM_EDIT_STATUS_CHANGED 2	// 編集中MML(未保存)
+
+#define MUCOM_EDIT_OPTION_SJIS 0	// 編集中MMLの文字コードはSJIS
+#define MUCOM_EDIT_OPTION_UTF8 1	// 編集中MMLの文字コードはUTF-8
+
 
 
 //	MUBHED structure
@@ -178,12 +203,10 @@ public:
 	~CMucom();
 
 	void Init(void *window = NULL, int option = 0, int Rate = 0);
-	int AddPlugins(const char *filename, int bootopt);
-	void NoticePlugins(int cmd, void *p1=NULL, void *p2=NULL);
 	void Reset(int option=0);
-
 	int Play(int num=0);
 	int Stop(int option=0);
+	int Restart(void);
 	int Fade(void);
 	int PlayEffect(int num=0);
 
@@ -192,7 +215,7 @@ public:
 	void UpdateTime(int tick_ms);
 
 	int LoadPCM(const char *fname = MUCOM_DEFAULT_PCMFILE);
-	int LoadFMVoice(const char *fname = MUCOM_DEFAULT_VOICEFILE);
+	int LoadFMVoice(const char *fname = MUCOM_DEFAULT_VOICEFILE, bool sw=false);
 	int LoadMusic(const char *fname, int num = 0);
 	int CompileFile(const char *fname, const char *sname, int option=0);
 	int Compile(char *text, const char *filename, int option=0);
@@ -217,13 +240,46 @@ public:
 	char *MUBGetTagData(MUBHED *hed, int &size);
 	char *MUBGetPCMData(MUBHED *hed, int &size);
 
+	//	Editor Support Service
+	void EditorReset(const char *mml=NULL, int option = 0);
+	void EditorSetFileName(const char *filename, const char *pathname="");
+	int GetEditorNotice(void) { return edit_notice; }
+	int GetEditorStatus(void) { return edit_status; }
+	int GetEditorOption(void) { return edit_option; }
+	const char *GetEditorFileName(void) { return edit_filename.c_str(); }
+	const char *GetEditorPathName(void) { return edit_pathname.c_str(); }
+	int CheckEditorUpdate(void);
+	int UpdateEditorMML(const char *mml);
+	char *GetEditorMML(void) { return edit_buffer; }
+	const char *GetRequestMML(void);
+	int GetEditorPosToLine(int pos);
+	int SaveEditorMML(const char *filename);
+	int RequestEditorMML(const char *mml);
+
+	//	Plugin Service
+	int AddPlugins(const char *filename, int bootopt);
+	void NoticePlugins(int cmd, void *p1 = NULL, void *p2 = NULL);
+
+	//	Utility
 	int ConvertADPCM(const char *fname, const char *sname);
 	void GetMD5(char *res, char *buffer, int size);
 	void SetUUID(char *uuid);
-	void SetVolume(int fmvol, int ssgvol);
-	void SetFastFW(int value);
 
+	//	Player Service
+	void SetFastFW(int value);
+	void SetVolume(int fmvol, int ssgvol);
 	int GetChannelData(int ch, PCHDATA *result);
+
+	//	FM Voice Service
+	void InitFMVoice(unsigned char *voice = NULL);
+	int SaveFMVoice(void);
+	void StoreFMVoice(unsigned char *voice);
+	void CMucom::DumpFMVoice(int no);
+	MUCOM88_VOICEFORMAT *GetFMVoice(int no);
+	int UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice);
+	int StoreFMVoiceFromEmbed(unsigned char *voicelist=NULL);
+	char *GetVoiceFileName(void) { return voicefilename; }
+	MUCOM88_VOICEFORMAT *GetVoiceData(void) { return fmvoice_internal; }
 
 private:
 	//		Settings
@@ -233,6 +289,13 @@ private:
 	char pcmfilename[MUCOM_FILE_MAXSTR];	// loaded PCM file
 	int mubver;			// playing MUB version
 	MUBHED *hedmusic;	// playing Music data header
+
+	//		FM voice status
+	//
+	int fmvoice_mode;
+	char voicefilename[MUCOM_FILE_MAXSTR];		// loaded VOICE file
+	char tempfilename[MUCOM_FILE_MAXSTR+8];		// temp VOICE file
+	MUCOM88_VOICEFORMAT fmvoice_internal[MUCOM_FMVOICE_MAXNO];
 
 	//		Compile Status
 	//
@@ -250,7 +313,19 @@ private:
 	CMemBuf *infobuf;
 	char user_uuid[64];
 
+	//		Editor Status
+	//
+	int edit_status;			// current status
+	int	edit_notice;			// notice code (MUCOM_NOTICE_*)
+	int edit_option;			// option (MUCOM_EDIT_OPTION_*)
+	char *edit_buffer;			// current buffer
+	std::string edit_master;	// saved buffer
+	std::string edit_request;	// external request buffer
+	std::string edit_filename;	// MML filename
+	std::string edit_pathname;	// MML pathname
 
+	//		Internal Utility
+	//
 	int htoi_sub(char hstr);
 	int htoi(char *str);
 	int strpick_spc(char *target, char *dest, int strmax);

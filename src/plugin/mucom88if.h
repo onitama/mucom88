@@ -41,10 +41,11 @@ typedef int(*MUCOM88IF_STARTUP)(void *, int);
 //	if_editorで使用するコマンド
 #define	MUCOM88IF_EDITOR_CMD_NONE 0
 #define	MUCOM88IF_EDITOR_CMD_PASTECLIP 1	// エディタにクリップボードテキストを貼り付け
-#define	MUCOM88IF_EDITOR_CMD_GETTEXT 2		// エディタのテキストを取得
-#define	MUCOM88IF_EDITOR_CMD_UPDATETEXT 3	// エディタのテキストを更新
-#define	MUCOM88IF_EDITOR_CMD_GETCURSOR 4	// エディタのカーソル位置を取得
-#define	MUCOM88IF_EDITOR_CMD_SETCURSOR 5	// エディタのカーソル位置を変更
+#define	MUCOM88IF_EDITOR_CMD_GETTEXTSIZE 2	// エディタのテキストサイズを取得
+#define	MUCOM88IF_EDITOR_CMD_GETTEXT 3		// エディタのテキストを取得
+#define	MUCOM88IF_EDITOR_CMD_UPDATETEXT 4	// エディタのテキストを更新
+#define	MUCOM88IF_EDITOR_CMD_GETCURSOR 5	// エディタのカーソル位置を取得
+#define	MUCOM88IF_EDITOR_CMD_SETCURSOR 6	// エディタのカーソル位置を変更
 
 //	if_mucomvmで使用するコマンド
 #define	MUCOM88IF_MUCOMVM_CMD_NONE 0
@@ -53,6 +54,8 @@ typedef int(*MUCOM88IF_STARTUP)(void *, int);
 #define	MUCOM88IF_MUCOMVM_CMD_GETCHDATA 3	// chの演奏データを取得
 #define	MUCOM88IF_MUCOMVM_CMD_CHDATA 4		// chの演奏データを取得
 #define	MUCOM88IF_MUCOMVM_CMD_TAGDATA 5		// TAGデータを取得
+#define	MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE 6	// 音色データを更新
+#define	MUCOM88IF_MUCOMVM_CMD_VOICESAVE 7	// 音色データファイルを保存
 
 
 class mucomvm;

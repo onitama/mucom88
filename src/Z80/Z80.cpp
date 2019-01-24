@@ -77,9 +77,9 @@
 #define IMM16		(CLOCK_MEM2(), pc += 2, load(pc - 2) | load(pc - 1) << 8)
 #endif
 #else
-#define IMM8		(load(pc++))
+#define IMM8		(loadpc(pc++))
 #define M1			IMM8
-#define IMM16		(pc += 2, load(pc - 2) | load(pc - 1) << 8)
+#define IMM16		(pc += 2, loadpc(pc - 2) | loadpc(pc - 1) << 8)
 #endif
 
 #define SET2(macro)\

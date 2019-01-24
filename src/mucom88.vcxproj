@@ -134,6 +134,7 @@
     <ClInclude Include="plugin\mucom88if.h" />
     <ClInclude Include="plugin\plugin.h" />
     <ClInclude Include="soundbuf.h" />
+    <ClInclude Include="voiceformat.h" />
     <ClInclude Include="wavout.h" />
     <ClInclude Include="win32\osdep_win.h" />
     <ClInclude Include="win32\realchip.h" />

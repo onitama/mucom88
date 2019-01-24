@@ -5,6 +5,7 @@
 #define _OS_DEP_H_
 
 #include <vector>
+#include <string>
 #include "callback.h"
 #include "plugin/mucom88if.h"
 

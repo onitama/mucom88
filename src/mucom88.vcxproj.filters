@@ -163,6 +163,9 @@
     <ClInclude Include="plugin\plugin.h">
       <Filter>plugin</Filter>
     </ClInclude>
+    <ClInclude Include="voiceformat.h">
+      <Filter>mucom88</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Z80">

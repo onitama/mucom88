@@ -45,6 +45,7 @@ static const char *p[] = {
 	"       -s Use SCCI device",
 	"       -k Skip PCM load",
 	"       -x Record WAV file",
+	"       -d Dump used voice parameter",
 	"       -l [n] Set Recording lengh to n seconds ",
 	NULL };
 	int i;
@@ -59,7 +60,7 @@ int main( int argc, char *argv[] )
 {
 	char a1,a2;
 	int b,st;
-	int cmpopt,ppopt;
+	int cmpopt,ppopt,dumpopt;
 	int scci_opt;
 	char fname[1024];
 	const char *pcmfile;
@@ -107,7 +108,7 @@ int main( int argc, char *argv[] )
 
 	if (argc<2) { usage1();return -1; }
 
-	st = 0; ppopt = 0; cmpopt = 0; scci_opt = 0;
+	st = 0; ppopt = 0; cmpopt = 0; scci_opt = 0; dumpopt = 0;
 	pcmfile = MUCOM_DEFAULT_PCMFILE;
 	outfile = DEFAULT_OUTFILE;
 	wavfile = DEFAULT_OUTWAVE;
@@ -159,6 +160,9 @@ int main( int argc, char *argv[] )
 				break;
 			case 'x':
 				cmpopt |= MUCOM_CMPOPT_STEP;
+				break;
+			case 'd':
+				dumpopt = 1;
 				break;
 			default:
 				st=1;break;
@@ -219,24 +223,37 @@ int main( int argc, char *argv[] )
 			st = 1;
 		}
 	}
+
+	if (st) {
+		mucom.PrintInfoBuffer();
+		puts(mucom.GetMessageBuffer());
+		return st;
+	}
+
+	st = mucom.Play(0);
+	if (st == 0) {
+		if (dumpopt) {
+			int i, max;
+			unsigned char voicelist[32];
+			max = mucom.StoreFMVoiceFromEmbed(voicelist);
+			for (i = 0; i < max; i++) {
+				mucom.DumpFMVoice((int)(voicelist[i]));
+			}
+		}
+	}
+
 	mucom.PrintInfoBuffer();
 	puts(mucom.GetMessageBuffer());
 
-	if (st) return st;
-
-	if (cmpopt & MUCOM_CMPOPT_COMPILE) {
-		mucom.Reset(MUCOM_RESET_PLAYER);
-		mucom.Stop();
-	} else {
-		if (mucom.Play(0) < 0) return -1;
+	if (st == 0) {
+		if (cmpopt & MUCOM_CMPOPT_STEP) {
+			RecordWave(&mucom, wavfile, RENDER_RATE, song_length);
+		}
+		else {
+			mucom.PlayLoop();
+		}
 	}
 
-	if (cmpopt & MUCOM_CMPOPT_STEP) {
-		RecordWave(&mucom, wavfile, RENDER_RATE, song_length);
-	} else {
-		mucom.PlayLoop();
-	}
-
-	return 0;
+	return st;
 }
 

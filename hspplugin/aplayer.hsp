@@ -4,7 +4,7 @@
 title "MUCOM88 Auto Player"
 
 #include "hspmucom.as"
-#include "mod_appconfig.as"
+#include "mod_mucom88.as"
 
 #packopt name "aplayer"
 #packopt xsize 800
@@ -13,28 +13,20 @@ title "MUCOM88 Auto Player"
 
 #pack "mucom88.png"
 
-#define INIFILE "\\mucom88win.ini"
-#define APP_VER "0.3"
+#define APP_VER "0.4"
 
 ;#define DEMOSONG
 
-	scci_mode=0
 	initopt=0
 	filedir=dir_exe	;dir_mydoc
+	celload "mucom88.png",3
 
-	get_appdata_path app_dir
-	cfg_init app_dir+INIFILE
-	cfg_load:modcfg=stat
-	if modcfg {	; iniÉtÉ@ÉCÉãì«Ç›çûÇ›
-		filedir=cfg_getvar("filedir")
-		scci_mode=0+cfg_getvar("scci_mode")
-	}
+	mucom88app_init
+	if scci_mode>0 : initopt=MUCOM_OPTION_FMMUTE|MUCOM_OPTION_SCCI
 
 #ifdef DEMOSONG
 	filedir=dir_exe+"\\demosong\\"
 #endif
-
-	if scci_mode>0 : initopt=MUCOM_OPTION_FMMUTE|MUCOM_OPTION_SCCI
 
 	mucominit hwnd,initopt
 	onexit *byebye
@@ -44,7 +36,6 @@ title "MUCOM88 Auto Player"
 
 	wx=800:wy=600
 	screen 0,wx,wy
-	celload "mucom88.png",3
 
 	sdim buf,$10000
 	pos 0,wy-80
@@ -62,7 +53,7 @@ title "MUCOM88 Auto Player"
 
 	if fmax=0 : dialog "No file for play" : goto *byebye
 
-	autoflag=1
+	autoflag=aplayer_auto
 	chview=0
 
 *vstart
@@ -111,7 +102,9 @@ title "MUCOM88 Auto Player"
 	note="C C+D D+E F F+G G+A A+B "
 	panstr=' ','R','L','C'
 	chkey="   "
-	vtimer = 60*120		; 2ï™ç≈ëÂ
+
+	vtimer = aplayer_time*60		;120	; 2ï™ç≈ëÂ
+	if vtimer<=0 : vtimer=0
 
 	vpkeymax=12*8:vppx=1:vppy=1
 	vpsx=192*vppx:vpsy=vpkeymax*vppy
@@ -122,9 +115,12 @@ title "MUCOM88 Auto Player"
 	vpwx=wx:vpwy=wy-80-120
 	vpx=vpsx-vppx
 
+	mucomstat maxcount, MUCOM_STATUS_MAXCOUNT
+	maxskip = maxcount * aplayer_loop / 100
+	if maxskip<0 : maxskip=0
+
 *main_smon
 	mucomstat count, MUCOM_STATUS_INTCOUNT
-	mucomstat maxcount, MUCOM_STATUS_MAXCOUNT
 
 	redraw 0
 
@@ -220,11 +216,15 @@ title "MUCOM88 Auto Player"
 		chview^=1
 	}
 	if autoflag {
-		vtimer--
-		if (maxcount*3/2)<count { vtimer=0 }
-		if vtimer<=0 {
-			mucomstop 0
-			goto *autoplay
+		if maxskip>0 {
+			if maxskip<=count { vtimer=1 }
+		}
+		if vtimer>0 {
+			vtimer--
+			if vtimer=0 {
+				mucomstop 0
+				goto *autoplay
+			}
 		}
 	}
 

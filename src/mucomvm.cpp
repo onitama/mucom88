@@ -19,8 +19,6 @@
 
 #include "mucomvm_os.h"
 
-static OsDependent *master_osd = NULL;
-
 /*------------------------------------------------------------*/
 /*
 interface
@@ -161,7 +159,6 @@ void mucomvm::InitSoundSystem(int rate)
 	// OS依存部分
 	osd = new OSDEP_CLASS();
 	if (osd == NULL) return;
-	master_osd = osd;					// プラグイン用
 
 	//		COM初期化
 	//
@@ -219,6 +216,7 @@ void mucomvm::Reset(void)
 	p = &mem[0];
 	memset(p, 0, 0x10000);		// CLEAR
 	ClearBank();
+	bankprg = VMPRGBANK_MAIN;
 
 	m_flag = VMFLAG_EXEC;
 	sound_reg_select = 0;
@@ -245,6 +243,15 @@ int mucomvm::DeviceCheck(void)
 		return osd->CheckRealChip();
 	}
 	return 0;
+}
+
+
+int32_t mucomvm::loadpc(uint16_t adr)
+{
+	if (bankprg == VMPRGBANK_SHADOW) {
+		return (int32_t)memprg[adr];
+	}
+	return (int32_t)mem[adr];
 }
 
 
@@ -315,6 +322,14 @@ void mucomvm::Halt(void)
 {
 	//if (m_flag == VMFLAG_EXEC) printf("Halt.\n");
 	m_flag = VMFLAG_HALT;
+}
+
+
+void mucomvm::SendMemoryToShadow(void)
+{
+	//	メモリのシャドーコピーを作成する
+	//
+	memcpy(memprg, mem, 0x10000);
 }
 
 
@@ -467,12 +482,31 @@ int mucomvm::ExecUntilHalt(int times)
 
 			pc = 0xafb3;				// retの位置まで飛ばす
 		}
+
 #if 0
-		if (pc==0x979c) {
+		if (pc == 0x9000) {				// MWRITE(コマンド書き込みメイン)
+			int mdata = Peekw(0x0f320);
+			printf("#MWRITE MDATA$%04x.\r\n", mdata);
+		}
+#endif
+
+#if 0
+		if (pc == 0xde06) {				// CONVERT(音色定義コンバート)
+			//	出力データが大きい場合、DE06H～とかぶるので別バンクで実行する
+			bankprg = VMPRGBANK_SHADOW;
+		}
+		if (pc == 0xe132) {				// CONVERT(音色定義コンバート終了)
+			bankprg = VMPRGBANK_MAIN;
+		}
+#endif
+
+#if 0
+		if (pc==0x979c) {				// COMPST(コンパイラメイン)
 			int ch = Peek(0x0f330);
 			int line = Peekw(0x0f32b);
 			int link = Peekw(0x0f354);
-			printf("#CMPST $%04x LINKPT%04x CH%d LINE%04x.\r\n", pc, link, ch, line);
+			int mdata = Peekw(0x0f320);
+			printf("#CMPST $%04x LINKPT%04x CH%d LINE%04x MDATA%04x.\r\n", pc, link, ch, line,mdata);
 		}
 		if ((pc >= 0xAD86) && (pc < 0xb000)) {
 				printf("#VOICECONV1 %04x.\r\n", pc);
@@ -626,6 +660,14 @@ char *mucomvm::LoadAlloc(const char *fname, int *sizeout)
 }
 
 
+void mucomvm::LoadAllocFree(char *ptr)
+{
+	//	LoadAllocをロードしたメモリを返却する
+	//
+	free(ptr);
+}
+
+
 int mucomvm::LoadPcmFromMem(const char *buf, int sz, int maxpcm)
 {
 	//	PCMデータをOPNAのRAMにロード(メモリから)
@@ -681,7 +723,7 @@ int mucomvm::LoadPcm(const char *fname,int maxpcm)
 	buf = LoadAlloc( fname, &sz );
 	if (buf) {
 		LoadPcmFromMem( buf,sz,maxpcm );
-		free(buf);
+		LoadAllocFree(buf);
 	}
 	return 0;
 }
@@ -700,11 +742,19 @@ int mucomvm::SaveMem(const char *fname, int adr, int size)
 {
 	//	VMメモリの内容をファイルにセーブ
 	//
+	return SaveToFile( fname, mem+adr, size );
+}
+
+
+int mucomvm::SaveToFile(const char *fname, const unsigned char *src, int size)
+{
+	//	バイナリファイルを保存
+	//
 	FILE *fp;
 	int flen;
 	fp = fopen(fname, "wb");
 	if (fp == NULL) return -1;
-	flen = (int)fwrite(mem + adr, 1, size, fp);
+	flen = (int)fwrite(src, 1, size, fp);
 	fclose(fp);
 	return 0;
 }
@@ -723,6 +773,14 @@ int mucomvm::SaveMemExpand(const char *fname, int adr, int size, char *header, i
 	if (pcm) fwrite(pcm, 1, pcmsize, fp);
 	fclose(fp);
 	return 0;
+}
+
+
+int mucomvm::KillFile(const char *fname)
+{
+	//		ファイルの削除
+	//
+	return remove(fname);
 }
 
 
@@ -845,6 +903,22 @@ void mucomvm::StartINT3(void)
 }
 
 
+void mucomvm::RestartINT3(void)
+{
+	//		INT3割り込みを再開
+	//
+	if (int3flag) {
+		return;
+	}
+	int3mask &= 0x7f;
+	FMRegDataOut( 0x32, int3mask);
+	osd->WaitSendingAudio();
+	checkThreadBusy();
+	osd->ResetTime();
+	int3flag = true;
+}
+
+
 void mucomvm::StopINT3(void)
 {
 	//		INT3割り込みを停止
@@ -852,8 +926,7 @@ void mucomvm::StopINT3(void)
 	osd->WaitSendingAudio();
 	int3flag = false;
 	checkThreadBusy();
-
-	SetIntCount(0);
+	//SetIntCount(0);
 	predelay = 0;
 }
 
@@ -894,6 +967,7 @@ FM synth
 */
 /*------------------------------------------------------------*/
 
+//	レジスタデータ出力
 void mucomvm::FMRegDataOut(int reg, int data)
 {
 	regmap[reg] = (uint8_t)data;			// 内部レジスタ保持用
@@ -905,7 +979,12 @@ void mucomvm::FMRegDataOut(int reg, int data)
 	}
 }
 
-//	データ出力
+//	レジスタデータ取得
+int mucomvm::FMRegDataGet(int reg)
+{
+	return (int)regmap[reg];
+}
+
 void mucomvm::FMOutData(int data)
 {
 	//printf("FMReg: %04x = %02x\n", sound_reg_select, data);
@@ -1007,7 +1086,7 @@ int mucomvm::ConvertWAVtoADPCMFile(const char *fname, const char *sname)
 
 
 	dstbuffer = adpcm.waveToAdpcm(buf, sz, dAdpcmSize, 16000 );
-	free(buf);
+	LoadAllocFree(buf);
 
 	if (dstbuffer == NULL) return -1;
 	res = (int)dAdpcmSize;

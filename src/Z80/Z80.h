@@ -137,6 +137,7 @@ private:
 #define store(x, y)	(m[x] = y)
 #else
 	virtual int32_t load(uint16_t adr) = 0;
+	virtual int32_t loadpc(uint16_t adr) = 0;
 	virtual void store(uint16_t adr, uint8_t data) = 0;
 #endif
 #if CLOCK_EMU >= 2

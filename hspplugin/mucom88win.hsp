@@ -6,7 +6,7 @@
 #include "hspmucom.as"
 #include "mod_fontdlg.as"
 #include "mod_selfolder.as"
-#include "mod_appconfig.as"
+#include "mod_mucom88.as"
 
 #define EM_GETSEL	$00B0
 #define EM_LINEFROMCHAR	$00C9
@@ -22,11 +22,9 @@
 #packopt icon "mucom88win.ico"
 #pack "mucom88.png"
 
-#define INIFILE "\\mucom88win.ini"
-#define APP_VER "0.41"
-
 ;#define EDITOR_DEBUG
 
+#define APP_VER "0.45"
 #define EDITOR_TITLE "MUCOM88"
 
 #define TEMPMML "mucommml"
@@ -49,51 +47,9 @@
 	;	初期設定
 	myfile=""
 	editfile=""
-	voicefile=MUCOM_DEFAULT_VOICEFILE
-	pcmfile=MUCOM_DEFAULT_PCMFILE
-	fontname="FixedSys"
-	fontsize=14
-	filedir=dir_exe	;dir_mydoc
-	scci_mode=0
-	author="???"
-	url=""
-	recent=""
-	uuid=""
-	weburl="https://onitama.tv/mucom88/"
-	fastfw=0
-	fgcolor=$dcdcdc
-	bgcolor=0
-
-	wx=800:wy=600
-	app_winx=-1
-	app_winy=-1
-	initopt=0
-
 	celload "mucom88.png",1
 
-	get_appdata_path app_dir
-	cfg_init app_dir+INIFILE
-	cfg_load:modcfg=stat
-	if modcfg {	; iniファイル読み込み
-		wx=0+cfg_getvar("wx")
-		wy=0+cfg_getvar("wy")
-		app_winx=0+cfg_getvar("winx")
-		app_winy=0+cfg_getvar("winy")
-		voicefile=cfg_getvar("voicefile")
-		pcmfile=cfg_getvar("pcmfile")
-		fontname=cfg_getvar("fontname")
-		fontsize=0+cfg_getvar("fontsize")
-		filedir=cfg_getvar("filedir")
-		author=cfg_getvar("author")
-		url=cfg_getvar("url")
-		recent=cfg_getvar("recent")
-		uuid=cfg_getvar("uuid")
-		scci_mode=0+cfg_getvar("scci_mode")
-		fastfw=0+cfg_getvar("fastfw")
-		fgcolor=0+cfg_getvar("fgcolor")
-		bgcolor=0+cfg_getvar("bgcolor")
-		if fgcolor=0&&bgcolor=0 : fgcolor=$dcdcdc : bgcolor=$1e1e1e
-	}
+	mucom88app_init
 
 	if app_winx<0 : app_winx = -1
 	if app_winy<0 : app_winy = -1
@@ -135,6 +91,9 @@
 	notesel mml
 	noteload "of1.muc"
 #endif
+	mucomedit_reset mml,MUCOM_EDIT_OPTION_SJIS
+
+	if plg_fmedit : mucomplg_init "muplug_fmeditor.dll"
 
 	dirlist s1,filedir,5
 	if stat>0 {
@@ -168,7 +127,7 @@
 	x+=sx
 	pos x,y:button "PLAY [F5]",*to_mmlcomp
 	x+=sx
-	pos x,y:button gosub "STOP [ESC]",*m_stop
+	pos x,y:button gosub "STOP [ESC]",*m_stopesc
 
 	mesx=x+sx:mesy=y
 	clrmusicbar
@@ -360,9 +319,15 @@
 	editfile=getpath(fname,1+8)
 	buf="["+fname+"] Loaded."
 	gosub *update_title
+
+	chdir filedir
 	notesel mml
+	exist myfile
+	if strsize<=0 : dialog "No file ["+myfile+"]" : goto *to_editor
 	noteload myfile			; テキストファイル読み込み
 	objprm obj_mml,mml
+	mucomedit_reset mml,MUCOM_EDIT_OPTION_SJIS
+	mucomedit_setfile getpath(myfile,8), filedir+"\\"
 	goto *to_editor
 *dlcan2
 	goto *main2
@@ -437,6 +402,7 @@
 	syscolor 15:boxf homex,homey+40,wx,wy
 	sysfont 0:color 0,0,0
 	pos homex,homey+40
+
 	mucomtag t_title,"title"
 	if t_title="" : t_title="NO TITLE"
 	mucomtag t_author,"author"
@@ -455,6 +421,7 @@
 *to_sellist
 	if sellist<0 : goto *main2
 
+	chdir filedir
 	notesel mylist
 	noteget s1,sellist
 	if peek(s1,0)='<' {
@@ -477,6 +444,8 @@
 
 *to_selplay
 	if sellist<0 : goto *to_main2
+
+	chdir filedir
 	notesel mylist
 	noteget s1,sellist
 	fname=s1
@@ -503,6 +472,8 @@
 
 *to_selmub
 	if sellist<0 : goto *to_main2
+
+	chdir filedir
 	notesel mylist
 	noteget s1,sellist
 	fname=s1
@@ -518,7 +489,7 @@
 	goto *to_main2
 
 *selcomp_sub
-	gosub *m_stop
+	mucomstop 0
 	;
 	mucomreset MUCOM_RESET_COMPILE
 	if voicefile!=MUCOM_DEFAULT_VOICEFILE {
@@ -552,6 +523,9 @@
 	gosub *exec_addtag
 	editfile="No Title"
 	gosub *update_title
+
+	mucomedit_reset mml,MUCOM_EDIT_OPTION_SJIS
+	mucomedit_setfile getpath(myfile,8), filedir+"\\"
 	goto *to_editor
 
 *menu_tool
@@ -684,7 +658,7 @@
 	sysfont 17
 	mes "(*) 一部の設定はツール再起動後に反映されます\n"
 
-	objsize 300,24
+	objsize 240,24
 	mes "ユーザー名(タグ設定用)"
 	input author
 	mes "\n標準音色ファイル"
@@ -707,22 +681,44 @@
 	pos myx+132,myy+30
 	button "変更",*to_sizesel
 
-	pos myx,myy+60
 	color 0,0,0
-	objsize 60,24
-	mes "\n早送り再生([ctrl]+[F1])速度"
-	objsize 60,24
+	objsize 80,24
+	pos myx+100,myy+60
+	mes "\nスロー再生速度"
+	combox slowfw,200,"x2\nx4\nx6\nx8\nx10"
+
+	pos myx,myy+60
+	mes "\n早送り再生速度"
 	combox fastfw,200,"x2\nx4\nx6\nx8\nx10"
+
 	mes "\nSCCIデバイス使用スイッチ(*)"
 	objsize 120,24
 	chkbox "SCCIを使用",scci_mode
 	button "SCCI設定...",*to_sccicfg
 
+	objsize 200,24
+	pos myx+280,myy-200
+	chkbox "起動時にアップデート確認(*)",upd_check
+	chkbox "FM音色エディタと連携する(*)",plg_fmedit
+
+	mes "\nオートプレイヤー設定"
+	chkbox "条件を満たせばスキップする",aplayer_auto
+	objsize 60,24
+	pos myx+280,myy-100
+	mes "最大演奏時間(秒)"
+	input aplayer_time
+	pos myx+380,myy-100
+	mes "経過の割合(%)"
+	input aplayer_loop
+
+	objsize 120,24
 	pos myx+280,myy+60
 	mes "\nフォント設定:"+fontname+":"+fontsize
 	objsize 120,24
 	button "変更...",*to_fontsel
+
 	myx=ginfo_cx+130:myy=ginfo_cy
+
 	button "文字色の変更...",*to_fgcolor
 	button "背景色の変更...",*to_bgcolor
 
@@ -814,14 +810,16 @@
 	main_key = iparam
 
 	if main_enter {
+		mucomedit_update mml
 		sendmsg mml_hw, EM_GETSEL,varptr(mml_sptr), varptr(mml_eptr)
-		sendmsg mml_hw, EM_LINEFROMCHAR, mml_sptr, 0
-		i=stat+1
+		mucomedit_getline i,mml_sptr
+		;sendmsg mml_hw, EM_LINEFROMCHAR, mml_sptr, 0
+		;i=stat+1
 		msg "line: "+i
 	}
 
 	if iparam=27 {
-		gosub *m_stop
+		gosub *m_stopesc
 		return
 	}
 	if iparam='S' {
@@ -858,8 +856,14 @@
 	;
 	compflag=0
 	count_max=0
-	notesel mml
-	notesave TEMPMML
+
+	mucomedit_update mml
+	mucomedit_save TEMPMML
+	if stat : buf="Error file write ["+myfile+"]" : goto *getmucomerr2
+
+	;notesel mml
+	;notesave TEMPMML
+
 	mucomreset MUCOM_RESET_COMPILE
 	if voicefile!=MUCOM_DEFAULT_VOICEFILE {
 		mucomloadvoice voicefile
@@ -943,6 +947,7 @@
 	if i>=0 {
 		noteget s1,i:buf+=s1+"\n"
 	}
+*getmucomerr2
 	gosub *updatebuf
 	msg "Compile Error"
 	return
@@ -958,6 +963,7 @@
 	;	PLAY
 	if compflag {
 		mucomplay 0
+		curplay=1
 	}
 	return
 
@@ -965,9 +971,28 @@
 	;	STOP
 	if compflag {
 		mucomstop 0
+		curplay=0
 		compflag=0
-		count_max=0
+		;count_max=0
 		;mucomfade
+		return
+	}
+	return
+
+*m_stopesc
+	;	STOP (toggle restart)
+	if compflag {
+		if curplay=0 {
+			mucomstop $1000	; 再開
+			curplay=1
+			return
+		}
+		mucomstop 0
+		curplay=0
+		;compflag=0
+		;count_max=0
+		;mucomfade
+		return
 	}
 	return
 
@@ -976,7 +1001,9 @@
 	if myfile="" : goto *file_save
 	notesel mml
 	fname=myfile
-	notesave fname
+	mucomedit_save
+	if stat : dialog "Error file write ["+myfile+"]" : return
+	;notesave fname
 	goto *file_savedone
 
 *file_save
@@ -990,8 +1017,11 @@
 	s1=getpath(fname,32)
 	s1=strtrim(s1,2,'\\')
 	filedir=s1
-	notesel mml
-	notesave fname			; テキストファイルをセーブ
+	mucomedit_setfile getpath(myfile,8), filedir+"\\"
+	mucomedit_save
+	if stat : dialog "Error file write ["+myfile+"]" : return
+	;notesel mml
+	;notesave fname			; テキストファイルをセーブ
 	list_update=0
 *file_savedone
 	buf="["+fname+"] Saved."
@@ -1012,13 +1042,16 @@
 	;	元ファイルから変更があるかチェック
 	;	i = 0:同じ  1=変更
 	;
-	i=0
-	if myfile="" : return
-	sdim tmp,$10000
-	notesel tmp
-	noteload myfile
-	if tmp!=mml : i=1
-	sdim tmp,64
+	mucomedit_getstat i,MUCOM_EDIT_GETSTAT_UPDATE
+	if i<1 : i=0 : return
+	i--
+	;i=0
+	;if myfile="" : return
+	;sdim tmp,$10000
+	;notesel tmp
+	;noteload myfile
+	;if tmp!=mml : i=1
+	;sdim tmp,64
 	return
 
 *exec_tool
@@ -1293,28 +1326,7 @@
 
 *to_vplayer
 	gosub *m_stop
-
-	get_appdata_path app_dir
-	cfg_init app_dir+INIFILE
-	cfg_seti "wx",wx
-	cfg_seti "wy",wy
-	cfg_seti "winx",ginfo_wx1
-	cfg_seti "winy",ginfo_wy1
-	cfg_sets "voicefile",voicefile
-	cfg_sets "pcmfile",pcmfile
-	cfg_sets "fontname",fontname
-	cfg_seti "fontsize",fontsize
-	cfg_sets "filedir",filedir
-	cfg_sets "author",author
-	cfg_sets "url",url
-	cfg_sets "recent",recent
-	cfg_sets "uuid",uuid
-	cfg_seti "scci_mode",scci_mode
-	cfg_seti "fastfw",fastfw
-	cfg_seti "fgcolor",fgcolor
-	cfg_seti "bgcolor",bgcolor
-	cfg_save
-
+	mucom88app_term				; 設定を保存する
 	exec dir_exe+"\\aplayer.exe"
 	goto *main2
 
@@ -1362,34 +1374,18 @@
 *byebye
 	;	ini保存
 	;
-	if wx<640 : wx=640
-	if wy<480 : wy=480
-	get_appdata_path app_dir
-	cfg_init app_dir+INIFILE
-	cfg_seti "wx",wx
-	cfg_seti "wy",wy
-	cfg_seti "winx",ginfo_wx1
-	cfg_seti "winy",ginfo_wy1
-	cfg_sets "voicefile",voicefile
-	cfg_sets "pcmfile",pcmfile
-	cfg_sets "fontname",fontname
-	cfg_seti "fontsize",fontsize
-	cfg_sets "filedir",filedir
-	cfg_sets "author",author
-	cfg_sets "url",url
-	cfg_sets "recent",recent
-	cfg_sets "uuid",uuid
-	cfg_seti "scci_mode",scci_mode
-	cfg_seti "fastfw",fastfw
-	cfg_seti "fgcolor",fgcolor
-	cfg_seti "bgcolor",bgcolor
-	cfg_save
+	mucom88app_term
 
 #ifdef EDITOR_DEBUG
 	mucombye
 	end
 #else
-	dialog "終了していいですか?",2
+	mucomedit_getstat i,MUCOM_EDIT_GETSTAT_UPDATE
+	if i<=1 {		; ファイル変更がなければそのまま終了
+		mucombye
+		end
+	}
+	dialog "編集内容が破棄されます。\n終了していいですか?",2
 	if stat=6 {
 		mucombye
 		end

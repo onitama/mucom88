@@ -15,8 +15,6 @@ Windows version by ONION software/onitama 2018-2019(C)
 	コマンドライン版、GUI版の両方が用意されています。
 
 		mucom88win.exe         Windows GUI版エディタ
-		FmToneEditor.exe       Windows GUI版音色エディタ
-		mucom88DatToTxt.exe    Windows GUI版音色変換ツール
 		mucom88.exe            Windows コマンドライン版
 
 	MUCOM88 Windowsを使用することにより、音楽記述に特化した言語
@@ -37,13 +35,17 @@ Windows version by ONION software/onitama 2018-2019(C)
 	OPEN MUCOM88 for PC-8801
 	https://www.ancient.co.jp/~mucom88/
 
+	ツールについての詳細は、github上のWiKiでも紹介していますので
+	参考にしてください。このページは随時更新されます。
+	https://github.com/onitama/mucom88/wiki
+
 
 ・動作環境
 
-	MUCOM88 Windowsは、サウンド再生が可能なWindows XP以降のシステム上で
+	MUCOM88 Windowsは、サウンド再生が可能なWindows 7以降のシステム上で
 	動作します。
 	Windowsのサウンド再生処理には、DirectX8以降のDirectSoundを
-	使用しています。Windows XP以降の環境では、追加のコンポーネントを
+	使用しています。Windows 7以降の環境では、追加のコンポーネントを
 	用意することなく動作させることができます。
 
 	FM音源、PSGサウンドのエミュレーションは32bit/55KHzで合成し、
@@ -112,9 +114,11 @@ Windows version by ONION software/onitama 2018-2019(C)
 	MMLは、テキストファイルとして読み込み・保存ができるので
 	気軽な気持ちで読み書きが可能です。
 
-	MML記述についての詳細は、付属のテキスト「MUCOM88_REF.txt」を
-	参考にしてください。また、サンプルMML(sampl1～sampl3)も、実際の
-	作成に役立つはずです。
+	MML記述についての詳細は、github上のWiKiにて紹介していますので
+	参考にしてください。このページは随時更新されます。
+	https://github.com/onitama/mucom88/wiki/MML%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9
+
+	また、サンプルMML(sampl1～sampl3)も、実際の作成に役立つはずです。
 
 	MML編集以外の操作は、[F1]キーで呼び出されるメニュースクリーンから
 	行います。
@@ -125,8 +129,8 @@ Windows version by ONION software/onitama 2018-2019(C)
 	オートプレイヤーにより、複数の楽曲を自動的に演奏させることが可能です。
 	メニュースクリーンの[Home]->[プレイヤー...]ボタンを押すと、
 	その時点で選択されていたファイルリストの曲を順番に演奏します。
-	オートプレイヤーは、2分間経過するか、または1.5ループ曲を再生すると
-	次の曲に移行します。
+	オートプレイヤーの設定は、Optionメニュー内で変更することが可能です。
+	また、以下のキーによる操作を受け付けます。
 
 		[ESC]     アプリケーション終了
 		[Enter]   曲の更新

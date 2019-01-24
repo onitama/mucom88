@@ -156,7 +156,12 @@ EXPORT BOOL WINAPI mucomstop(int p1, int p2, int p3, int p4)
 	//	DLL mucomstop mode (type$00)
 	//
 	if (mucom) {
-		mucom->Stop(p1);
+		if (p1 & 0x1000) {
+			mucom->Restart();
+		}
+		else {
+			mucom->Stop(p1);
+		}
 	}
 	return 0;
 }
@@ -437,6 +442,7 @@ EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomrecord(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomrecord "filename",time (type$202)
+	//	(wav録音機能は通常起動すると任意に実行できないため機能保留中)
 	//
 	int ep1;
 	char *p;
@@ -449,5 +455,185 @@ EXPORT BOOL WINAPI mucomrecord(HSPEXINFO *hei, int p1, int p2, int p3)
 	}
 	return 0;
 }
+
+
+EXPORT BOOL WINAPI mucomplg_init(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomplg_init "filename" (type$202)
+	//	MUCOM88プラグインの追加と初期化
+	//
+	int res;
+	int ep1;
+	char *p;
+	p = hei->HspFunc_prm_gets();		// パラメータ1:文字列
+	ep1 = hei->HspFunc_prm_getdi(0);	// パラメータ2:数値
+
+	if (mucom) {
+		res = mucom->AddPlugins(p, ep1);
+		if (res) return -1;
+	}
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomplg_notice(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomplg_notice p1,p2,p3 (type$202)
+	//	MUCOM88プラグインの通知
+	//
+	int ep1,ep2,ep3;
+	ep1 = hei->HspFunc_prm_getdi(0);	// パラメータ1:数値
+	ep2 = hei->HspFunc_prm_getdi(0);	// パラメータ2:数値
+	ep3 = hei->HspFunc_prm_getdi(0);	// パラメータ3:数値
+
+	if (mucom) {
+		mucom->NoticePlugins(ep1, (void *)ep2,(void *)ep3);
+	}
+	return 0;
+}
+
+
+//--------------------------------------------------------------------------------------
+
+EXPORT BOOL WINAPI mucomedit_reset(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_reset "MML", option (type$202)
+	//	MMLエディタサービスのリセット
+	//
+	int ep1;
+	char *p;
+	p = hei->HspFunc_prm_gets();			// パラメータ1:文字列
+	ep1 = hei->HspFunc_prm_getdi(0);		// パラメータ2:数値
+	if (mucom) {
+		mucom->EditorReset( p, ep1 );
+	}
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomedit_setfile(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_setfile "filename", "pathname" (type$202)
+	//	MMLエディタファイル名の設定
+	//
+	char *p;
+	char filename[_MAX_PATH];
+	char pathname[_MAX_PATH];
+	p = hei->HspFunc_prm_gets();			// パラメータ1:文字列
+	strncpy(filename, p, _MAX_PATH);
+	p = hei->HspFunc_prm_getds("");			// パラメータ2:文字列
+	strncpy(pathname, p, _MAX_PATH);
+	if (mucom) {
+		mucom->EditorSetFileName(filename, pathname);
+	}
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomedit_getstat(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_getstat var, prmid (type$202)
+	//	MMLエディタのステータス取得
+	//	(prmid:0=status/1=notice/2=option/3=update check)
+	//
+	PVal *pv;
+	APTR ap;
+	int ep1;
+	int res;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	ep1 = hei->HspFunc_prm_getdi(0);		// パラメータ2:数値
+	res = 0;
+	if (mucom) {
+		switch (ep1) {
+		case 0:
+			res = mucom->GetEditorStatus();
+			break;
+		case 1:
+			res = mucom->GetEditorNotice();
+			break;
+		case 2:
+			res = mucom->GetEditorOption();
+			break;
+		case 3:
+			res = mucom->CheckEditorUpdate();
+			break;
+		}
+	}
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// 変数に値を代入
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomedit_update(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_update var (type$202)
+	//	MMLエディタのテキスト更新(varは配列ではない単一の変数)
+	//
+	PVal *pv;
+	APTR ap;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	if (mucom) {
+		mucom->UpdateEditorMML( pv->pt );
+	}
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomedit_getline(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_getline var, pos (type$202)
+	//	MMLエディタのpos->line取得
+	//
+	PVal *pv;
+	APTR ap;
+	int ep1;
+	int res;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	ep1 = hei->HspFunc_prm_getdi(0);		// パラメータ2:数値
+	res = 0;
+	if (mucom) {
+		res = mucom->GetEditorPosToLine(ep1);
+	}
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// 変数に値を代入
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomedit_save(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_save "filename" (type$202)
+	//	MMLエディタの保存実行
+	//	(filenameが""の場合はデフォルト名、指定された場合はその名前で保存する)
+	//
+	int res;
+	char *p;
+	p = hei->HspFunc_prm_getds("");			// パラメータ1:文字列
+
+	if (mucom) {
+		res = mucom->SaveEditorMML(p);
+		if (res) return -1;
+	}
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomedit_getreq(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_getreq var (type$202)
+	//	MMLエディタのリクエストMML文字列を取得
+	//
+	PVal *pv;
+	APTR ap;
+	const char *p;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	if (mucom) {
+		p = mucom->GetRequestMML();
+		if (p == NULL) return -1;
+	}
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, p);	// 変数に値を代入
+	return 0;
+}
+
+//--------------------------------------------------------------------------------------
 
 

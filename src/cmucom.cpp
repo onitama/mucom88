@@ -102,6 +102,7 @@ CMucom::CMucom( void )
 	flag = 0;
 	vm = NULL;
 	infobuf = NULL;
+	edit_status = MUCOM_EDIT_STATUS_NONE;
 	user_uuid[0] = 0;
 }
 
@@ -137,6 +138,9 @@ void CMucom::Init(void *window, int option, int rate)
 	vm->InitSoundSystem(myrate);
 	MusicBufferInit();
 	vm->SetMucomInstance(this);			// Mucomのインスタンスを通知する(プラグイン用)
+
+	//		エディタが保持する情報のリセット
+	EditorReset();
 }
 
 
@@ -194,7 +198,7 @@ void CMucom::Reset(int option)
 			vm->LoadMem("ssgdat", 0x5e00, 0);
 			vm->LoadMem("time", 0xe400, 0);
 			vm->LoadMem("smon", 0xde00, 0);
-			vm->LoadMem(MUCOM_DEFAULT_VOICEFILE, 0x6000, 0);
+			LoadFMVoice(MUCOM_DEFAULT_VOICEFILE,true);
 		}
 		else {
 			//	内部のコンパイラを読む
@@ -204,8 +208,9 @@ void CMucom::Reset(int option)
 			vm->SendMem(bin_muc88, 0x9600, muc88_size);
 			vm->SendMem(bin_ssgdat, 0x5e00, ssgdat_size);
 			vm->SendMem(bin_time, 0xe400, time_size);
-			vm->SendMem(bin_voice_dat, 0x6000, voice_dat_size);
 			vm->SendMem(bin_smon, 0xde00, smon_size);
+			//vm->SendMem(bin_voice_dat, 0x6000, voice_dat_size);
+			StoreFMVoice((unsigned char *)bin_voice_dat);
 		}
 
 		int i;
@@ -235,6 +240,9 @@ void CMucom::Reset(int option)
 		//	内部のプレイヤーを読む
 		vm->SendMem(bin_music2, 0xb000, music2_size);
 	}
+
+	//	実行用メモリをシャドーコピーとして保存しておく
+	vm->SendMemoryToShadow();
 
 	DeleteInfoBuffer();
 
@@ -312,8 +320,9 @@ int CMucom::Play(int num)
 	if (voicefile[0]) {
 		LoadFMVoice(voicefile);
 	}
-
 	vm->SendMem((const unsigned char *)data, 0xc200, datasize);
+
+	StoreFMVoiceFromEmbed();
 
 	NoticePlugins(MUCOM88IF_NOTICE_PREPLAY);
 
@@ -414,6 +423,17 @@ int CMucom::Stop(int option)
 }
 
 
+int CMucom::Restart(void)
+{
+	//		MUCOM88音楽再生の再開(停止後)
+	//		(戻り値が0以外の場合はエラー)
+	//
+	NoticePlugins(MUCOM88IF_NOTICE_PLAY);
+	vm->RestartINT3();
+	return 0;
+}
+
+
 int CMucom::Fade(void)
 {
 	//		MUCOM88音楽フェードアウト
@@ -422,18 +442,6 @@ int CMucom::Fade(void)
 	if (playflag == false) return -1;
 	vm->CallAndHalt(0xb006);
 	return 0;
-}
-
-
-int CMucom::LoadFMVoice(const char *fname)
-{
-	//		FM音色データ読み込み
-	//		fname = FM音色データファイル (デフォルトはMUCOM_DEFAULT_VOICEFILE)
-	//		(戻り値が0以外の場合はエラー)
-	//
-	if (vm->LoadMem(fname, 0x6000, 0) >= 0) return 0;
-	PRINTF("#Voice file not found [%s].\r\n", fname);
-	return -1;
 }
 
 
@@ -545,6 +553,298 @@ int CMucom::GetStatus(int option)
 
 /*------------------------------------------------------------*/
 /*
+FM Voice file support
+*/
+/*------------------------------------------------------------*/
+
+void CMucom::InitFMVoice(unsigned char *voice)
+{
+	//	FM音色データを初期化する
+	//
+	fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
+	StoreFMVoice(voice);
+	*voicefilename = 0;
+	*tempfilename = 0;
+}
+
+
+int CMucom::SaveFMVoice(void)
+{
+	//	FM音色データを保存する
+	//
+	if (fmvoice_mode == MUCOM_FMVOICE_MODE_EXTERNAL) return 0;	// 一時ファイルがなければ保存の必要なし
+	fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
+	if (*voicefilename != 0) {
+		vm->SendMem((unsigned char *)fmvoice_internal, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+		int res = vm->SaveMem( voicefilename, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+		if (res == 0) {
+			vm->KillFile(tempfilename);
+		}
+	}
+	return 0;
+}
+
+
+void CMucom::StoreFMVoice(unsigned char *voice)
+{
+	//	FM音色データをメモリに転送する
+	//
+	if (voice == NULL) return;
+	vm->SendMem(voice, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+	memcpy(fmvoice_internal, voice, MUCOM_FMVOICE_SIZE);
+}
+
+
+int CMucom::LoadFMVoice(const char *fname, bool sw)
+{
+	//		FM音色データ読み込み
+	//		fname = FM音色データファイル (デフォルトはMUCOM_DEFAULT_VOICEFILE)
+	//		sw = trueの場合は強制的に読み込む、falseの場合は仮ファイルを検索する
+	//		(戻り値が0以外の場合はエラー)
+	//
+	int voicesize;
+	char *voicedata;
+
+	if (*fname != 0) {
+		strncpy(voicefilename, fname, MUCOM_FILE_MAXSTR - 1);
+		strcpy(tempfilename, voicefilename);
+		strcat(tempfilename, "_tmp");
+	}
+
+	voicedata = NULL;
+	if ( sw == false ) {
+		fmvoice_mode = MUCOM_FMVOICE_MODE_INTERNAL;
+		voicedata = vm->LoadAlloc(tempfilename, &voicesize);
+	}
+	if (voicedata == NULL) {
+		voicedata = vm->LoadAlloc(voicefilename, &voicesize);
+		if (voicedata == NULL) {
+			PRINTF("#Voice file not found [%s].\r\n", fname);
+			return -1;
+		}
+		fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
+	}
+	StoreFMVoice((unsigned char *)voicedata);
+	vm->LoadAllocFree(voicedata);
+	return 0;
+}
+
+
+MUCOM88_VOICEFORMAT *CMucom::GetFMVoice(int no)
+{
+	//	内部保存された音色データを取得する
+	//	(no=音色番号0～255)
+	//
+	if ((no < 0) || (no >= MUCOM_FMVOICE_MAXNO)) return NULL;
+	return &fmvoice_internal[no];
+}
+
+
+int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
+{
+	//	音色データを更新する
+	//	(no=音色番号0～255)
+	//
+	if ((no < 0) || (no>= MUCOM_FMVOICE_MAXNO)) return -1;
+	fmvoice_internal[no] = *voice;
+
+	fmvoice_mode = MUCOM_FMVOICE_MODE_INTERNAL;
+	if (*tempfilename != 0) {
+		vm->SendMem((unsigned char *)fmvoice_internal, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+		return vm->SaveMem((char *)tempfilename, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+	}
+	return 0;
+}
+
+
+void CMucom::DumpFMVoice(int no)
+{
+	//	音色データを表示する
+	//	(no=音色番号1～255)
+	//
+	unsigned char name[8];
+	unsigned char *p;
+	unsigned char a1;
+	MUCOM88_VOICEFORMAT *v = GetFMVoice(no);
+	if (v==NULL) return;
+
+	p = (unsigned char *)v->name;
+	int len = 0;
+	while (1) {
+		if (len >= 6) break;
+		a1 = *p++;
+		if (a1 < 32) a1 = 32;		// コントロールコードはスペースに変換
+		if (a1 >= 128) a1 = 32;		// 半角文字はスペースに変換
+		name[len++] = a1;
+	}
+	name[len++] = 0;
+
+	PRINTF("  @%d:{\r\n", no);
+	PRINTF("  %d, %d\r\n", v->fb, v->al);
+	/*
+	  AR,DR,SR,RR,SL,TL,KS,ML,DT
+	*/
+	PRINTF("  %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d\r\n", v->ar_op1, v->dr_op1, v->sr_op1, v->rr_op1, v->sl_op1, v->tl_op1, v->ks_op1, v->ml_op1, v->dt_op1);
+	PRINTF("  %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d\r\n", v->ar_op2, v->dr_op2, v->sr_op2, v->rr_op2, v->sl_op2, v->tl_op2, v->ks_op2, v->ml_op2, v->dt_op2);
+	PRINTF("  %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d\r\n", v->ar_op3, v->dr_op3, v->sr_op3, v->rr_op3, v->sl_op3, v->tl_op3, v->ks_op3, v->ml_op3, v->dt_op3);
+	PRINTF("  %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d, %02d, \"%s\"}\r\n", v->ar_op4, v->dr_op4, v->sr_op4, v->rr_op4, v->sl_op4, v->tl_op4, v->ks_op4, v->ml_op4, v->dt_op4,name);
+}
+
+
+int CMucom::StoreFMVoiceFromEmbed(unsigned char *voicelist)
+{
+	//	演奏データ(MUB)が持つ音色データを内部保存データに反映させる
+	//	(VMの$c200から演奏データを読み込んでおくこと)
+	//		voicelist = 出力される音色番号のリスト
+	//		返値 = voicelistに出力された音色番号の数
+	//
+	int i,j,no;
+	char *v;
+
+	int vdata = vm->Peekw(0xc201) + 0xc200;
+	int result = vm->Peek(vdata++);
+
+	for (i = 0; i < result; i++) {
+		no = (int)hedmusic->ext_fmvoice[i] - 1;
+		if (voicelist != NULL) voicelist[i] = (unsigned char)no;
+		v = (char *)GetFMVoice(no);
+		v++;
+		for (j = 0; j < 25; j++) {			// 25byteの音色データをコピー
+			*v++ = vm->Peek(vdata++);
+		}
+	}
+	return result;
+}
+
+
+/*------------------------------------------------------------*/
+/*
+Editor support
+*/
+/*------------------------------------------------------------*/
+
+void CMucom::EditorReset(const char *mml, int option)
+{
+	//		エディタ編集項目のリセット
+	//		(mml=編集読み込み時のMMLバッファ内容/NULLの場合は空になる)
+	//		(option=MUCOM_EDIT_OPTION_*)
+	//
+	edit_status = MUCOM_EDIT_STATUS_NONE;
+	edit_option = option;
+	edit_notice = 0;
+	edit_master.clear();
+	edit_filename.clear();
+	edit_pathname.clear();
+	edit_request.clear();
+	if (mml) {
+		edit_master = std::string(mml);
+		edit_status = MUCOM_EDIT_STATUS_SAVED;
+	}
+	edit_buffer = (char *)edit_master.c_str();
+}
+
+
+void CMucom::EditorSetFileName(const char *filename, const char *pathname)
+{
+	//		エディタ編集ファイル名・パスを設定する
+	//		(EditorReset後に設定すること)
+	//		(filename+pathnameが保存されるファイルになります)
+	//
+	if (filename) edit_filename = std::string(filename);
+	if (pathname) edit_pathname = std::string(pathname);
+}
+
+
+int CMucom::CheckEditorUpdate(void)
+{
+	//		エディタ編集項目が修正されているか?
+	//		return 0=未初期化、1=保存済み、2=編集中
+	//
+	char *p = (char *)edit_master.c_str();
+	if (edit_status == MUCOM_EDIT_STATUS_NONE) return MUCOM_EDIT_STATUS_NONE;
+	if (strcmp(p, edit_buffer) == 0) {
+		edit_status = MUCOM_EDIT_STATUS_SAVED;
+	}
+	else {
+		edit_status = MUCOM_EDIT_STATUS_CHANGED;
+	}
+	return edit_status;
+}
+
+
+int CMucom::SaveEditorMML(const char *filename)
+{
+	//		エディタ編集内容を保存する
+	//		(filenameが""の場合はデフォルト名、指定された場合はその名前で保存する)
+	//
+	if (*filename != 0) {
+		return vm->SaveToFile(filename, (unsigned char *)edit_buffer, strlen(edit_buffer));
+	}
+	edit_master = std::string(edit_buffer);
+	edit_status = MUCOM_EDIT_STATUS_SAVED;
+	std::string savename = edit_pathname + edit_filename;
+	return vm->SaveToFile(savename.c_str(), (unsigned char *)edit_buffer, strlen(edit_buffer));
+}
+
+
+int CMucom::UpdateEditorMML(const char *mml)
+{
+	//		エディタ編集内容を更新する
+	//		(外部のエディタでMMLが変化したことを通知します)
+	//		(mmlのポインタのみ更新します、内容は外部で保持されている必要があります)
+	//
+	edit_buffer = (char *)mml;
+	edit_status = MUCOM_EDIT_STATUS_CHANGED;
+	return 0;
+}
+
+
+int CMucom::GetEditorPosToLine(int pos)
+{
+	//		エディタのカーソル位置から行数を得る
+	//
+	int line = 1;
+	int myline = 1;
+	int cur;
+	const char *src = edit_buffer;
+
+	while (1) {
+		if (src == NULL) break;
+		cur = src - edit_buffer;
+		if (cur<=pos) myline = line;
+		src = GetTextLine(src);
+		line++;
+	}
+	return myline;
+}
+
+
+int CMucom::RequestEditorMML(const char *mml)
+{
+	//		エディタのMMLファイルを外部から更新するリクエストを出す
+	//		(リクエストをエディタ側が取得しない限り更新されません)
+	//
+	edit_notice |= MUCOM_NOTICE_MMLCHANGE;
+	edit_request = std::string(mml);
+	return 0;
+}
+
+
+const char *CMucom::GetRequestMML(void)
+{
+	//		外部リクエストによるMMLを取得する
+	//		(リクエストがない場合はNULLを返す)
+	//
+	if (edit_notice & MUCOM_NOTICE_MMLCHANGE) {
+		edit_notice ^= MUCOM_NOTICE_MMLCHANGE;
+		return edit_request.c_str();
+	}
+	return NULL;
+}
+
+
+/*------------------------------------------------------------*/
+/*
 Compiler support
 */
 /*------------------------------------------------------------*/
@@ -639,6 +939,9 @@ const char *CMucom::GetInfoBufferByName(const char *name)
 	//		(結果が""の場合は該当項目なし)
 	//
 	int len;
+
+	if (infobuf == NULL) return "";
+
 	const char *src = GetInfoBuffer();
 	while (1) {
 		if (src == NULL) break;
@@ -681,13 +984,14 @@ int CMucom::ProcessFile(const char *fname)
 	//
 	int sz;
 	char *mml;
+	DeleteInfoBuffer();
 	mml = vm->LoadAlloc(fname, &sz);
 	if (mml == NULL) {
 		PRINTF("#File not found [%s].\r\n", fname);
 		return -1;
 	}
 	ProcessHeader( mml );
-	free(mml);
+	vm->LoadAllocFree(mml);
 	return 0;
 }
 
@@ -944,7 +1248,7 @@ int CMucom::CompileFile(const char *fname, const char *sname, int option)
 	ProcessHeader(mml);
 
 	res = Compile(mml, sname, option);
-	free(mml);
+	vm->LoadAllocFree(mml);
 
 	if (res) return res;
 
@@ -1048,7 +1352,7 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 		return -2;
 	}
 
-	if (pcmdata != NULL) free(pcmdata);
+	if (pcmdata != NULL) vm->LoadAllocFree(pcmdata);
 
 	PRINTF("#Saved [%s].\r\n", fname);
 	return 0;
@@ -1267,6 +1571,14 @@ int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, v
 		strncpy(result,p,255 );
 		return 0;
 		}
+	case MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE:		// prm1=音色No. , prm3=MUCOM88_VOICEFORMATポインタ
+		{
+		return mucom->UpdateFMVoice(prm1, (MUCOM88_VOICEFORMAT *)prm3);
+		}
+	case MUCOM88IF_MUCOMVM_CMD_VOICESAVE:		// パラメーターなし
+		{
+		return mucom->SaveFMVoice();
+		}
 	}
 	return -1;
 }
@@ -1276,7 +1588,16 @@ int MUCOM88IF_EDITOR_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm
 {
 	//		エディタ用プラグインコマンド
 	Mucom88Plugin *plg = (Mucom88Plugin *)ifptr;
+	CMucom *mucom = plg->mucom;			// mucomインスタンスを得る
+	switch (cmd) {
+	case MUCOM88IF_EDITOR_CMD_GETTEXTSIZE:	// パラメーターなし/サイズを返す
+		return strlen(mucom->GetEditorMML());
+	case MUCOM88IF_EDITOR_CMD_GETTEXT:	// prm3=テキスト書き込み先
+		strcpy( (char *)prm3, mucom->GetEditorMML());
+		return 0;
+	case MUCOM88IF_EDITOR_CMD_UPDATETEXT:	// prm3=書き換えテキストデータ
+		return mucom->RequestEditorMML( (const char *)prm3 );
+	}
 	return -1;
 }
-
 
