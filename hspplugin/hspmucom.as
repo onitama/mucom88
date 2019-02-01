@@ -45,6 +45,9 @@
 #func mucomedit_save mucomedit_save $202
 #func mucomedit_getreq mucomedit_getreq $202
 #func mucomedit_update mucomedit_update $202
+#func mucomedit_proc mucomedit_proc $202
+#func mucomedit_flush mucomedit_flush $202
+
 
 #define MUCOM_DEFAULT_PCMFILE "mucompcm.bin"
 #define MUCOM_DEFAULT_VOICEFILE "voice.dat"
@@ -118,6 +121,9 @@
 #define MUCOM_EDIT_GETSTAT_OPTION 2
 #define MUCOM_EDIT_GETSTAT_UPDATE 3
 
+//	プラグインに通知するコード
+#define MUCOM88IF_NOTICE_TOOLSTART 3	// プラグインツール起動リクエスト
+#define MUCOM88IF_NOTICE_TOOLHIDE 10	// プラグインツール非表示リクエスト
 
 #endif
 

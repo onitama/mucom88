@@ -12,6 +12,7 @@
 
 #include "soundbuf.h"
 
+
 inline int Limit(int v, int max, int min)
 {
 	return v > max ? max : (v < min ? min : v);
@@ -65,9 +66,10 @@ int SoundBuf::GetBuffer16(void *dst, int size)
 	if (m_endptr == 0) return -1;
 
 	if ((m_rtick + size) > m_wtick) {
-		//printf("#Buffer not enough tick(%d) end(%d).\n", m_rtick, m_wtick);
+		//printf("#Buffer not enough tick(%d) gap(%d).\n", m_rtick, m_wtick-(m_rtick + size));
 		return -1;
 	}
+	//printf("#Buffer not enough gap(%d).\n", m_wtick-(m_rtick + size) );
 
 	p = (int16 *)dst;
 	src = m_buffer + m_readptr;

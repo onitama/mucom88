@@ -160,7 +160,7 @@ void CMemBuf::PutStrDQ( const char *data )
 	unsigned char *src;
 	unsigned char *p;
 	unsigned char a1;
-	unsigned char a2;
+	unsigned char a2 = 0;
 	int fl;
 	src = (unsigned char *)data;
 

@@ -234,10 +234,9 @@ int main( int argc, char *argv[] )
 	if (st == 0) {
 		if (dumpopt) {
 			int i, max;
-			unsigned char voicelist[32];
-			max = mucom.StoreFMVoiceFromEmbed(voicelist);
+			max = mucom.GetUseVoiceMax();
 			for (i = 0; i < max; i++) {
-				mucom.DumpFMVoice((int)(voicelist[i]));
+				mucom.DumpFMVoice(mucom.GetUseVoiceNum(i));
 			}
 		}
 	}

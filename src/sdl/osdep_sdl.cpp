@@ -214,13 +214,41 @@ void OsDependentSdl::Delay(int ms) {
 }
 
 // プラグイン拡張
-int OsDependentSdl::InitPlugin(Mucom88Plugin *plg, char *filename) {
+int OsDependentSdl::InitPlugin(Mucom88Plugin *plg, const char *filename, int bootopt) {
 	return 0;
 }
-int OsDependentSdl::ExecPluginVMCommand( int, int, int, void *, void *) {
+
+void OsDependentSdl::FreePlugin(Mucom88Plugin *plg) {
+}
+
+
+int OsDependentSdl::ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *)
+{
+	//		OS依存のプラグインVMコマンド処理
+	//
 	return 0;
 }
-int OsDependentSdl::ExecPluginEditorCommand( int, int, int, void *, void *) {
+
+int OsDependentSdl::ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *)
+{
+	//		OS依存のプラグインエディタコマンド処理
+	//
+	return 0;
+}
+
+
+int OsDependentSdl::GetDirectory(char *buf, int size)
+{
+	return 0;
+}
+
+int OsDependentSdl::ChangeDirectory(const char *dir)
+{
+	return 0;
+}
+
+int OsDependentSdl::KillFile(const char *filename)
+{
 	return 0;
 }
 

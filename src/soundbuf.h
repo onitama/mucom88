@@ -26,6 +26,8 @@ public:
 	int GetEndPtr(void) { return m_endptr; }
 	int GetReadPtr(void) { return m_readptr; }
 	int GetPoolSize(void) { return m_wtick - m_rtick; }
+	int GetReadSize(void) { return m_rtick; }
+	int GetWriteSize(void) { return m_wtick; }
 
 	int32 *PrepareBuffer(int size);
 	void UpdateBuffer(int size);

@@ -38,6 +38,9 @@ goto *_end_mod_mucom88
 	aplayer_time=90
 	aplayer_loop=150
 
+	asave_sw=0
+	asave_time=180
+
 	wx=800:wy=600
 	app_winx=-1
 	app_winy=-1
@@ -73,7 +76,8 @@ goto *_end_mod_mucom88
 		cfg_getvari aplayer_auto,"aplayer_auto"
 		cfg_getvari aplayer_time,"aplayer_time"
 		cfg_getvari aplayer_loop,"aplayer_loop"
-
+		cfg_getvari asave_sw,"asave_sw"
+		cfg_getvari asave_time,"asave_time"
 	}
 
 	return
@@ -111,6 +115,9 @@ goto *_end_mod_mucom88
 	cfg_seti "aplayer_auto",aplayer_auto
 	cfg_seti "aplayer_time",aplayer_time
 	cfg_seti "aplayer_loop",aplayer_loop
+
+	cfg_seti "asave_sw",asave_sw
+	cfg_seti "asave_time",asave_time
 
 	cfg_save
 

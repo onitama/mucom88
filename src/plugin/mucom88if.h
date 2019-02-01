@@ -28,6 +28,7 @@ typedef int(*MUCOM88IF_STARTUP)(void *, int);
 #define	MUCOM88IF_NOTICE_BOOT 0x1000		// 最初の初期化時(起動時のみ)
 #define	MUCOM88IF_NOTICE_TERMINATE 0x1001	// 終了(解放)時
 #define MUCOM88IF_NOTICE_INTDONE 0x1002		// 演奏割り込み(演奏ルーチン実行)後
+#define MUCOM88IF_NOTICE_SESSION 0x1003		// エディタのセッション開始後
 #define	MUCOM88IF_NOTICE_RESET 1			// VMリセット時(コンパイル、演奏開始時)
 #define MUCOM88IF_NOTICE_DRVINT 2			// VMドライバ実行時(割り込みタイミング)
 #define MUCOM88IF_NOTICE_TOOLSTART 3		// プラグインツール起動リクエスト
@@ -37,6 +38,7 @@ typedef int(*MUCOM88IF_STARTUP)(void *, int);
 #define MUCOM88IF_NOTICE_MMLSEND 7			// コンパイルMML確定時
 #define MUCOM88IF_NOTICE_COMPEND 8			// コンパイル終了後
 #define MUCOM88IF_NOTICE_LOADMUB 9			// MUB読み込み後
+#define MUCOM88IF_NOTICE_TOOLHIDE 10		// プラグインツール非表示リクエスト
 
 //	if_editorで使用するコマンド
 #define	MUCOM88IF_EDITOR_CMD_NONE 0
@@ -49,14 +51,17 @@ typedef int(*MUCOM88IF_STARTUP)(void *, int);
 
 //	if_mucomvmで使用するコマンド
 #define	MUCOM88IF_MUCOMVM_CMD_NONE 0
-#define	MUCOM88IF_MUCOMVM_CMD_FMWRITE 1		// FMレジスタに書き込み
-#define	MUCOM88IF_MUCOMVM_CMD_FMREAD 2		// FMレジスタのテーブルを取得
-#define	MUCOM88IF_MUCOMVM_CMD_GETCHDATA 3	// chの演奏データを取得
-#define	MUCOM88IF_MUCOMVM_CMD_CHDATA 4		// chの演奏データを取得
-#define	MUCOM88IF_MUCOMVM_CMD_TAGDATA 5		// TAGデータを取得
-#define	MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE 6	// 音色データを更新
-#define	MUCOM88IF_MUCOMVM_CMD_VOICESAVE 7	// 音色データファイルを保存
-
+#define	MUCOM88IF_MUCOMVM_CMD_FMWRITE 1			// FMレジスタに書き込み
+#define	MUCOM88IF_MUCOMVM_CMD_FMREAD 2			// FMレジスタのテーブルを取得
+#define	MUCOM88IF_MUCOMVM_CMD_GETCHDATA 3		// chの演奏データを取得
+#define	MUCOM88IF_MUCOMVM_CMD_CHDATA 4			// chの演奏データを取得
+#define	MUCOM88IF_MUCOMVM_CMD_TAGDATA 5			// TAGデータを取得
+#define	MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE 6		// 音色データを更新
+#define	MUCOM88IF_MUCOMVM_CMD_VOICESAVE 7		// 音色データファイルを保存
+#define	MUCOM88IF_MUCOMVM_CMD_GETVOICENUM 8		// 音色番号を取得
+#define	MUCOM88IF_MUCOMVM_CMD_GETVOICEDATA 9	// 音色データを取得
+#define	MUCOM88IF_MUCOMVM_CMD_GETVOICENAME 10	// 音色ファイル名を取得
+#define	MUCOM88IF_MUCOMVM_CMD_GETVMMEMMAP 11	// VMのZ80メモリマップを取得
 
 class mucomvm;
 class CMucom;

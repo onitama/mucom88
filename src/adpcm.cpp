@@ -164,8 +164,8 @@ int Adpcm::encode(short *pSrc,unsigned char *pDis,DWORD iSampleSize){
 	};
 	int iCnt;
 	long i , dn , xn , stepSize;
-	unsigned char adpcm;
-	unsigned char adpcmPack;
+	unsigned char adpcm = 0;
+	unsigned char adpcmPack = 0;
 
 	// ‰Šú’lİ’è
 	xn			= 0;

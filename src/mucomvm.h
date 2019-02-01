@@ -62,7 +62,6 @@ public:
 	int SendMem(const unsigned char *src, int adr, int size);
 	int SaveMem(const char *fname,int adr, int size);
 	int SaveMemExpand(const char *fname, int adr, int size, char *header, int hedsize, char *footer, int footsize, char *pcm, int pcmsize);
-	int KillFile(const char *fname);
 	char *LoadAlloc(const char *fname, int *sizeout);
 	void LoadAllocFree(char *ptr);
 	int SaveToFile(const char *fname, const unsigned char *src, int size);
@@ -70,6 +69,11 @@ public:
 	void SetFastFW(int value);
 	void SkipPlay(int count);
 	void PlayLoop(void);
+
+	//		ファイルコントロール
+	int GetDirectory(char *buf, int size);
+	int ChangeDirectory(const char *dir);
+	int KillFile(const char *fname);
 
 	//		仮想マシンステータス
 	uint8_t *GetMemoryMap(void) { return mem; }
@@ -186,6 +190,7 @@ private:
 	bool playflag;
 	bool busyflag;
 	bool int3flag;
+	bool tmflag;
 	int predelay;
 	int int3mask;
 	int msgid;

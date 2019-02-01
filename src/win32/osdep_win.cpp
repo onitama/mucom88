@@ -292,12 +292,13 @@ bool OsDependentWin32::InitAudio(void *hwnd, int Rate, int BufferSize) {
 
 	SamplePerTick = ((double)Rate / 1000);
 	UpdateSamples = 0.0;
+	TotalTick = 0;
 
 	//		先行するサウンドバッファを作っておく
 	//
-	int size = Rate * 40 / 1000 * 2;
-	snddrv->GetSoundBuffer()->PrepareBuffer(size);
-	snddrv->GetSoundBuffer()->UpdateBuffer(size);
+	presize = Rate * 40 / 1000;
+	snddrv->GetSoundBuffer()->PrepareBuffer(presize*2);
+	snddrv->GetSoundBuffer()->UpdateBuffer(presize*2);
 	//pooltime = snddrv->GetSoundBuffer()->GetPoolSize();
 
 	//		タイマー初期化
@@ -328,28 +329,33 @@ bool OsDependentWin32::SendAudio(int ms)
 	return true;
 }
 
-
 void OsDependentWin32::StreamSend(int ms)
 {
-	int i;
 	if (!snddrv) return;
 
 	// 0以外はスレッドが重複しているので続行しない。
 	int ret = InterlockedExchange(&sending, 1);
-	if (ret != 0) return;
+	if (ret != 0) {
+		return;
+	}
 
 	int writelength;
-	writelength = 0;// snddrv->PrepareSend();
+	int needlength;
 
-	UpdateSamples = (ms * SamplePerTick * sizeof(short) * 2 );
-	i = (int)UpdateSamples;
-	if (i>writelength ) {
-		writelength = i;
-	}
+	UpdateSamples = (ms * SamplePerTick );
+	writelength = ((int)UpdateSamples);
+	needlength =  (( snddrv->GetSoundBuffer()->GetReadSize() >>1 )+ writelength + presize) - (snddrv->GetSoundBuffer()->GetWriteSize() >> 1);
+	if (writelength < needlength) writelength = needlength;
+
+	//UpdateSamples -= writelength;
+	TotalTick += writelength;
+
+	//UpdateSamples = (ms * SamplePerTick * sizeof(short) * 2 );
+	//writelength = (int)UpdateSamples;
 
 	if (writelength) {
 		int32 *smp;
-		int size = writelength >> 2;
+		int size = writelength;
 		smp = snddrv->GetSoundBuffer()->PrepareBuffer(size*2);
 
 		if (!MuteAudio) {
@@ -423,5 +429,33 @@ int OsDependentWin32::ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int,
 	//
 	return 0;
 }
+
+
+int OsDependentWin32::GetDirectory(char *buf, int size)
+{
+	//		OS依存のフォルダ名取得
+	//
+	if (GetCurrentDirectory(size, buf) == 0) return -1;
+	return 0;
+}
+
+
+int OsDependentWin32::ChangeDirectory(const char *dir)
+{
+	//		OS依存のフォルダ移動
+	//
+	if (SetCurrentDirectory(dir) == 0) return -1;
+	return 0;
+}
+
+
+int OsDependentWin32::KillFile(const char *filename)
+{
+	//		OS依存のファイル削除
+	//
+	if (remove(filename)) return -1;
+	return 0;
+}
+
 
 

@@ -65,6 +65,7 @@
 #define MUCOM_HEADER_VERSION1 1		// 1.0 Header
 #define MUCOM_HEADER_VERSION2 2		// 2.0 Header
 
+#define MUCOM_FLAG_SJISTAG 0		// TAG dataの文字コードはSJIS
 #define MUCOM_FLAG_UTF8TAG 1		// TAG dataの文字コードはUTF8
 
 //	MUBのバイナリデータ生成に関する情報
@@ -80,12 +81,15 @@
 #define MUCOM_TARGET_YM2151 3		// YM2151による演奏
 #define MUCOM_TARGET_MULTI 0x80		// 複数のチップによる演奏
 
-#define MUCOM_FMVOICE_MAX 16
+#define MUCOM_FMVOICE_MAX 32
 
 #define MUCOM_CMPOPT_USE_EXTROM 1
 #define MUCOM_CMPOPT_COMPILE 2
 #define MUCOM_CMPOPT_STEP 8
 #define MUCOM_CMPOPT_INFO 0x100
+
+#define MUCOM_COMPILE_IGNOREVOICE 1
+#define MUCOM_COMPILE_IGNOREPCM 2
 
 #define MUCOM_FMVOICE_ADR 0x6000
 #define MUCOM_FMVOICE_SIZE 0x2000
@@ -101,9 +105,10 @@
 
 #define MUCOM_NOTICE_SYSERROR 0x1000	// 不明なシステムエラー通知
 
-#define MUCOM_EDIT_STATUS_NONE 0	// 編集中MMLなし
-#define MUCOM_EDIT_STATUS_SAVED 1	// 編集中MML(保存済み)
-#define MUCOM_EDIT_STATUS_CHANGED 2	// 編集中MML(未保存)
+#define MUCOM_EDIT_STATUS_NONE 0		// 編集中MMLなし
+#define MUCOM_EDIT_STATUS_SAVED 1		// 編集中MML(保存済み)
+#define MUCOM_EDIT_STATUS_CHANGED 2		// 編集中MML(未保存)
+#define MUCOM_EDIT_STATUS_VOICEEDIT 4	// 音色編集中(未保存)
 
 #define MUCOM_EDIT_OPTION_SJIS 0	// 編集中MMLの文字コードはSJIS
 #define MUCOM_EDIT_OPTION_UTF8 1	// 編集中MMLの文字コードはUTF-8
@@ -192,6 +197,18 @@ typedef struct
 } PCHDATA;
 
 
+//	Temporary File Storage Class
+//
+class CMucomTempFileInfo {
+public:
+	CMucomTempFileInfo();
+	~CMucomTempFileInfo();
+
+	std::string filename;		// original file name
+	std::string tempfilename;	// temp file name
+	std::string pathname;		// path name
+};
+
 //
 //	CMucom.cpp functions
 //
@@ -202,20 +219,25 @@ public:
 	CMucom();
 	~CMucom();
 
+	//	MUCOM88 main service
 	void Init(void *window = NULL, int option = 0, int Rate = 0);
 	void Reset(int option=0);
 	int Play(int num=0);
 	int Stop(int option=0);
 	int Restart(void);
 	int Fade(void);
+	int Update(void);
 	int PlayEffect(int num=0);
 
+	//	Service for command line
 	void PlayLoop();
 	void RenderAudio(void *mix, int size);
 	void UpdateTime(int tick_ms);
 
+	//	PCM file service
 	int LoadPCM(const char *fname = MUCOM_DEFAULT_PCMFILE);
-	int LoadFMVoice(const char *fname = MUCOM_DEFAULT_VOICEFILE, bool sw=false);
+
+	//	MUCOM88 MUC/MUB service
 	int LoadMusic(const char *fname, int num = 0);
 	int CompileFile(const char *fname, const char *sname, int option=0);
 	int Compile(char *text, const char *filename, int option=0);
@@ -225,16 +247,19 @@ public:
 	int LoadTagFromMusic(int num);
 	void AddExtraInfo(char *mmlsource);
 
+	//	VM log service
 	const char *GetMessageBuffer(void);
 	int GetStatus(int option);
 	void SetVMOption(int option, int mode);
 	void SetAudioRate(int rate);
 
+	//	MML TAG service
 	const char *GetInfoBuffer(void);
 	const char *GetInfoBufferByName(const char *name);
 	void DeleteInfoBuffer(void);
 	void PrintInfoBuffer(void);
 
+	//	MUB Header utility
 	int MUBGetHeaderVersion(MUBHED *hed);
 	char *MUBGetData(MUBHED *hed, int &size);
 	char *MUBGetTagData(MUBHED *hed, int &size);
@@ -242,7 +267,8 @@ public:
 
 	//	Editor Support Service
 	void EditorReset(const char *mml=NULL, int option = 0);
-	void EditorSetFileName(const char *filename, const char *pathname="");
+	void EditorSetFileName(const char *filename, const char *pathname="", bool sessionstart=false);
+	int UpdateEditor(void);
 	int GetEditorNotice(void) { return edit_notice; }
 	int GetEditorStatus(void) { return edit_status; }
 	int GetEditorOption(void) { return edit_option; }
@@ -272,14 +298,21 @@ public:
 
 	//	FM Voice Service
 	void InitFMVoice(unsigned char *voice = NULL);
-	int SaveFMVoice(void);
+	int LoadFMVoiceFromTAG(void);
+	int LoadFMVoice(const char *fname = MUCOM_DEFAULT_VOICEFILE, bool sw = false);
+	int GetFMVoiceMode(void) { return fmvoice_mode; }
+	int SaveFMVoice(bool sw = true);
 	void StoreFMVoice(unsigned char *voice);
-	void CMucom::DumpFMVoice(int no);
+	void DumpFMVoice(int no);
 	MUCOM88_VOICEFORMAT *GetFMVoice(int no);
 	int UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice);
-	int StoreFMVoiceFromEmbed(unsigned char *voicelist=NULL);
-	char *GetVoiceFileName(void) { return voicefilename; }
+	int StoreFMVoiceFromEmbed(void);
+	const char *GetVoiceFileName(void) { return voicefilename.c_str(); }
+	const char *GetVoicePathName(void) { return voice_pathname.c_str(); }
 	MUCOM88_VOICEFORMAT *GetVoiceData(void) { return fmvoice_internal; }
+	MUCOM88_VOICEFORMAT *GetVoiceDataOrg(void) { return fmvoice_original; }
+	int GetUseVoiceNum(int num) { return (int)fmvoice_use[num]; }
+	int GetUseVoiceMax(void) { return fmvoice_usemax; }
 
 private:
 	//		Settings
@@ -293,9 +326,13 @@ private:
 	//		FM voice status
 	//
 	int fmvoice_mode;
-	char voicefilename[MUCOM_FILE_MAXSTR];		// loaded VOICE file
-	char tempfilename[MUCOM_FILE_MAXSTR+8];		// temp VOICE file
+	std::string voicefilename;	// loaded VOICE file
+	std::string tempfilename;	// temp VOICE file
+	std::string voice_pathname;	// voice pathname
 	MUCOM88_VOICEFORMAT fmvoice_internal[MUCOM_FMVOICE_MAXNO];
+	MUCOM88_VOICEFORMAT *fmvoice_original;
+	unsigned char fmvoice_use[MUCOM_FMVOICE_MAX];	// use FM voice no. table
+	int fmvoice_usemax;							// use FM voice table max
 
 	//		Compile Status
 	//
@@ -318,6 +355,9 @@ private:
 	int edit_status;			// current status
 	int	edit_notice;			// notice code (MUCOM_NOTICE_*)
 	int edit_option;			// option (MUCOM_EDIT_OPTION_*)
+	int edit_autosave;			// auto save mode (1=on)
+	int edit_autosave_time;		// auto save timer (sec)
+	int edit_autosave_next;		// auto save next time (Tick)
 	char *edit_buffer;			// current buffer
 	std::string edit_master;	// saved buffer
 	std::string edit_request;	// external request buffer

@@ -86,6 +86,7 @@
 	buf=welcome_mes
 	compflag=0
 	count_max=0
+	main_cnt = 0
 
 #ifdef EDITOR_DEBUG
 	notesel mml
@@ -139,17 +140,27 @@
 
 	mucomsetfastfw 2*(fastfw+1)		; 早送りを設定
 
+	mucomplg_notice MUCOM88IF_NOTICE_TOOLSTART
+
 	;---------------------------------------------------------------------------
 *to_main
 	main_key = 0
 	main_cmd = 0
 	main_ff = 0
 	main_enter=1
+	if asave_time<30 : asave_time=30
+
 	objsel obj_mml
 	mml_hw=objinfo(obj_mml,2)
 	mml_sptr=0:mml_eptr=0
+
 *main
 	;	main loop
+	if asave_sw {
+		main_cnt++
+		if (main_cnt/15)>=asave_time : goto *to_save
+	}
+	mucomedit_proc main_notice
 	await 1000/15
 	putmusicbar
 	if main_cmd = 0 : goto *main
@@ -160,12 +171,14 @@
 	stop
 
 *to_save
+	main_cnt = 0
 	gosub *file_saveov
 	goto *to_main
 
 *to_mmlcomp
 	getkey key_shift,16
 	gosub *mmlcomp
+	gosub *m_play
 	;
 	if key_shift : goto *to_smon
 	goto *to_main
@@ -188,6 +201,9 @@
 	goto *main
 
 *to_menu
+	;	メニューへ
+	mucomplg_notice MUCOM88IF_NOTICE_TOOLHIDE
+	;
 	menu_mode=0
 	main_enter=0
 
@@ -300,8 +316,13 @@
 	;
 	gosub *check_modify
 	if i=0 : goto *menuload
+	if i=4 : goto *menuload_v
 	dialog "編集内容が破棄されます。\n読み込みを行っていいですか?",2
-	if stat=6 : goto *menunew
+	if stat=6 : goto *menuload
+	goto *main2
+*menuload_v
+	dialog "編集された音色が破棄されます。\n読み込みを行っていいですか?",2
+	if stat=6 : goto *menuload
 	goto *main2
 *menuload
 	dialog "muc",16,"MUCOM88ファイル"
@@ -324,10 +345,13 @@
 	notesel mml
 	exist myfile
 	if strsize<=0 : dialog "No file ["+myfile+"]" : goto *to_editor
+
+	mucomedit_flush			; 一時ファイルを破棄
 	noteload myfile			; テキストファイル読み込み
 	objprm obj_mml,mml
 	mucomedit_reset mml,MUCOM_EDIT_OPTION_SJIS
-	mucomedit_setfile getpath(myfile,8), filedir+"\\"
+	mucomedit_setfile getpath(myfile,8), filedir+"\\",1
+
 	goto *to_editor
 *dlcan2
 	goto *main2
@@ -433,10 +457,17 @@
 		goto *main_menu
 	}
 	gosub *check_modify
-	if i {
+	if i=0 : goto *sellist_go
+	if i=1 {
 		dialog "編集内容が破棄されます。\n読み込みを行っていいですか?",2
 		if stat!=6 : goto *main2
+		goto *sellist_go
 	}
+	dialog "編集された音色が破棄されます。\n読み込みを行っていいですか?",2
+	if stat!=6 : goto *main2
+	goto *sellist_go
+
+*sellist_go
 	notesel mylist
 	noteget s1,sellist
 	fname=dir_cur+"\\"+s1
@@ -444,6 +475,12 @@
 
 *to_selplay
 	if sellist<0 : goto *to_main2
+
+	gosub *check_modify
+	if i=4 {
+		dialog "編集された音色が破棄されます。\n続行していいですか?",2
+		if stat!=6 : goto *main2
+	}
 
 	chdir filedir
 	notesel mylist
@@ -472,6 +509,12 @@
 
 *to_selmub
 	if sellist<0 : goto *to_main2
+
+	gosub *check_modify
+	if i=4 {
+		dialog "編集された音色が破棄されます。\n続行していいですか?",2
+		if stat!=6 : goto *main2
+	}
 
 	chdir filedir
 	notesel mylist
@@ -524,8 +567,10 @@
 	editfile="No Title"
 	gosub *update_title
 
+	mucomedit_flush			; 一時ファイルを破棄
+
 	mucomedit_reset mml,MUCOM_EDIT_OPTION_SJIS
-	mucomedit_setfile getpath(myfile,8), filedir+"\\"
+	mucomedit_setfile getpath(myfile,8), filedir+"\\",1
 	goto *to_editor
 
 *menu_tool
@@ -636,8 +681,6 @@
 
 	chdir filedir
 	gosub *mmlcomp
-	gosub *m_stop
-
 	s1=dir_exe+"\\mucom88.exe"
 	exist s1
 	if strsize>0 {
@@ -697,17 +740,24 @@
 	button "SCCI設定...",*to_sccicfg
 
 	objsize 200,24
-	pos myx+280,myy-200
+	pos myx+320,myy-200
 	chkbox "起動時にアップデート確認(*)",upd_check
 	chkbox "FM音色エディタと連携する(*)",plg_fmedit
 
+	mes "\nオートセーブ設定"
+	chkbox "一定時間ごとに保存する",asave_sw
+	objsize 60,24
+	mes "更新間隔(秒)"
+	input asave_time
+
 	mes "\nオートプレイヤー設定"
+	objsize 200,24
 	chkbox "条件を満たせばスキップする",aplayer_auto
 	objsize 60,24
-	pos myx+280,myy-100
+	pos myx+320,myy-16
 	mes "最大演奏時間(秒)"
 	input aplayer_time
-	pos myx+380,myy-100
+	pos myx+420,myy-16
 	mes "経過の割合(%)"
 	input aplayer_loop
 
@@ -887,8 +937,6 @@
 	mucomres result
 	compflag=1
 
-	gosub *m_play
-
 	return
 
 *getmucominfo
@@ -1040,18 +1088,12 @@
 
 *check_modify
 	;	元ファイルから変更があるかチェック
-	;	i = 0:同じ  1=変更
+	;	i = 0:同じ  1=変更 4=音色変更
 	;
 	mucomedit_getstat i,MUCOM_EDIT_GETSTAT_UPDATE
-	if i<1 : i=0 : return
-	i--
-	;i=0
-	;if myfile="" : return
-	;sdim tmp,$10000
-	;notesel tmp
-	;noteload myfile
-	;if tmp!=mml : i=1
-	;sdim tmp,64
+	if i<=1 : i=0 : return
+	if i=4 : return
+	i=1 : return
 	return
 
 *exec_tool
@@ -1382,14 +1424,17 @@
 #else
 	mucomedit_getstat i,MUCOM_EDIT_GETSTAT_UPDATE
 	if i<=1 {		; ファイル変更がなければそのまま終了
+		mucomedit_flush			; 一時ファイルを破棄
 		mucombye
 		end
 	}
 	dialog "編集内容が破棄されます。\n終了していいですか?",2
 	if stat=6 {
+		mucomedit_flush			; 一時ファイルを破棄
 		mucombye
 		end
 	}
 #endif
 	stop
+
 

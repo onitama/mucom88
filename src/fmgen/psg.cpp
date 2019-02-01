@@ -143,10 +143,10 @@ void PSG::SetReg(uint regnum, uint8 data)
 {
 	if (regnum < 0x10)
 	{
+        int tmp;
 		reg[regnum] = data;
 		switch (regnum)
 		{
-			int tmp;
 
 		case 0:		// ChA Fine Tune
 		case 1:		// ChA Coarse Tune

@@ -822,7 +822,7 @@ void Channel4::SetAlgorithm(uint algo)
 //  ‡¬
 ISample Channel4::Calc()
 {
-	int r;
+	int r = 0;
 	switch (algo_)
 	{
 	case 0:
@@ -882,7 +882,7 @@ ISample Channel4::CalcL()
 {
 	chip_->SetPMV(pms[chip_->GetPML()]);
 
-	int r;
+	int r = 0;
 	switch (algo_)
 	{
 	case 0:

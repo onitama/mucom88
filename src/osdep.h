@@ -58,6 +58,12 @@ public:
 	virtual int ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *) = 0;
 	virtual int ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *) = 0;
 
+	// ファイル操作関連
+	virtual int GetDirectory(char *buf, int size) = 0;
+	virtual int ChangeDirectory(const char *dir) = 0;
+	virtual int KillFile(const char *filename) = 0;
+
+
 protected:
 
 };

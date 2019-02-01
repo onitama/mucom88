@@ -18,6 +18,7 @@
 #define baseclock 7987200		// Base Clock
 
 #include "mucomvm_os.h"
+#include "voiceformat.h"
 
 /*------------------------------------------------------------*/
 /*
@@ -249,6 +250,9 @@ int mucomvm::DeviceCheck(void)
 int32_t mucomvm::loadpc(uint16_t adr)
 {
 	if (bankprg == VMPRGBANK_SHADOW) {
+		if ((adr < 0xde00)||(adr >=0xe300)) {
+			return (int32_t)mem[adr];
+		}
 		return (int32_t)memprg[adr];
 	}
 	return (int32_t)mem[adr];
@@ -490,6 +494,24 @@ int mucomvm::ExecUntilHalt(int times)
 		}
 #endif
 
+#if 1
+		if (pc == 0xde06) {				// CONVERT(音色定義コンバート)
+										//	出力データが大きい場合、DE06H～とかぶるので代替コードで実行する
+										// $6001～ 38byteの音色データを25byteに圧縮する->$6001から書き込む
+										//
+			MUCOM88_VOICEFORMAT *v = (MUCOM88_VOICEFORMAT *)(memprg + 0x6000);
+			unsigned char *src = mem + 0x6001;
+			v->ar_op1 = *src++;  v->dr_op1 = *src++; v->sr_op1 = *src++; v->rr_op1 = *src++; v->sl_op1 = *src++; v->tl_op1 = *src++; v->ks_op1 = *src++; v->ml_op1 = *src++; v->dt_op1 = *src++;
+			v->ar_op2 = *src++;  v->dr_op2 = *src++; v->sr_op2 = *src++; v->rr_op2 = *src++; v->sl_op2 = *src++; v->tl_op2 = *src++; v->ks_op2 = *src++; v->ml_op2 = *src++; v->dt_op2 = *src++;
+			v->ar_op3 = *src++;  v->dr_op3 = *src++; v->sr_op3 = *src++; v->rr_op3 = *src++; v->sl_op3 = *src++; v->tl_op3 = *src++; v->ks_op3 = *src++; v->ml_op3 = *src++; v->dt_op3 = *src++;
+			v->ar_op4 = *src++;  v->dr_op4 = *src++; v->sr_op4 = *src++; v->rr_op4 = *src++; v->sl_op4 = *src++; v->tl_op4 = *src++; v->ks_op4 = *src++; v->ml_op4 = *src++; v->dt_op4 = *src++;
+			v->fb = *src++; v->al = *src++;
+			memcpy(mem + 0x6000, memprg + 0x6000, 26);
+
+			SetHL(0x6001);
+			pc = 0xafb3;				// retの位置まで飛ばす($c9のコードなら何でもいい)
+		}
+#endif
 #if 0
 		if (pc == 0xde06) {				// CONVERT(音色定義コンバート)
 			//	出力データが大きい場合、DE06H～とかぶるので別バンクで実行する
@@ -780,7 +802,23 @@ int mucomvm::KillFile(const char *fname)
 {
 	//		ファイルの削除
 	//
-	return remove(fname);
+	return osd->KillFile(fname);
+}
+
+
+int mucomvm::GetDirectory(char *buf, int size)
+{
+	//		ファイルの削除
+	//
+	return osd->GetDirectory(buf,size);
+}
+
+
+int mucomvm::ChangeDirectory(const char *dir)
+{
+	//		ファイルの削除
+	//
+	return osd->ChangeDirectory(dir);
 }
 
 
@@ -842,8 +880,14 @@ void mucomvm::UpdateTime(int base)
 
 	bool stream_event = false;
 	bool int3_mode = int3flag;
+
 	time_master += base;
 	time_scount += base;
+
+	if (tmflag) {
+		return;
+	}
+	tmflag = true;
 
 	if (int3mask & 128) int3_mode = false;		// 割り込みマスク
 
@@ -880,10 +924,12 @@ void mucomvm::UpdateTime(int base)
 
 	if (stream_event) {
 		stream_event = false;
+		//pass_tick = ( opn->GetNextEvent() + 1023 ) >> TICK_SHIFT;
 		pass_tick = time_scount >> TICK_SHIFT;
 		time_scount = ( time_scount & ((int)TICK_FACTOR - 1) );
 		osd->SendAudio(pass_tick);
 	}
+	tmflag = false;
 
 }
 
@@ -900,6 +946,7 @@ void mucomvm::StartINT3(void)
 	SetIntCount(0);
 	predelay = 4;
 	int3flag = true;
+	tmflag = false;
 }
 
 
@@ -916,6 +963,7 @@ void mucomvm::RestartINT3(void)
 	checkThreadBusy();
 	osd->ResetTime();
 	int3flag = true;
+	tmflag = false;
 }
 
 
@@ -1204,6 +1252,7 @@ int mucomvm::AddPlugins(const char *filename, int bootopt)
 	//		bootopt = 起動オプション(未使用)
 	//		終了コード : 0=OK
 	//
+#ifndef USE_SDL
 	int res;
 	Mucom88Plugin *plg = new Mucom88Plugin;
 	plg->if_mucomvm = (MUCOM88IF_COMMAND)MUCOM88IF_VM_COMMAND;
@@ -1216,6 +1265,7 @@ int mucomvm::AddPlugins(const char *filename, int bootopt)
 	res = osd->InitPlugin(plg, filename, bootopt);
 	if (res) return res;
 	plg->if_notice(plg, MUCOM88IF_NOTICE_BOOT,NULL,NULL);				// 初期化を通知する
+#endif
 	return 0;
 }
 
@@ -1224,6 +1274,8 @@ void mucomvm::FreePlugins(void)
 {
 	//		プラグインをすべて破棄する
 	//
+// C++11ではOS X 10.6用ビルドが通らないので…。
+#ifndef USE_SDL
 	Mucom88Plugin *plg;
 	for (auto it = begin(plugins); it != end(plugins); ++it) {
 		plg = *it;
@@ -1231,16 +1283,19 @@ void mucomvm::FreePlugins(void)
 		osd->FreePlugin(plg);
 	}
 	plugins.clear();			// すべて削除
+#endif
 }
 
 
 void mucomvm::NoticePlugins(int cmd, void *p1, void *p2)
 {
+#ifndef USE_SDL
 	Mucom88Plugin *plg;
 	for (auto it = begin(plugins); it != end(plugins); ++it) {
 		plg = *it;
 		plg->if_notice(plg, cmd, p1, p2);
 	}
+#endif
 }
 
 

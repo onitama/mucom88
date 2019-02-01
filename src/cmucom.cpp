@@ -139,8 +139,14 @@ void CMucom::Init(void *window, int option, int rate)
 	MusicBufferInit();
 	vm->SetMucomInstance(this);			// Mucomのインスタンスを通知する(プラグイン用)
 
+	//		オートセーブを初期化(デフォルトは無効)
+	edit_autosave = 0;
+	edit_autosave_time = 0;
+	edit_autosave_next = 0;
+
 	//		エディタが保持する情報のリセット
 	EditorReset();
+	InitFMVoice();
 }
 
 
@@ -314,12 +320,8 @@ int CMucom::Play(int num)
 		}
 	}
 
-	//	voiceファイルをロードしておく(音色エディット用)
-	char voicefile[MUCOM_FILE_MAXSTR];
-	strncpy(voicefile, GetInfoBufferByName("voice"), MUCOM_FILE_MAXSTR);
-	if (voicefile[0]) {
-		LoadFMVoice(voicefile);
-	}
+	LoadFMVoiceFromTAG();
+
 	vm->SendMem((const unsigned char *)data, 0xc200, datasize);
 
 	StoreFMVoiceFromEmbed();
@@ -430,6 +432,7 @@ int CMucom::Restart(void)
 	//
 	NoticePlugins(MUCOM88IF_NOTICE_PLAY);
 	vm->RestartINT3();
+	playflag = true;
 	return 0;
 }
 
@@ -562,25 +565,46 @@ void CMucom::InitFMVoice(unsigned char *voice)
 	//	FM音色データを初期化する
 	//
 	fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
+	fmvoice_original = fmvoice_internal;
 	StoreFMVoice(voice);
-	*voicefilename = 0;
-	*tempfilename = 0;
+	voicefilename.clear();
+	tempfilename.clear();
 }
 
 
-int CMucom::SaveFMVoice(void)
+int CMucom::SaveFMVoice(bool sw)
 {
 	//	FM音色データを保存する
+	//	(sw true=保存、false=保存せずに一時ファイルを消去)
 	//
+	int res;
+	char curdir[MUCOM_FILE_MAXSTR];
+
 	if (fmvoice_mode == MUCOM_FMVOICE_MODE_EXTERNAL) return 0;	// 一時ファイルがなければ保存の必要なし
-	fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
-	if (*voicefilename != 0) {
+	if (voicefilename.empty()) return -1;
+
+	*curdir = 0;
+	vm->GetDirectory(curdir, MUCOM_FILE_MAXSTR);			// 現在のディレクトリ
+	vm->ChangeDirectory(voice_pathname.c_str());
+
+	//	保存
+	res = 0;
+	if (sw) {
 		vm->SendMem((unsigned char *)fmvoice_internal, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
-		int res = vm->SaveMem( voicefilename, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+		res = vm->SaveMem(voicefilename.c_str(), MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+		//Alertf("[%s]%s", voice_pathname.c_str(), voicefilename.c_str());
+	}
+
+	//	FM音色データの一時ファイルを破棄する
+	if (tempfilename.empty() == false) {
 		if (res == 0) {
-			vm->KillFile(tempfilename);
+			vm->KillFile(tempfilename.c_str());
+			tempfilename.clear();
 		}
 	}
+	vm->ChangeDirectory(curdir);
+	fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
+	fmvoice_original = fmvoice_internal;
 	return 0;
 }
 
@@ -598,34 +622,63 @@ void CMucom::StoreFMVoice(unsigned char *voice)
 int CMucom::LoadFMVoice(const char *fname, bool sw)
 {
 	//		FM音色データ読み込み
-	//		fname = FM音色データファイル (デフォルトはMUCOM_DEFAULT_VOICEFILE)
+	//		fname = FM音色データファイル (空文字はMUCOM_DEFAULT_VOICEFILE)
 	//		sw = trueの場合は強制的に読み込む、falseの場合は仮ファイルを検索する
 	//		(戻り値が0以外の場合はエラー)
 	//
 	int voicesize;
 	char *voicedata;
+	char *voicedata_org;
+	char dirname[MUCOM_FILE_MAXSTR];
 
+	voicefilename.clear();
+	voice_pathname.clear();
+	tempfilename.clear();
+
+	fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
 	if (*fname != 0) {
-		strncpy(voicefilename, fname, MUCOM_FILE_MAXSTR - 1);
-		strcpy(tempfilename, voicefilename);
-		strcat(tempfilename, "_tmp");
+		voicefilename = std::string(fname);
 	}
+	else {
+		voicefilename = std::string(MUCOM_DEFAULT_VOICEFILE);
+	}
+
+	tempfilename = voicefilename + "_tmp";
+	*dirname = 0;
+	vm->GetDirectory(dirname, MUCOM_FILE_MAXSTR);
+	voice_pathname = std::string(dirname);
 
 	voicedata = NULL;
-	if ( sw == false ) {
-		fmvoice_mode = MUCOM_FMVOICE_MODE_INTERNAL;
-		voicedata = vm->LoadAlloc(tempfilename, &voicesize);
+	voicedata_org = NULL;
+
+	if (fmvoice_original != fmvoice_internal) {
+		vm->LoadAllocFree((char *)fmvoice_original);		// オリジナルデータがあれば破棄する
+		fmvoice_original = fmvoice_internal;
 	}
+
+	voicedata_org = vm->LoadAlloc(voicefilename.c_str(), &voicesize);
+	if (voicedata_org == NULL) {
+		PRINTF("#Voice file not found [%s].\r\n", fname);
+		return -1;
+	}
+	fmvoice_original = (MUCOM88_VOICEFORMAT *)voicedata_org;
+
+	if (sw == false) {
+		voicedata = vm->LoadAlloc(tempfilename.c_str(), &voicesize);
+	}
+
 	if (voicedata == NULL) {
-		voicedata = vm->LoadAlloc(voicefilename, &voicesize);
-		if (voicedata == NULL) {
-			PRINTF("#Voice file not found [%s].\r\n", fname);
-			return -1;
-		}
-		fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
+		// オリジナルファイルのみの場合
+		StoreFMVoice((unsigned char *)voicedata_org);
+		//Alertf("[%s]%s", voice_pathname.c_str(), voicefilename.c_str());
 	}
-	StoreFMVoice((unsigned char *)voicedata);
-	vm->LoadAllocFree(voicedata);
+	else {
+		// 一時ファイルがあった場合
+		StoreFMVoice((unsigned char *)voicedata);
+		vm->LoadAllocFree(voicedata);
+		fmvoice_mode = MUCOM_FMVOICE_MODE_INTERNAL;
+		//Alertf("[%s]%s", voice_pathname.c_str(), tempfilename.c_str());
+	}
 	return 0;
 }
 
@@ -645,14 +698,26 @@ int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
 	//	音色データを更新する
 	//	(no=音色番号0～255)
 	//
-	if ((no < 0) || (no>= MUCOM_FMVOICE_MAXNO)) return -1;
+	char curdir[MUCOM_FILE_MAXSTR];
+
+	if ((no < 0) || (no >= MUCOM_FMVOICE_MAXNO)) return -1;
+
 	fmvoice_internal[no] = *voice;
 
-	fmvoice_mode = MUCOM_FMVOICE_MODE_INTERNAL;
-	if (*tempfilename != 0) {
+	*curdir = 0;
+	if (voicefilename.empty()) return -1;
+
+
+	vm->GetDirectory(curdir, MUCOM_FILE_MAXSTR);			// 現在のディレクトリ
+	vm->ChangeDirectory(voice_pathname.c_str());
+
+	if (tempfilename.empty() == false) {
+		fmvoice_mode = MUCOM_FMVOICE_MODE_INTERNAL;
 		vm->SendMem((unsigned char *)fmvoice_internal, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
-		return vm->SaveMem((char *)tempfilename, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
+		return vm->SaveMem((char *)tempfilename.c_str(), MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
 	}
+	vm->ChangeDirectory(curdir);
+
 	return 0;
 }
 
@@ -691,7 +756,7 @@ void CMucom::DumpFMVoice(int no)
 }
 
 
-int CMucom::StoreFMVoiceFromEmbed(unsigned char *voicelist)
+int CMucom::StoreFMVoiceFromEmbed(void)
 {
 	//	演奏データ(MUB)が持つ音色データを内部保存データに反映させる
 	//	(VMの$c200から演奏データを読み込んでおくこと)
@@ -700,20 +765,40 @@ int CMucom::StoreFMVoiceFromEmbed(unsigned char *voicelist)
 	//
 	int i,j,no;
 	char *v;
+	int vmmem;
 
 	int vdata = vm->Peekw(0xc201) + 0xc200;
 	int result = vm->Peek(vdata++);
+	fmvoice_usemax = result;
 
 	for (i = 0; i < result; i++) {
 		no = (int)hedmusic->ext_fmvoice[i] - 1;
-		if (voicelist != NULL) voicelist[i] = (unsigned char)no;
+		fmvoice_use[i] = (unsigned char)no;
 		v = (char *)GetFMVoice(no);
+		vmmem = no * sizeof(MUCOM88_VOICEFORMAT) + MUCOM_FMVOICE_ADR;
+		vm->SendMem( (unsigned char *)v, vmmem, sizeof(MUCOM88_VOICEFORMAT));
 		v++;
 		for (j = 0; j < 25; j++) {			// 25byteの音色データをコピー
 			*v++ = vm->Peek(vdata++);
 		}
 	}
 	return result;
+}
+
+
+int CMucom::LoadFMVoiceFromTAG(void)
+{
+	//	(#voice)タグ情報から音色データをロードする(音色エディタ用の準備)
+	//
+
+	//	voiceファイルをロードしておく
+	char voicefile[MUCOM_FILE_MAXSTR];
+	strncpy(voicefile, GetInfoBufferByName("voice"), MUCOM_FILE_MAXSTR);
+	if (voicefile[0]) {
+		LoadFMVoice(voicefile);
+	}
+
+	return 0;
 }
 
 
@@ -744,14 +829,22 @@ void CMucom::EditorReset(const char *mml, int option)
 }
 
 
-void CMucom::EditorSetFileName(const char *filename, const char *pathname)
+void CMucom::EditorSetFileName(const char *filename, const char *pathname,bool sessionstart)
 {
 	//		エディタ編集ファイル名・パスを設定する
 	//		(EditorReset後に設定すること)
 	//		(filename+pathnameが保存されるファイルになります)
+	//		(sessionstart=true時はファイルの内容をチェックします)
 	//
 	if (filename) edit_filename = std::string(filename);
 	if (pathname) edit_pathname = std::string(pathname);
+	if (sessionstart) {
+		int res;
+		res = ProcessFile(filename);
+		if (res == 0) {
+			NoticePlugins(MUCOM88IF_NOTICE_SESSION);
+		}
+	}
 }
 
 
@@ -764,10 +857,14 @@ int CMucom::CheckEditorUpdate(void)
 	if (edit_status == MUCOM_EDIT_STATUS_NONE) return MUCOM_EDIT_STATUS_NONE;
 	if (strcmp(p, edit_buffer) == 0) {
 		edit_status = MUCOM_EDIT_STATUS_SAVED;
+		if (fmvoice_mode == MUCOM_FMVOICE_MODE_INTERNAL) {
+			edit_status = MUCOM_EDIT_STATUS_VOICEEDIT;
+		}
 	}
 	else {
 		edit_status = MUCOM_EDIT_STATUS_CHANGED;
 	}
+
 	return edit_status;
 }
 
@@ -776,6 +873,8 @@ int CMucom::SaveEditorMML(const char *filename)
 {
 	//		エディタ編集内容を保存する
 	//		(filenameが""の場合はデフォルト名、指定された場合はその名前で保存する)
+	//
+	SaveFMVoice();
 	//
 	if (*filename != 0) {
 		return vm->SaveToFile(filename, (unsigned char *)edit_buffer, strlen(edit_buffer));
@@ -840,6 +939,14 @@ const char *CMucom::GetRequestMML(void)
 		return edit_request.c_str();
 	}
 	return NULL;
+}
+
+
+int CMucom::UpdateEditor(void)
+{
+	//		エディタ更新
+	//
+	return edit_notice;
 }
 
 
@@ -1119,6 +1226,7 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	//		filename     = 出力される音楽データファイル
 	//		option : 1   = #タグによるvoice設定を無視
 	//		         2   = PCM埋め込みをスキップ
+	//		         4   = 音色の一時バッファ作成を許可する
 	//		(戻り値が0以外の場合はエラー)
 	//
 	int i, res;
@@ -1133,7 +1241,7 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	AddExtraInfo(text);
 
 	//		voiceタグの解析
-	if ((option & 1) == 0) {
+	if ((option & MUCOM_COMPILE_IGNOREVOICE) == 0) {
 		char voicefile[MUCOM_FILE_MAXSTR];
 		strncpy(voicefile, GetInfoBufferByName("voice"), MUCOM_FILE_MAXSTR);
 		if (voicefile[0]) {
@@ -1323,7 +1431,12 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	hed.jumpline = jumpline;
 
 	//	2.0 Header option
+#ifdef MUCOM88UTF8
 	hed.ext_flags = MUCOM_FLAG_UTF8TAG;
+#else
+	hed.ext_flags = MUCOM_FLAG_SJISTAG;
+#endif	
+
 	hed.ext_system = MUCOM_SYSTEM_PC88;
 	hed.ext_target = MUCOM_TARGET_YM2608;
 	hed.ext_channel_num = maxch;
@@ -1334,7 +1447,7 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 		hed.ext_fmvoice[i] = (unsigned char)vm->Peek(0x8c50+i);
 	}
 
-	if ((option & 2) == 0) {
+	if ((option & MUCOM_COMPILE_IGNOREPCM) == 0) {
 		pcmname = GetInfoBufferByName("pcm");
 		if (pcmname[0] != 0) {
 			pcmdata = vm->LoadAlloc(pcmname, &pcmsize);
@@ -1578,6 +1691,36 @@ int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, v
 	case MUCOM88IF_MUCOMVM_CMD_VOICESAVE:		// パラメーターなし
 		{
 		return mucom->SaveFMVoice();
+		}
+	case MUCOM88IF_MUCOMVM_CMD_GETVOICENUM:		// (返値はテーブルの要素数) , prm3=番号出力先(int*)
+		{
+		int *pp = (int *)prm3;
+		int max = mucom->GetUseVoiceMax();
+		for (int i = 0; i < max; i++) {
+			// ベクターに追加する
+			pp[i] = mucom->GetUseVoiceNum(i);
+		}
+		return max;
+		}
+	case MUCOM88IF_MUCOMVM_CMD_GETVOICEDATA:	// prm3,prm4=MUCOM88_VOICEFORMATポインタ出力用のポインタ (prm3はオリジナル、prm4は編集中の音色)
+		{
+		MUCOM88_VOICEFORMAT **pp3 = (MUCOM88_VOICEFORMAT **)prm3;
+		MUCOM88_VOICEFORMAT **pp4 = (MUCOM88_VOICEFORMAT **)prm4;
+		*pp3 = mucom->GetVoiceDataOrg();
+		*pp4 = mucom->GetVoiceData();
+		return 0;
+		}
+	case MUCOM88IF_MUCOMVM_CMD_GETVOICENAME:	// 音色ファイル名を取得 prm3=char *ポインタ出力用のポインタ
+		{
+		char **pp = (char **)prm3;
+		*pp = (char *)mucom->GetVoiceFileName();
+		return 0;
+		}
+	case MUCOM88IF_MUCOMVM_CMD_GETVMMEMMAP:		// VMののZ80メモリマップを取得 prm3=char *ポインタ出力用のポインタ
+		{
+		char **pp = (char **)prm3;
+		*pp = (char *)vm->GetMemoryMap();
+		return 0;
 		}
 	}
 	return -1;
