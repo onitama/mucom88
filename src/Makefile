@@ -48,7 +48,7 @@ test: makedir $(TARGET_DEPTEST) $(TARGET_MODTEST)
 mini: makedir $(TARGET_MINIPLAY)
 
 
-DIRS = z80 fmgen plugin module tests
+DIRS = Z80 fmgen plugin module tests
 
 SRCS = membuf.cpp adpcm.cpp
 
