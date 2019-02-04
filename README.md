@@ -7,8 +7,8 @@ https://github.com/onitama/mucom88/wiki
 
 MUCOM88 Windowsの配布パッケージは、以下のサイトにて1次配布されています。
 
-	MUCOM88 Windows
-	[https://onitama.tv/mucom88/](https://onitama.tv/mucom88/)
+MUCOM88 Windows
+https://onitama.tv/mucom88/
 
 MUCOM88は、もともと1987年・古代祐三氏によって開発・発表されたNEC PC-8801プラットフォーム用のMML形式による音楽作成ツール、及び再生用のプログラム(ドライバー)環境です。
 
@@ -37,16 +37,14 @@ OPEN MUCOM88プロジェクトは、オリジナルのMUCOM88ソースコード�
 		cd src
 		make
 		make mini
+いくつかの派生ツールが公開されています
 
-	いくつかの派生ツールが公開されています
+ぼうきちさんによる、MacOSX向けの実装及びバイナリが公開されています。
+https://github.com/BouKiCHi/mucom88/tags
 
-	ぼうきちさんによる、MacOSX向けの実装及びバイナリが公開されています。
-	[https://github.com/BouKiCHi/mucom88/tags](https://github.com/BouKiCHi/mucom88/tags)
-
-	kumatan氏による、MDPlayer、及びmucomMD2vgmでMUCOM88のMML(.muc)を
-	サポートしています。
-	[https://github.com/kuma4649/MDPlayer](https://github.com/kuma4649/MDPlayer)
-	[https://github.com/kuma4649/mucomMD2vgm/releases](https://github.com/kuma4649/mucomMD2vgm/releases)
+kumatan氏による、MDPlayer、及びmucomMD2vgmでMUCOM88のMML(.muc)をサポートしています。
+https://github.com/kuma4649/MDPlayer
+https://github.com/kuma4649/mucomMD2vgm/releases
 
 
 # ライセンスおよび連絡先
@@ -84,8 +82,8 @@ https://www.ancient.co.jp/yuzo.html
 
 MUCOM88 Windowsは、おにたま(onion software)が中心となり作成されています。
 
-	ONION software Homepage
-	[https://www.onionsoft.net/](https://www.onionsoft.net/)
+ONION software Homepage
+https://www.onionsoft.net/
 
 ユーザーがMUCOM88を使って作成したオリジナルの楽曲、MMLファイルの権利はそれを作成したユーザーに属します。
 onion softwareは本プログラムによって生じた、いかなる損害についても保証いたしません。自己の責任の範囲で使用してください。また、付属のHSPスクリプトも自由に改変、公開していただいて構いません。
