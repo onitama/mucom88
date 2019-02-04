@@ -9,7 +9,7 @@ title "MUCOM88 Auto Player"
 #packopt name "aplayer"
 #packopt xsize 800
 #packopt ysize 600
-#packopt icon "mucom88win.ico"
+#packopt icon "mucom88win_B.ico"
 
 #pack "mucom88.png"
 

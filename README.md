@@ -5,6 +5,11 @@ MUCOM88 Windowsは、OPEN MUCOM88プロジェクトの一部として公開さ�
 詳細については、Open MUCOM88 WiKiをご覧ください。
 https://github.com/onitama/mucom88/wiki
 
+MUCOM88 Windowsの配布パッケージは、以下のサイトにて1次配布されています。
+
+	MUCOM88 Windows
+	https://onitama.tv/mucom88/
+
 MUCOM88は、もともと1987年・古代祐三氏によって開発・発表されたNEC PC-8801プラットフォーム用のMML形式による音楽作成ツール、及び再生用のプログラム(ドライバー)環境です。
 
 OPEN MUCOM88プロジェクトは、オリジナルのMUCOM88ソースコードを公開することで、幅広く活用・継承することを目的としています。無償で公開されたソースコードや資産などは、オープンなライセンスにより自由に活用することが可能です。
@@ -13,16 +18,38 @@ OPEN MUCOM88プロジェクトは、オリジナルのMUCOM88ソースコード�
 オリジナルのPC-8801版MUCOM88も、[株式会社エインシャント様](https://www.ancient.co.jp/~mucom88/)のサイトでディスクイメージが公開されています。以下を参照してください。
 
 
+# ビルド方法
+
+	srcフォルダにVisual Studio 2017用のプロジェクトファイルが含まれています
+	xcodeフォルダにMacOSX版のXCode用プロジェクトファイルが含まれています
+	HSPプラグイン及び、HSPソースコードはhsppluginフォルダに含まれています
+	(Windows版のGUIアプリケーションはHSP3.5からコンパイルする必要があります)
+	Makefileは、Linux及びWin32版に対応しています。
+
+	Makefileからコンパイルする場合は、sdl1.2-devパッケージを導入した上で、
+	リポジトリのsrcフォルダでmakeを実行してください。
+	Raspberry Piで導入する例は、以下の通りです。
+
+	例:
+		sudo apt-get install libsdl1.2-dev
+			(※OSによりパッケージマネージャは異なります)
+		git clone https://github.com/onitama/mucom88
+		cd src
+		make
+		make mini
+
+	いくつかの派生ツールが公開されています
+
+	ぼうきちさんによる、MacOSX向けの実装及びバイナリが公開されています。
+	https://github.com/BouKiCHi/mucom88/tags
+
+	kumatan氏による、MDPlayer、及びmucomMD2vgmでMUCOM88のMML(.muc)を
+	サポートしています。
+	https://github.com/kuma4649/MDPlayer
+	https://github.com/kuma4649/mucomMD2vgm/releases
+
+
 # ライセンスおよび連絡先
-
-MUCOM88 Windowsは、以下のサイトにて1次配布されています。
-
-	MUCOM88 Windows
-	https://onitama.tv/mucom88/
-
-	OPEN MUCOM88 Windows github repository
-	https://github.com/onitama/mucom88
-
 
 MUCOM88 Windowsは、以下のライブラリ及びソースコード・データにより作成されています。
 

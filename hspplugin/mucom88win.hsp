@@ -24,7 +24,9 @@
 
 ;#define EDITOR_DEBUG
 
-#define APP_VER "0.45"
+#const VER_NUMBER 46
+#define APP_VER "0.46"
+
 #define EDITOR_TITLE "MUCOM88"
 
 #define TEMPMML "mucommml"
@@ -40,6 +42,8 @@
 #uselib "ole32.dll"
 #func CoTaskMemFree "CoTaskMemFree" int
 
+#define DIID_DWebBrowserEvents2     "{34A715A0-6587-11D0-924A-0020AFC7AC4D}"
+#define DISPID_NAVIGATECOMPLETE2    252
 
 
 	;	起動
@@ -87,6 +91,7 @@
 	compflag=0
 	count_max=0
 	main_cnt = 0
+	toolsw = 0
 
 #ifdef EDITOR_DEBUG
 	notesel mml
@@ -94,7 +99,17 @@
 #endif
 	mucomedit_reset mml,MUCOM_EDIT_OPTION_SJIS
 
-	if plg_fmedit : mucomplg_init "muplug_fmeditor.dll"
+	if upd_check {
+		s1=dir_exe+"\\updcheck.exe"
+		exist s1:if strsize>0 : exec s1+" "+VER_NUMBER
+	}
+
+	if plg_fmedit {
+		s1="muplug_fmeditor.dll"
+		mucomplg_init s1
+		if stat : dialog "Missing plugin ["+s1+"]"
+		toolsw = 1
+	}
 
 	dirlist s1,filedir,5
 	if stat>0 {
@@ -140,7 +155,8 @@
 
 	mucomsetfastfw 2*(fastfw+1)		; 早送りを設定
 
-	mucomplg_notice MUCOM88IF_NOTICE_TOOLSTART
+	toolshow 1
+	gsel 0,1
 
 	;---------------------------------------------------------------------------
 *to_main
@@ -158,7 +174,7 @@
 	;	main loop
 	if asave_sw {
 		main_cnt++
-		if (main_cnt/15)>=asave_time : goto *to_save
+		if (main_cnt/15)>=asave_time : goto *to_saveauto
 	}
 	mucomedit_proc main_notice
 	await 1000/15
@@ -169,6 +185,11 @@
 
 	title "System Halted."
 	stop
+
+*to_saveauto
+	main_cnt = 0
+	if myfile!="" : mucomedit_save
+	goto *main
 
 *to_save
 	main_cnt = 0
@@ -202,7 +223,7 @@
 
 *to_menu
 	;	メニューへ
-	mucomplg_notice MUCOM88IF_NOTICE_TOOLHIDE
+	toolshow 0
 	;
 	menu_mode=0
 	main_enter=0
@@ -816,7 +837,20 @@
 	menu_str=""
 	pos sx,0
 	axobj ie, "Shell.Explorer.2",wx-sx,wy-80
+	comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",*webevent  ; DIID_DWebBrowserEvents2     
 	ie->"Navigate" weburl
+	return
+*webevent
+	;	COMイベント処理
+	dispid = comevdisp(ie_event)
+	if dispid = DISPID_NAVIGATECOMPLETE2 : gosub *OnNavigateComplete2
+	return
+
+*OnNavigateComplete2
+	name = ie("LocationURL")
+	pDoc = ie("Document")
+	name = pDoc("Title")
+	delcom pDoc
 	return
 
 *menu_share
@@ -1285,7 +1319,8 @@
 
 *to_vedit
 	;	音色エディタ
-	exec dir_exe+"\\FmToneEditor.exe"
+	;exec dir_exe+"\\FmToneEditor.exe"
+	toolshow -1
 	goto *main
 
 	;---------------------------------------------------------------------------
@@ -1373,6 +1408,21 @@
 	goto *main2
 
 	;---------------------------------------------------------------------------
+
+#deffunc toolshow int _p1
+
+	toolsw_tmp=_p1
+	if _p1<0 {
+		toolsw_tmp=toolsw^1
+	}
+	if toolsw_tmp=0 {
+		mucomplg_notice MUCOM88IF_NOTICE_TOOLHIDE
+		toolsw = 0
+		return
+	}
+	mucomplg_notice MUCOM88IF_NOTICE_TOOLSTART
+	toolsw = 1
+	return
 
 #deffunc clearmsg
 	color 0,60,120

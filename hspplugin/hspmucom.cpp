@@ -513,18 +513,21 @@ EXPORT BOOL WINAPI mucomedit_reset(HSPEXINFO *hei, int p1, int p2, int p3)
 
 EXPORT BOOL WINAPI mucomedit_setfile(HSPEXINFO *hei, int p1, int p2, int p3)
 {
-	//	DLL mucomedit_setfile "filename", "pathname" (type$202)
+	//	DLL mucomedit_setfile "filename", "pathname",session (type$202)
 	//	MMLエディタファイル名の設定
+	//	(session=1の場合は音色ファイルを含めて初期化する)
 	//
 	char *p;
 	char filename[_MAX_PATH];
 	char pathname[_MAX_PATH];
+	int ep1;
 	p = hei->HspFunc_prm_gets();			// パラメータ1:文字列
 	strncpy(filename, p, _MAX_PATH);
 	p = hei->HspFunc_prm_getds("");			// パラメータ2:文字列
 	strncpy(pathname, p, _MAX_PATH);
+	ep1 = hei->HspFunc_prm_getdi(0);		// パラメータ3:数値
 	if (mucom) {
-		mucom->EditorSetFileName(filename, pathname);
+		mucom->EditorSetFileName(filename, pathname,ep1!=0);
 	}
 	return 0;
 }
@@ -633,6 +636,40 @@ EXPORT BOOL WINAPI mucomedit_getreq(HSPEXINFO *hei, int p1, int p2, int p3)
 	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, p);	// 変数に値を代入
 	return 0;
 }
+
+
+EXPORT BOOL WINAPI mucomedit_proc(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_proc var (type$202)
+	//	MMLエディタの定期処理(オートセーブなど)
+	//	varの変数にnotice情報を代入する
+	//
+	PVal *pv;
+	APTR ap;
+	int res;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	res = 0;
+	if (mucom) {
+		res = mucom->UpdateEditor();
+	}
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// 変数に値を代入
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomedit_flush(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomedit_flush (type$202)
+	//	MMLエディタの一時ファイルをすべて破棄する
+	//
+	int res;
+	if (mucom) {
+		res = mucom->SaveFMVoice(false);
+		if (res) return -1;
+	}
+	return 0;
+}
+
 
 //--------------------------------------------------------------------------------------
 

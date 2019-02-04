@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
-MUCOM88 Windows document (Japanese Shift_JIS text)
+MUCOM88 Windows document (Japanese UTF8 text)
 
 OpenMucom88 Ver.1.7a Copyright 1987-2019(C) Yuzo Koshiro
 Z80 emulation by Yasuo Kuwahara 2002-2018(C)
@@ -7,291 +7,316 @@ FM Sound Generator by cisc 1998, 2003(C)
 Windows version by ONION software/onitama 2018-2019(C)
 ------------------------------------------------------------------------------
 
-�E�͂��߂�
+・はじめに
 
-	MUCOM88 Windows�́ANEC�̃p�\�R��PC-8801�V���[�Y�œ��삵�Ă����A
-	�Ñ�S�O���ɂ��FM�����̃c�[��/�h���C�o�[�ł���AMUCOM88��
-	Windows��œ��삳���邽�߂̃V�X�e���ł��B
-	�R�}���h���C���ŁAGUI�ł̗������p�ӂ���Ă��܂��B
+	MUCOM88 Windowsは、NECのパソコンPC-8801シリーズで動作していた、
+	古代祐三氏によるFM音源のツール/ドライバーである、MUCOM88を
+	Windows上で動作させるためのシステムです。
+	コマンドライン版、GUI版の両方が用意されています。
 
-		mucom88win.exe         Windows GUI�ŃG�f�B�^
-		mucom88.exe            Windows �R�}���h���C����
+		mucom88win.exe         Windows GUI版エディタ
+		mucom88.exe            Windows コマンドライン版
 
-	MUCOM88 Windows���g�p���邱�Ƃɂ��A���y�L�q�ɓ�����������
-	MML(Music Macro Language)�Ƃ��ċL�q���ꂽ���y���A
-	PC-8801�̉����Ɠ��l�ɉ��t�����邱�Ƃ��ł��܂��B
-	�܂��ASCCI(Sound Chip Common Interface)���o�R���邱�Ƃ�
-	���ۂ�FM�����`�b�v(YM2608)�ɂ�鉉�t���T�|�[�g���Ă��܂��B
+	MUCOM88 Windowsを使用することにより、音楽記述に特化した言語
+	MML(Music Macro Language)として記述された音楽を、
+	PC-8801の音源と同様に演奏させることができます。
+	また、SCCI(Sound Chip Common Interface)を経由することで
+	実際のFM音源チップ(YM2608)による演奏をサポートしています。
 
-	MUCOM88 Windows�̍ŐV���y�сA�t�@�C���̃_�E�����[�h��
-	�ȉ��̃T�C�g�ɂčs���Ă��܂��B
+	MUCOM88 Windowsについての詳細な説明、及びMMLリファレンスは
+	Open MUCOM88 WiKiにて提供されています。
+	WEBブラウザで、以下のURLをご覧ください。
+	https://github.com/onitama/mucom88/wiki
+
+
+	MUCOM88 Windowsの最新情報及び、ファイルのダウンロードは
+	以下のサイトにて行っています。
 
 	MUCOM88 Windows
 	https://onitama.tv/mucom88/
 
-	�I���W�i����PC-8801��MUCOM88���A������ЃG�C���V�����g�l�̃T�C�g��
-	�f�B�X�N�C���[�W�����J����Ă��܂��B
+	オリジナルのPC-8801版MUCOM88も、株式会社エインシャント様のサイトで
+	ディスクイメージが公開されています。
 
 	OPEN MUCOM88 for PC-8801
 	https://www.ancient.co.jp/~mucom88/
 
-	�c�[���ɂ��Ă̏ڍׂ́Agithub���WiKi�ł��Љ�Ă��܂��̂�
-	�Q�l�ɂ��Ă��������B���̃y�[�W�͐����X�V����܂��B
-	https://github.com/onitama/mucom88/wiki
+
+・動作環境
+
+	MUCOM88 Windowsは、サウンド再生が可能なWindows 7以降のシステム上で
+	動作します。
+	Windowsのサウンド再生処理には、DirectX8以降のDirectSoundを
+	使用しています。Windows 7以降の環境では、追加のコンポーネントを
+	用意することなく動作させることができます。
+
+	FM音源、PSGサウンドのエミュレーションは32bit/55KHzで合成し、
+	出力されています。古いマシンでは、負荷が大きい場合があります。
+
+	MUCOM88 Windowsは、オリジナルのMUCOM88で使用されていたコード(Z80)を
+	仮想的にエミュレーションし、FM音源ジェネレーター(fmgen)を介して
+	演奏します。オリジナルと同様の動作で、MMLの解釈、演奏をさせることが
+	可能になっています。
+	動作に際して、PC-8801のBIOSやROM、ディスクイメージは必要ありません。
+
+	アプリケーションの更新履歴については、同梱されている「history.txt」を
+	参照してください。
 
 
-�E�����
+・ファイル形式の概要
 
-	MUCOM88 Windows�́A�T�E���h�Đ����\��Windows 7�ȍ~�̃V�X�e�����
-	���삵�܂��B
-	Windows�̃T�E���h�Đ������ɂ́ADirectX8�ȍ~��DirectSound��
-	�g�p���Ă��܂��BWindows 7�ȍ~�̊��ł́A�ǉ��̃R���|�[�l���g��
-	�p�ӂ��邱�ƂȂ����삳���邱�Ƃ��ł��܂��B
+	MUCOM88 Windowsで扱うことのできるフォーマットは、以下の通りです。
 
-	FM�����APSG�T�E���h�̃G�~�����[�V������32bit/55KHz�ō������A
-	�o�͂���Ă��܂��B�Â��}�V���ł́A���ׂ��傫���ꍇ������܂��B
+	・.MUC形式      PC-8801上で動作するMUCOM88(MUSIC LALF)の書式で
+	                記述されたMML(行番号を除く)SJIS形式のテキストファイル
+	                として保存したもの。
+	                FM音源(YM2608)6声、ADPCM1声とリズム音源6声、PSG3声の
+			コントロールが可能です。
+	                MMLの詳細はMUCOM88のマニュアルを参照下さい。
 
-	MUCOM88 Windows�́A�I���W�i����MUCOM88�Ŏg�p����Ă����R�[�h(Z80)��
-	���z�I�ɃG�~�����[�V�������AFM�����W�F�l���[�^�[(fmgen)�����
-	���t���܂��B�I���W�i���Ɠ��l�̓���ŁAMML�̉��߁A���t�������邱�Ƃ�
-	�\�ɂȂ��Ă��܂��B
-	����ɍۂ��āAPC-8801��BIOS��ROM�A�f�B�X�N�C���[�W�͕K�v����܂���B
+	・.MUB形式      MUC形式をバイナリに変換したファイル形式。
+	                演奏データ及びFM音色、ADPCMデータを内包します。
 
-	�A�v���P�[�V�����̍X�V�����ɂ��ẮA��������Ă���uhistory.txt�v��
-	�Q�Ƃ��Ă��������B
+	・.dat形式      FM音源のプリセット音色を保存しているファイルです。
+	                voice.datファイルを標準的なプリセット音色として
+	                使用します。これは、PC-8801版のMUCOM88(MUSIC LALF)
+	                で使用されていたファイルと互換性があります。
 
-
-�E�t�@�C���`���̊T�v
-
-	MUCOM88 Windows�ň������Ƃ̂ł���t�H�[�}�b�g�́A�ȉ��̒ʂ�ł��B
-
-	�E.MUC�`��      PC-8801��œ��삷��MUCOM88(MUSIC LALF)�̏�����
-	                �L�q���ꂽMML(�s�ԍ�������)SJIS�`���̃e�L�X�g�t�@�C��
-	                �Ƃ��ĕۑ��������́B
-	                FM����(YM2608)6���AADPCM1���ƃ��Y������6���APSG3����
-			�R���g���[�����\�ł��B
-	                MML�̏ڍׂ�MUCOM88�̃}�j���A�����Q�Ɖ������B
-
-	�E.MUB�`��      MUC�`�����o�C�i���ɕϊ������t�@�C���`���B
-	                ���t�f�[�^�y��FM���F�AADPCM�f�[�^�����܂��B
-
-	�E.dat�`��      FM�����̃v���Z�b�g���F��ۑ����Ă���t�@�C���ł��B
-	                voice.dat�t�@�C����W���I�ȃv���Z�b�g���F�Ƃ���
-	                �g�p���܂��B����́APC-8801�ł�MUCOM88(MUSIC LALF)
-	                �Ŏg�p����Ă����t�@�C���ƌ݊���������܂��B
-
-	�E.bin�`��      ADPCM�����g�`�f�[�^��ۑ����Ă���t�@�C���ł��B
-			mucompcm.bin�t�@�C����W���Ŏg�p���܂��B
-			PC-8801�ł�MUCOM88(MUSIC LALF)�Ŏg�p����Ă���
-			�f�[�^��ϊ����Ďg�p���邱�Ƃ��\�ł��B
+	・.bin形式      ADPCM音源波形データを保存しているファイルです。
+			mucompcm.binファイルを標準で使用します。
+			PC-8801版のMUCOM88(MUSIC LALF)で使用されていた
+			データを変換して使用することが可能です。
 
 
-�E�g�����̊T�v
+・使い方の概要
 
-	Windows GUI�x�[�X��MML�̕ҏW�Ɖ��t���\�ł��B
-	�umucom88win.exe�v���N������ƁA�G�f�B�^�̉�ʂƂȂ�MML�̕ҏW��
-	�ł���悤�ɂȂ�܂��B��{�I�ȑ���́A�ȉ��̃L�[���{�^���ōs���܂��B
+	Windows GUIベースでMMLの編集と演奏が可能です。
+	「mucom88win.exe」を起動すると、エディタの画面となりMMLの編集が
+	できるようになります。基本的な操作は、以下のキーかボタンで行います。
 
-		���j���[�X�N���[���Ăяo�� ([F1]�L�[)
-		�ҏW����MML��ۑ� ([ctrl]+[S]�L�[)
-		�ҏW����MML�����t ([F5]�܂���[F12]�L�[)
-		���t�̒�~ ([ESC]�L�[)
-		���t�̑�����([ctrl]+[F1]�L�[)
-		���F�G�f�B�^�̋N��(V.EDIT�{�^��)
+		メニュースクリーン呼び出し ([F1]キー)
+		編集中のMMLを保存 ([ctrl]+[S]キー)
+		編集中のMMLを演奏 ([F5]または[F12]キー)
+		演奏の停止・再開 ([ESC]キー)
+		演奏の早送り([ctrl]+[F1]キー)
+		音色エディタの起動(V.EDITボタン)
 
-	MML�̕ҏW��ʂł́A
+	MMLの編集画面では、
 
 	A t190@30v15 cdefgab>c
 
-	�Ȃǁu�`�����l��(A�`K)�v�u�X�y�[�X�v�uMML�L�q�v�Ƃ����g�ݍ��킹��
-	�e�s�ɏ��������̂��A���̂܂܉��t����܂��B
+	など「チャンネル(A～K)」「スペース」「MML記述」という組み合わせで
+	各行に書いたものが、そのまま演奏されます。
 
-	��{�I�ɂ́A���R��MML���L�q��[F5]�ŉ��t(MML�R���p�C��)�����Ȃ���
-	�Ȃ��쐬����X�^�C���ɂȂ�܂��B��ʉ��ɂ��鐔�s�̃E�C���h�E�ɁA
-	MML�R���p�C���̌��ʂ⃁�b�Z�[�W���\������܂��B
-	MML�̋L�q�ɃG���[���������ꍇ���A�����ɕ\������܂��B
+	基本的には、自由にMMLを記述し[F5]で演奏(MMLコンパイル)させながら
+	曲を作成するスタイルになります。画面下にある数行のウインドウに、
+	MMLコンパイルの結果やメッセージが表示されます。
+	MMLの記述にエラーがあった場合も、そこに表示されます。
 
-	MML�́A�e�L�X�g�t�@�C���Ƃ��ēǂݍ��݁E�ۑ����ł���̂�
-	�C�y�ȋC�����œǂݏ������\�ł��B
+	MMLは、テキストファイルとして読み込み・保存ができるので
+	気軽な気持ちで読み書きが可能です。
 
-	MML�L�q�ɂ��Ă̏ڍׂ́Agithub���WiKi�ɂďЉ�Ă��܂��̂�
-	�Q�l�ɂ��Ă��������B���̃y�[�W�͐����X�V����܂��B
+	MML記述についての詳細は、github上のWiKiにて紹介していますので
+	参考にしてください。このページは随時更新されます。
 	https://github.com/onitama/mucom88/wiki/MML%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9
 
-	�܂��A�T���v��MML(sampl1�`sampl3)���A���ۂ̍쐬�ɖ𗧂͂��ł��B
+	また、サンプルMML(sampl1～sampl3)も、実際の作成に役立つはずです。
 
-	MML�ҏW�ȊO�̑���́A[F1]�L�[�ŌĂяo����郁�j���[�X�N���[������
-	�s���܂��B
-
-
-�E�I�[�g�v���C���[
-
-	�I�[�g�v���C���[�ɂ��A�����̊y�Ȃ������I�ɉ��t�����邱�Ƃ��\�ł��B
-	���j���[�X�N���[����[Home]->[�v���C���[...]�{�^���������ƁA
-	���̎��_�őI������Ă����t�@�C�����X�g�̋Ȃ����Ԃɉ��t���܂��B
-	�I�[�g�v���C���[�̐ݒ�́AOption���j���[���ŕύX���邱�Ƃ��\�ł��B
-	�܂��A�ȉ��̃L�[�ɂ�鑀����󂯕t���܂��B
-
-		[ESC]     �A�v���P�[�V�����I��
-		[Enter]   �Ȃ̍X�V
-
-	��SCCI���[�h���쎞�́AMUCOM88 Windows�Ƃ̓����N�����ł��܂���B
-	  MUCOM88 Windows���I����������ŁA�I�[�g�v���C���[�݂̂�
-	�@���s���Ă�������(aplayer.exe)
+	MML編集以外の操作は、[F1]キーで呼び出されるメニュースクリーンから
+	行います。
 
 
-�E���j���[�X�N���[��
+・オートプレイヤー
 
-	[F1]�L�[�Ő؂�ւ�郁�j���[�X�N���[���ł́A��ʍ��ɕ��񂾃{�^���ɂ��
-	�@�\��I�Ԃ��Ƃ��ł��܂��B
-	���ꂼ��̃��j���[�ڍׂ́A�ȉ��̒ʂ�ł��B
+	オートプレイヤーにより、複数の楽曲を自動的に演奏させることが可能です。
+	メニュースクリーンの[Home]->[プレイヤー...]ボタンを押すと、
+	その時点で選択されていたファイルリストの曲を順番に演奏します。
+	オートプレイヤーの設定は、Optionメニュー内で変更することが可能です。
+	また、以下のキーによる操作を受け付けます。
 
-	��<<
+		[ESC]     アプリケーション終了
+		[Enter]   曲の更新
 
-	���j���[�X�N���[�����I�����āAMML�ҏW��ʂɖ߂�܂��B
-	[F1]�L�[�ł��߂�܂��B
-
-	��Home
-
-	���j���[�X�N���[���ōŏ��ɕ\�������z�[����ʂɂȂ�܂��B
-	�t�@�C���u���E�U�ɂ��AMUC�t�@�C����I�����邱�Ƃ��ł��܂��B
-	�J�[�\���L�[�Ńt�@�C����I���A[Enter]�L�[�ŕҏW��ʂɓǂݍ��݂܂��B
-	�u�t�H���_���Q�Ɓv�{�^���ɂ��ʂȃt�H���_���Q�Ƃ��邱�Ƃ��ł��܂��B
-	�܂��A�t�@�C���u���E�U�ォ�璼��MUC�t�@�C�����Đ�������A�o�C�i��
-	�f�[�^(MUB�t�@�C��)���쐬���邱�Ƃ��ł��܂��B
-	�u�v���C���[�v�{�^���ɂ��I�[�g�v���C���[���N�����܂��B
-
-	��Load
-
-	�t�@�C���_�C�A���O����MUC�t�@�C����I�����āA�ҏW���܂��B
-
-	��Save
-
-	�ҏW����MML��MUC�t�@�C���ɏ㏑���ۑ����܂��B
-
-	��Save as...
-
-	�ҏW����MML�ɐV�������O��t����MUC�t�@�C���ɕۑ����܂��B
-
-	��New
-
-	�ҏW���̓��e���������āA�V�K��MML�t�@�C���ҏW���J�n���܂��B
-
-	��About
-
-	MUCOM88 Windows�̃o�[�W��������\�����܂��B
-
-	��Web
-
-	MUCOM88 Windows��web�y�[�W���J���܂��B
-
-	��Share
-
-	�ҏW����MML��SNS���ŋ��L���܂��B
-	(���̋@�\�͌��݊J�����̂��ߎg�p�ł��܂���B)
-
-	��Tool
-
-	MML��f�[�^�Ɋւ���c�[�������s���܂��B
-
-	�ҏW����MML�𐮌`���܂�
-
-		PC-8801�̃t�@�C����ϊ�����ۂɎg�p���܂�
-
-	PCM�f�[�^�t�@�C�����쐬���܂�
-
-		PC-8801�̃t�@�C����ϊ�������Awav�`����
-		�g�`���g����PCM�f�[�^�t�@�C�����쐬���܂��B
-		�ڂ����́A�uADPCM�f�[�^�t�@�C���ɂ��āv�̍��ڂ�
-		�Q�Ƃ��Ă��������B
-
-	�ҏW����MML��N88�G�N�X�|�[�g
-
-		�ҏW����MML�ɍs�ԍ���t�����āA�Ă�PC-8801��
-		�����čs�����Ƃ̂ł���t�@�C���𐶐����܂��B
+	※SCCIモード動作時は、MUCOM88 Windowsとの同時起動ができません。
+	  MUCOM88 Windowsを終了させた上で、オートプレイヤーのみを
+	　実行してください(aplayer.exe)
 
 
-	��Option
+・メニュースクリーン
 
-	MUCOM88 Windows�̐ݒ��ύX���܂��B
+	[F1]キーで切り替わるメニュースクリーンでは、画面左に並んだボタンにより
+	機能を選ぶことができます。
+	それぞれのメニュー詳細は、以下の通りです。
 
-	���[�U�[��          : �^�O�ݒ莞�Ɏg�p��������̃��[�U�[��
-	�W�����F�t�@�C��    : �^�O�ݒ莞�Ɏg�p��������̉��F�t�@�C��
-	�W��ADPCM�t�@�C��   : �^�O�ݒ莞�Ɏg�p���������ADPCM�t�@�C��
+	■<<
 
-	�E�C���h�E�T�C�Y    : �A�v���P�[�V�����̃E�C���h�E�T�C�Y��ݒ肵�܂�
-	�t�H���g�ݒ�        : �t�H���g��ύX���܂�
-	�����F�̕ύX        : �G�f�B�^�����F���_�C�A���O�Őݒ肵�܂�
-	�w�i�F�̕ύX        : �G�f�B�^�w�i�F���_�C�A���O�Őݒ肵�܂�
+	メニュースクリーンを終了して、MML編集画面に戻ります。
+	[F1]キーでも戻ります。
 
-	������Đ����x      : ������(ctrl+F1)���̑��x��ύX���܂�
+	■Home
 
-	SCCI���g�p          : SCCI�ɂ����`�b�v���t��L���ɂ��܂�
-	                      (���̐ݒ�ύX�̓c�[���ċN����ɗL���ɂȂ�܂�)
-	SCCI�ݒ�            : SCCI�ݒ�c�[��(scciconfig.exe)���N�����܂�
+	メニュースクリーンで最初に表示されるホーム画面になります。
+	ファイルブラウザにより、MUCファイルを選択することができます。
+	カーソルキーでファイルを選択、[Enter]キーで編集画面に読み込みます。
+	「フォルダを参照」ボタンにより別なフォルダを参照することができます。
+	また、ファイルブラウザ上から直接MUCファイルを再生したり、バイナリ
+	データ(MUBファイル)を作成することができます。
+	「プレイヤー」ボタンによりオートプレイヤーが起動します。
+
+	■Load
+
+	ファイルダイアログからMUCファイルを選択して、編集します。
+
+	■Save
+
+	編集中のMMLをMUCファイルに上書き保存します。
+
+	■Save as...
+
+	編集中のMMLに新しい名前を付けてMUCファイルに保存します。
+
+	■New
+
+	編集中の内容を消去して、新規のMMLファイル編集を開始します。
+
+	■About
+
+	MUCOM88 Windowsのバージョン情報を表示します。
+
+	■Web
+
+	Open MUCOM88 WiKiのwebページを開きます。
+
+	■Share
+
+	編集中のMMLをSNS等で共有します。
+	(この機能は現在開発中のため使用できません。)
+
+	■Tool
+
+	MMLやデータに関するツールを実行します。
+
+	編集中のMMLを整形します
+
+		PC-8801のファイルを変換する際に使用します
+
+	PCMデータファイルを作成します
+
+		PC-8801のファイルを変換したり、wav形式の
+		波形を使ってPCMデータファイルを作成します。
+		詳しくは、「ADPCMデータファイルについて」の項目を
+		参照してください。
+
+	編集中のMMLをN88エクスポート
+
+		編集中のMMLに行番号を付加して、再びPC-8801に
+		持って行くことのできるファイルを生成します。
+
+	WAVファイルとして保存
+
+		編集中のMML演奏をWAV形式の音声ファイルとして保存します。
+		録音する時間(秒)であらかじめ長さを指定して、「ファイルに出力」
+		ボタンを押して保存するファイルを指定します。
 
 
-�E�ꎞ�t�@�C���ɂ���
+	■Option
 
-	mucom88win.exe�ł́AMML���t(�R���p�C��)���Ɉꎞ�t�@�C����
-	MUC�t�@�C��������t�H���_�Ɠ����ꏊ�ɍ쐬���܂��B
+	MUCOM88 Windowsの設定を変更します。
 
-		mucommml      �ҏW����MML���o�͂����ꎞ�t�@�C��
-		mucombin      �ҏW����MML���o�C�i���o�͂����ꎞ�t�@�C��
+	ユーザー名          : タグ設定時に使用される既定のユーザー名
+	標準音色ファイル    : タグ設定時に使用される既定の音色ファイル
+	標準ADPCMファイル   : タグ設定時に使用される既定のADPCMファイル
 
-	�����̈ꎞ�t�@�C���́A�ʏ펞�͕K�v����܂���̂�
-	�폜���Ă���肠��܂���B�����A�G�f�B�^���G���[�Ȃǂŋ����I��
-	����āA�t�@�C���̕ҏW���ł��Ȃ������ۂɂ́A�Ō�ɉ��t����
-	�f�[�^��mucommml���畜�����邱�Ƃ��ł��܂��B
+	ウインドウサイズ    : アプリケーションのウインドウサイズを設定します
+	フォント設定        : フォントを変更します
+	文字色の変更        : エディタ文字色をダイアログで設定します
+	背景色の変更        : エディタ背景色をダイアログで設定します
 
-	�܂��A�G�f�B�^�̐ݒ�́A�ȉ��̃t�H���_�ɕۑ�����Ă��܂��B
+	早送り再生速度      : 早送り(ctrl+F1)時の速度を変更します
 
-	/User/���[�U�[��/AppData/Roaming/MUCOM88/mucom88win.ini
+	SCCIを使用          : SCCIによる実チップ演奏を有効にします
+	                      (この設定変更はツール再起動後に有効になります)
+	SCCI設定            : SCCI設定ツール(scciconfig.exe)を起動します
 
-	�A���C���X�g�[������A�ݒ������������ۂ́A�Y���t�H���_��
-	�폜���Ă��������B
+	オートプレイヤー設定 : オートプレイヤー実行時の設定を行います
+	オートセーブ設定     : オートセーブの設定を行います
+	                       指定した更新間隔(秒)で、MMLを自動的に保存します
+
+	起動時にアップデート確認 : ONの場合、MUCOM88起動時にアップデートを確認します
+	FM音色エディタと連携する : ONの場合、FM音色エディタと連携して動作します
 
 
-�E���F�f�[�^�t�@�C���ɂ���
+・一時ファイルについて
 
-	MUCOM88 Windows�ɂ́A���F�f�[�^�t�@�C���Ƃ��āA�uvoice.dat�v��
-	�t�����Ă��܂��B�uvoice.dat�v�ł́APC-8801�ł�MUCOM88�Ɠ��l��
-	FM���F���w�肷�邱�Ƃ��ł��܂��B
+	mucom88win.exeでは、MML演奏(コンパイル)時に一時ファイルを
+	MUCファイルがあるフォルダと同じ場所に作成します。
 
-	PC-8801�Ŏg�p���Ă���FM���F�t�@�C����Windows��Ɏ����Ă��邱�Ƃ�
-	�uvoice.dat�v�ȊO�̉��F���g�p���邱�Ƃ��\�ł��B
+		mucommml      編集中のMMLを出力した一時ファイル
+		mucombin      編集中のMMLをバイナリ出力した一時ファイル
 
-	�W���I�Ɏg�p�����FM���F�t�@�C���́Amucom88win�̃��j���[(F1)����
-	�I�v�V����(Option)->�u�W�����F�t�@�C���v�Ŏw�肳��Ă��鍀�ڂ�
-	�C�����邱�ƂŕύX���\�ł��B
+	これらの一時ファイルは、通常時は必要ありませんので
+	削除しても問題ありません。もし、エディタがエラーなどで強制終了
+	されて、ファイルの編集ができなかった際には、最後に演奏した
+	データをmucommmlから復元することができます。
 
-	�܂��AMML�̒��ɁA�^�O�Ƃ��āu#voice�v�Ŏn�܂�s��ǉ����邱�ƂŁA
-	�����I��FM���F�t�@�C�����w�肷�邱�Ƃ��ł��܂��B
+	また、エディタの設定は、以下のフォルダに保存されています。
+
+	/User/ユーザー名/AppData/Roaming/MUCOM88/mucom88win.ini
+
+	アンインストール時や、設定を初期化する際は、該当フォルダを
+	削除してください。
+
+
+・音色データファイルについて
+
+	MUCOM88 Windowsには、音色データファイルとして、「voice.dat」が
+	付属しています。「voice.dat」では、PC-8801版のMUCOM88と同様の
+	FM音色を指定することができます。
+
+	PC-8801で使用していたFM音色ファイルをWindows上に持ってくることで
+	「voice.dat」以外の音色を使用することが可能です。
+
+	標準的に使用されるFM音色ファイルは、mucom88winのメニュー(F1)から
+	オプション(Option)->「標準音色ファイル」で指定されている項目を
+	修正することで変更が可能です。
+
+	また、MMLの中に、タグとして「#voice」で始まる行を追加することで、
+	明示的にFM音色ファイルを指定することができます。
 
 		#voice voice.dat
 
-	��̗�ł́AMML���uvoice.dat�v��FM���F�f�[�^�t�@�C�����g�p���邱�Ƃ�
-	�����Ă��܂��B����ɂ��A���t���Ɏ����I�ɊY������FM���F�f�[�^��
-	�ǂݍ��܂�܂��B
+	上の例では、MMLが「voice.dat」のFM音色データファイルを使用することを
+	示しています。これにより、演奏時に自動的に該当するFM音色データが
+	読み込まれます。
 
-	���[�U�[���Ǝ��ɍ쐬����FM���F�f�[�^�t�@�C���́AMML�f�[�^�t�@�C����
-	�����t�H���_�ɔz�u����悤�ɂ��Ă��������B
+	ユーザーが独自に作成したFM音色データファイルは、MMLデータファイルと
+	同じフォルダに配置するようにしてください。
 
 
-�E���F�G�f�B�^�ɂ���
+・音色エディタについて
 
-	���F�f�[�^�t�@�C����FM�����̃p�����[�^�[���m�F���Ȃ��特�F��
-	�ҏW���邱�Ƃ��ł���A���F�G�f�B�^���t������Ă��܂��B
-	MML�ҏW��ʂ́uV.EDIT�v�{�^�����������ƂŁA���F�G�f�B�^���N�����܂��B
-	���F�G�f�B�^�̃E�C���h�E�ɁAvoice.dat�Ȃǂ̉��F�f�[�^�t�@�C����
-	�h���b�O&�h���b�v���邱�ƂŁA�t�@�C���ɕۑ����ꂽ���F���m�F����
-	���Ƃ��ł��܂��B
-	�܂��A�ҏW�������F�́A�N���b�v�{�[�h���o�R���āAMUCOM88�̃G�f�B�^��
-	�����Ă��邱�Ƃ��ł��܂��B
+	音色データファイルやFM音源のパラメーターを確認しながら音色を
+	編集することができる、音色エディタが付属されています。
 
-	���F�G�f�B�^��ctrl+C�ɂ��N���b�v�{�[�h�ɃR�s�[������A
-	MUCOM88 Windows��MML�G�f�B�^��ʂŁActrl+V�������ăy�[�X�g�����
-	�ȉ��̂悤�ȉ��F��`�e�L�X�g���\��t�����܂��B
+	メニューのOption項目で、「FM音色エディタと連携する」がONになっている
+	場合は、編集中のMMLで指定された音色をリアルタイムで同期させながら
+	音色の編集を行うことが可能です。
+
+	FM音色エディタは、演奏開始時にMMLの「#voice」タグで指定された
+	音色ファイルを同期させます。演奏中に使用されている音色を選択して、
+	パラメーターをリアルタイムに変化させることが可能です。
+	修正されたパラメーターは、一時ファイル「音色ファイル名_tmp」として
+	保存され、MMLの保存と同期して音色ファイルも更新されます。
+
+	FM音色エディタと連携中は、MML編集画面の「V.EDIT」ボタンを押すことで、
+	音色エディタのウインドウ表示をON/OFFすることができます。
+
+	また、編集した音色は、クリップボードを経由して、MUCOM88のエディタに
+	持ってくることができます。
+
+	音色エディタでctrl+Cによりクリップボードにコピーした後、
+	MUCOM88 WindowsのMMLエディタ画面で、ctrl+Vを押してペーストすると
+	以下のような音色定義テキストが貼り付けられます。
 
 	  @0:{
 	   7,  0
@@ -300,99 +325,99 @@ Windows version by ONION software/onitama 2018-2019(C)
 	  31, 10,  4,  6,  2, 18,  1,  0,  3
 	  31, 10,  3,  6,  2,  0,  1,  0,  3,""}
 
-	���F�G�f�B�^�̏ڂ����g�p���@�́A�h�L�������g�uFmToneEditoe.txt�v��
-	���ǂ݂��������B
+	音色エディタの詳しい使用方法は、ドキュメント「FmToneEditoe.txt」を
+	お読みください。
 
 
-�EADPCM�f�[�^�t�@�C���ɂ���
+・ADPCMデータファイルについて
 
-	MUCOM88 Windows�ł́AADPCM�����p�̃T���v�����O�f�[�^���A
-	�W���Łumucompcm.bin�v�Ƃ����t�@�C���ɏW�񂵂ĊǗ����Ă��܂��B
-	�umucompcm.bin�v�ɂ́A�W���I��ADPCM�̃T���v�����܂܂�Ă��܂��B
+	MUCOM88 Windowsでは、ADPCM音源用のサンプリングデータを、
+	標準で「mucompcm.bin」というファイルに集約して管理しています。
+	「mucompcm.bin」には、標準的なADPCMのサンプルが含まれています。
 
-	        No. �T�E���h
+	        No. サウンド
 	    -----------------------------------------------
-		@0  kick(�o�X�h����)
-		@1  snare(�X�l�A�h����)
-		@2  kick+snare(�o�X+�X�l�A�h����)
-		@3  crashcymbal(�N���b�V���V���o��)
-		@4  kick+cymbal(�o�X�h����+�V���o��)
-		@5  ac.tam(�A�R�[�X�e�B�b�N�E�^��)
-		@6  e.tam(�G���N�g���b�N�E�^��)
-		@7  snare2(�X�l�A�h����2)
-		@8  o.hit(�I�[�P�X�g���q�b�g)
-		@9  909kick(909�o�X�h����)
-		@10 909snare(909�X�l�A�h����)
-		@11 808openhihat(808�I�[�v���n�C�n�b�g)
-		@12 timbal(�e�B���o���X)
-		@13 hand clap(�n���h�N���b�v)
-		@14 timpani(�e�B���p�j�[)
+		@0  kick(バスドラム)
+		@1  snare(スネアドラム)
+		@2  kick+snare(バス+スネアドラム)
+		@3  crashcymbal(クラッシュシンバル)
+		@4  kick+cymbal(バスドラム+シンバル)
+		@5  ac.tam(アコースティック・タム)
+		@6  e.tam(エレクトリック・タム)
+		@7  snare2(スネアドラム2)
+		@8  o.hit(オーケストラヒット)
+		@9  909kick(909バスドラム)
+		@10 909snare(909スネアドラム)
+		@11 808openhihat(808オープンハイハット)
+		@12 timbal(ティンバレス)
+		@13 hand clap(ハンドクラップ)
+		@14 timpani(ティンパニー)
 
-	���[�U�[���Ǝ���ADPCM(�T���v�����O)�f�[�^��ϊ�����ADPCM�f�[�^�t�@�C��
-	�Ƃ��Ďg�p���邱�Ƃ��\�ł��B
-	���炩���߁A�e�L�X�g�t�@�C���ɂ܂Ƃ߂�ΏۂƂȂ�t�@�C�������L�q
-	�������̂�ۑ����Ă����܂��B���Ƃ��΁A�upcmlist.txt�v�Ƃ����t�@�C����
+	ユーザーが独自のADPCM(サンプリング)データを変換してADPCMデータファイル
+	として使用することが可能です。
+	あらかじめ、テキストファイルにまとめる対象となるファイル名を記述
+	したものを保存しておきます。たとえば、「pcmlist.txt」というファイルに
 
 		voice1.wav
 		voice2.wav
 		voice3.wav
 
-	�Ƃ���3�s���L�q���āAmucom88win�̃��j���[(F1)����c�[��(Tool)->
-	�uPCM�f�[�^�t�@�C�����쐬���܂��v���ɂ���u�t�@�C�����X�g���w��v
-	�{�^������A�upcmlist.txt�v���w�肷�邱�ƂŁA�����I��ADPCM�f�[�^
-	�t�@�C�����쐬����܂��B
-	�쐬�����t�@�C�����́A�f�t�H���g�Łumypcm.bin�v�ƂȂ��Ă��܂����A
-	�_�C�A���O�ŕύX���邱�Ƃ��\�ł��B
+	という3行を記述して、mucom88winのメニュー(F1)からツール(Tool)->
+	「PCMデータファイルを作成します」下にある「ファイルリストを指定」
+	ボタンから、「pcmlist.txt」を指定することで、自動的にADPCMデータ
+	ファイルが作成されます。
+	作成されるファイル名は、デフォルトで「mypcm.bin」となっていますが、
+	ダイアログで変更することが可能です。
 
-	�t�@�C�����X�g���L�q�����e�L�X�g�t�@�C���Ɠ����t�H���_�ɁA���ۂ�
-	ADPCM�t�@�C�����ۑ�����Ă���K�v������܂��B
-	�����Ŏg�p����WAV�t�@�C���́A16bit���m������PCM�f�[�^�ł���
-	�K�v������܂��B�T���v�����O���g���́AADPCM�ϊ�����16KHz�ɕ␳����܂��B
-	(WAV�`���ȊO�̊g���q�����t�@�C�������X�g�ɂ���ꍇ�́AADPCM�`����
-	�o�C�i���t�@�C���Ƃ��ĔF������܂��̂ŁAPC-8801�ō쐬���ꂽADPCM��
-	�o�C�i���t�@�C�����w�肷�邱�Ƃ��\�ł��B)
+	ファイルリストを記述したテキストファイルと同じフォルダに、実際の
+	ADPCMファイルが保存されている必要があります。
+	ここで使用するWAVファイルは、16bitモノラルのPCMデータである
+	必要があります。サンプリング周波数は、ADPCM変換時に16KHzに補正されます。
+	(WAV形式以外の拡張子を持つファイルがリストにある場合は、ADPCM形式の
+	バイナリファイルとして認識されますので、PC-8801で作成されたADPCMの
+	バイナリファイルを指定することも可能です。)
 
-	���[�U�[��MUCOM88(MUSIC LALF)�œƎ��Ɏg�p���Ă���ADPCM(�T���v�����O)
-	�f�[�^���ۂ��ƕϊ����Ďg�p���邱�Ƃ��\�ł��B
-	�܂��APC-8801��Ŏg�p���Ă����f�B�X�N��̃t�@�C�������ׂ�Windows���
-	�����Ă���K�v������܂��Bn88 DISK BASIC�`���̃f�B�X�N(D88�`��)����
-	�t�@�C�������o�����߂̃c�[���Ƃ��āA�`�j�`�s�s�`�����쐬����d88edj��
-	�g�p���Č��؂��Ă��܂��B
+	ユーザーがMUCOM88(MUSIC LALF)で独自に使用していたADPCM(サンプリング)
+	データを丸ごと変換して使用することも可能です。
+	まず、PC-8801上で使用していたディスク上のファイルをすべてWindows上に
+	持ってくる必要があります。n88 DISK BASIC形式のディスク(D88形式)から
+	ファイルを取り出すためのツールとして、ＡＫＡＴＴＡ氏が作成したd88edjを
+	使用して検証しています。
 
-	d88edj�́A�ȉ��̃T�C�g�ɂĔz�z����Ă��܂��B
+	d88edjは、以下のサイトにて配布されています。
 
 	d88edj   -D88 Editor for Java-
 	http://www.cug.net/~akatta/
 
-	MUCOM88�ł́AADPCM�̃f�[�^�Ƃ��āuDATA�v�Ƃ����o�C�i���t�@�C���A
-	�uVOICE._1�v�uVOICE._2�v�Ȃǂ̃f�[�^�t�@�C�����g�p���Ă��܂��B
-	������1�̃t�H���_�ɂ��ׂēW�J���āAmucom88win�̃��j���[(F1)����
-	�c�[��(Tool)->�uPCM�f�[�^�t�@�C�����쐬���܂��v���ɂ���uDATA�t�@�C���t�H���_���w��v�{�^����
-	�����ăt�H���_���w�肷�邱�ƂŁAPCM�f�[�^�t�@�C�����쐬����܂��B
+	MUCOM88では、ADPCMのデータとして「DATA」というバイナリファイル、
+	「VOICE._1」「VOICE._2」などのデータファイルを使用しています。
+	これらを1つのフォルダにすべて展開して、mucom88winのメニュー(F1)から
+	ツール(Tool)->「PCMデータファイルを作成します」下にある「DATAファイルフォルダを指定」ボタンを
+	押してフォルダを指定することで、PCMデータファイルが作成されます。
 
-	�W���I�Ɏg�p�����PCM�f�[�^�t�@�C���́Amucom88win�̃��j���[(F1)����
-	�I�v�V����(Option)->�u�W��ADPCM�t�@�C���v�Ŏw�肳��Ă��鍀�ڂ�
-	�C�����邱�ƂŕύX���\�ł��B
+	標準的に使用されるPCMデータファイルは、mucom88winのメニュー(F1)から
+	オプション(Option)->「標準ADPCMファイル」で指定されている項目を
+	修正することで変更が可能です。
 
-	�܂��AMML�̒��ɁA�^�O�Ƃ��āu#pcm�v�Ŏn�܂�s��ǉ����邱�ƂŁA
-	�����I��ADPCM�f�[�^�t�@�C�����w�肷�邱�Ƃ��ł��܂��B
+	また、MMLの中に、タグとして「#pcm」で始まる行を追加することで、
+	明示的にADPCMデータファイルを指定することができます。
 
 		#pcm mucompcm.bin
 
-	��̗�ł́AMML���umucompcm.bin�v��ADPCM�f�[�^�t�@�C�����g�p���邱�Ƃ�
-	�����Ă��܂��B����ɂ��A���t���Ɏ����I�ɊY������PCM�f�[�^�t�@�C����
-	�ǂݍ��܂�܂��B�܂��A�o�C�i���f�[�^�t�@�C��(.mub)���o�͂����ۂɁA
-	ADPCM�f�[�^��������`�ŏo�͂���܂��B
+	上の例では、MMLが「mucompcm.bin」のADPCMデータファイルを使用することを
+	示しています。これにより、演奏時に自動的に該当するPCMデータファイルが
+	読み込まれます。また、バイナリデータファイル(.mub)を出力した際に、
+	ADPCMデータも内包した形で出力されます。
 
-	���[�U�[���Ǝ��ɍ쐬����ADPCM�f�[�^�t�@�C���́AMML�f�[�^�t�@�C����
-	�����t�H���_�ɔz�u����悤�ɂ��Ă��������B
+	ユーザーが独自に作成したADPCMデータファイルは、MMLデータファイルと
+	同じフォルダに配置するようにしてください。
 
 
-�E���Y�������ɂ���
+・リズム音源について
 
-	MUCOM88 Windows�Ɠ����t�H���_�ɁA�ȉ��̃t�@�C�����������ꍇ�́A
-	���Y�������p�̃T���v���t�@�C���Ƃ��Ďg�p����܂��B
-	���Y�����������g�p����ꍇ�́A�ʓr�t�@�C�������p�Ӓ����K�v������܂��B
+	MUCOM88 Windowsと同じフォルダに、以下のファイルがあった場合は、
+	リズム音源用のサンプルファイルとして使用されます。
+	リズム音源部を使用する場合は、別途ファイルをご用意頂く必要があります。
 
 	2608_BD.WAV
 	2608_HH.WAV
@@ -401,180 +426,218 @@ Windows version by ONION software/onitama 2018-2019(C)
 	2608_TOM.WAV
 	2608_TOP.WAV
 
-	���Y�������p�̃T���v���t�@�C���́A���ۂ̃{�[�h����T���v�����O����
-	�쐬����Ȃǂ̑��ɁA�T�C�g����_�E�����[�h���邱�Ƃ��\�ł��B
+	リズム音源用のサンプルファイルは、実際のボードからサンプリングして
+	作成するなどの他に、サイトからダウンロードすることが可能です。
 	https://sites.google.com/site/ym2608rhythm/
 
 
-�E���`�b�v�̎g�p�ɂ���
+・実チップの使用について
 
-	MUCOM88 Windows�ł́ASCCI(Sound Chip Common Interface)���o�R����
-	���ۂ�FM�����`�b�v(YM2608)�ɂ�鉉�t���T�|�[�g���Ă��܂��B
-	��������Ă���SCCI�̃V�X�e��DLL�́A�ȉ��̃n�[�h�E�F�A�Ɏ��`�b�v
-	(YM2608)�𓋍ڂ������̂ɑΉ����Ă��܂��B
+	MUCOM88 Windowsでは、SCCI(Sound Chip Common Interface)を経由して
+	実際のFM音源チップ(YM2608)による演奏をサポートしています。
+	同梱されているSCCIのシステムDLLは、以下のハードウェアに実チップ
+	(YM2608)を搭載したものに対応しています。
 
-	�ESPFM FM�̓�
-	�ESPFM Light
-	�ERE:Birth 
-	�EG.I.M.I.C
-	�EC86BOX
+	・SPFM FMの塔
+	・SPFM Light
+	・RE:Birth 
+	・G.I.M.I.C
+	・C86BOX
 
-	���`�b�v�̎g�p�ɂ��ẮA�ŐV��SCCI�֘A�����Q�Ƃ��������B
+	実チップの使用については、最新のSCCI関連情報を参照ください。
 
 	SCCI(Sound Chip Common Interface)
 	http://www.pyonpyon.jp/~gasshi/fm/scci.html
 
-	MUCOM88 Windows����SCCI���g�p����ۂ́A���j���[���I�v�V������
-	�uSCCI�g�p�v�̃`�F�b�N��ON�ɂ��āA�c�[�����ċN�����Ă��������B
-	(SCCI�I�v�V�����́A�c�[�����ēx�N�������ۂɗL���ɂȂ�܂�)
+	MUCOM88 WindowsからSCCIを使用する際は、メニュー→オプションで
+	「SCCI使用」のチェックをONにして、ツールを再起動してください。
+	(SCCIオプションは、ツールを再度起動した際に有効になります)
 
-	���ۂɂɎg�p����ۂɂ́APC�Ƀn�[�h�E�F�A��ڑ�������ԂŁA�ŏ���
-	SCCI�̐ݒ���s���Ă����K�v������܂��B
-	���j���[���I�v�V�����uSCCI�ݒ�v�{�^������ASCCI�̐ݒ胁�j���[
-	���N�����邱�Ƃ��ł��܂��B(scciconfig.exe������N���ł��܂�)
+	実際にに使用する際には、PCにハードウェアを接続した状態で、最初に
+	SCCIの設定を行っておく必要があります。
+	メニュー→オプション「SCCI設定」ボタンから、SCCIの設定メニュー
+	を起動することができます。(scciconfig.exeからも起動できます)
 
-	SCCI�g�p���́AWindows��ł�FM�����Đ��͍s�킸�A�O���̃`�b�v�݂̂�
-	�Đ����s���܂��B
+	SCCI使用時は、Windows上でのFM音源再生は行わず、外部のチップのみで
+	再生を行います。
 
 
-�E�R�}���h���C���łɂ���
+・コマンドライン版について
 
-	�R�}���h���C������umucom88.exe�v���Ăяo���Ďg�p���邱�Ƃ��\�ł��B
-	�ȉ��̏����ŃI�v�V�������w�肷�邱�Ƃ��ł��܂��B
+	コマンドラインから「mucom88.exe」を呼び出して使用することが可能です。
+	以下の書式でオプションを指定することができます。
 
 	mucom88 [options] [filename]
 
-	�I�v�V����
+	オプション
 
-	       -p [filename] 	�ǂݍ��܂��PCM�t�@�C�����w�肷��
-	       -v [filename]	�ǂݍ��܂�鉹�F�t�@�C�����w�肷��
-	       -o [filename]	�o�͂����o�C�i���t�@�C�������w�肷��
-	       -c [filename]	MML�t�@�C�����o�C�i���t�@�C���ɕϊ�����
-	       -i [filename]	MML�t�@�C���̊T�v���o�͂���
-	       -e           	MUCOM88�V�X�e���t�@�C�����O������ǂݍ���
-	       -s           	SCCI���o�R���Ď��`�b�v�ł̉��t���s��
-	       -k           	PCM�t�@�C���̓ǂݍ��݂��X�L�b�v����
+	       -p [filename] 	読み込まれるPCMファイルを指定する
+	       -v [filename]	読み込まれる音色ファイルを指定する
+	       -o [filename]	出力されるバイナリファイル名を指定する
+	       -w [filename]	出力されるWAVファイル名を指定する
+	       -c [filename]	MMLファイルをバイナリファイルに変換する
+	       -i [filename]	MMLファイルの概要を出力する
+	       -a [filename]	指定されたDLLをプラグインとして読み込む(Windows版のみ)
+	       -e           	MUCOM88システムファイルを外部から読み込む
+	       -s           	SCCIを経由して実チップでの演奏を行う
+	       -k           	PCMファイルの読み込みをスキップする
+	       -x		WAVファイルを出力する
+	       -l [n]		WAVファイル出力時の時間(秒)をnに指定する
+	       -d		演奏に使用しているFM音色パラメーターを表示する
+
+	コマンドライン版は、WindowsだけでなくLinuxやMacOSX/Raspberry Pi等でも
+	動作させることができます。詳しくは、OPEN MUCOM88のgithub repositoryを
+	参照してください。
+
+	OPEN MUCOM88 github repository
+	https://github.com/onitama/mucom88
+
+	Linux上でコンパイルする場合は、sdl1.2-devパッケージを導入した上で、
+	リポジトリのsrcフォルダでmakeを実行してください。
+	Raspberry Piで導入する例は、以下の通りです。
+
+	例:
+		sudo apt-get install libsdl1.2-dev
+			(※OSによりパッケージマネージャは異なります)
+		git clone https://github.com/onitama/mucom88
+		cd src
+		make
+		make mini
 
 
-�EHSP�v���O�C���ɂ���
+・MUCOM88派生ツール
 
-	��������Ă���Ahspmucom.dll�̓X�N���v�g����HSP(HotSoupProcessor)����
-	�Ăяo���Ďg�p���邱�Ƃ��\�ȃv���O�C���ɂȂ��Ă��܂��B
-	MUCOM88 Windows�A�v���P�[�V�������AHSP�ɂ��L�q����Ă��܂��B
-	hsplugin�t�H���_�ɃX�N���v�g�̃\�[�X�y�уv���O�C���h�L�������g��
-	�܂܂�Ă��܂��B
-	HSP�ɂ��Ă̏ڍׂ́A�ȉ����Q�Ƃ��Ă��������B
+	ぼうきちさんによる、MacOSX向けの実装及びバイナリが公開されています。
+	https://github.com/BouKiCHi/mucom88/tags
 
-	Hot Soup Processor����HP
+	kumatan氏による、MDPlayer、及びmucomMD2vgmでMUCOM88のMML(.muc)を
+	サポートしています。
+	https://github.com/kuma4649/MDPlayer
+	https://github.com/kuma4649/mucomMD2vgm/releases
+
+
+・HSPプラグインについて
+
+	同梱されている、hspmucom.dllはスクリプト言語HSP(HotSoupProcessor)から
+	呼び出して使用することが可能なプラグインになっています。
+	MUCOM88 Windowsアプリケーションも、HSPにより記述されています。
+	hspluginフォルダにスクリプトのソース及びプラグインドキュメントが
+	含まれています。
+	HSPについての詳細は、以下を参照してください。
+
+	Hot Soup Processor公式HP
 	https://hsp.tv/
 
 
-�EOPEN MUCOM88�v���W�F�N�g�ɂ���
+・OPEN MUCOM88プロジェクトについて
 
-	MUCOM88 Windows�́AOPEN MUCOM88�v���W�F�N�g�̈ꕔ�Ƃ��Č��J����Ă��܂��B
+	MUCOM88 Windowsは、OPEN MUCOM88プロジェクトの一部として公開されています。
 
-	MUCOM88�́A���Ƃ���1987�N�E�Ñ�S�O���ɂ���ĊJ���E���\���ꂽ
-	NEC PC-8801�v���b�g�t�H�[���p��MML�`���ɂ�鉹�y�쐬�c�[���A�y��
-	�Đ��p�̃v���O����(�h���C�o�[)���ł��B
+	MUCOM88は、もともと1987年・古代祐三氏によって開発・発表された
+	NEC PC-8801プラットフォーム用のMML形式による音楽作成ツール、及び
+	再生用のプログラム(ドライバー)環境です。
 
-	OPEN MUCOM88�v���W�F�N�g�́A�I���W�i����MUCOM88�\�[�X�R�[�h�����J����
-	���ƂŁA���L�����p�E�p�����邱�Ƃ�ړI�Ƃ��Ă��܂��B
-	�����Ō��J���ꂽ�\�[�X�R�[�h�⎑�Y�Ȃǂ́A�I�[�v���ȃ��C�Z���X�ɂ��
-	���R�Ɋ��p���邱�Ƃ��\�ł��B
-	���C�Z���X�̏ڍׂ́A�u���C�Z���X����јA����v���ڋy�сulicense.txt�v
-	�ɂ܂Ƃ߂��Ă��܂��B
+	OPEN MUCOM88プロジェクトは、オリジナルのMUCOM88ソースコードを公開する
+	ことで、幅広く活用・継承することを目的としています。
+	無償で公開されたソースコードや資産などは、オープンなライセンスにより
+	自由に活用することが可能です。
+	ライセンスの詳細は、「ライセンスおよび連絡先」項目及び「license.txt」
+	にまとめられています。
 
 
-�E���C�Z���X����јA����
+・ライセンスおよび連絡先
 
-	MUCOM88 Windows�́A�ȉ��̃T�C�g�ɂ�1���z�z����Ă��܂��B
+	MUCOM88 Windowsは、以下のサイトにて1次配布されています。
 
 	MUCOM88 Windows
 	https://onitama.tv/mucom88/
 
-	OPEN MUCOM88 Windows github repository
+	OPEN MUCOM88 github repository
 	https://github.com/onitama/mucom88
 
 
-	MUCOM88 Windows�́A�ȉ��̃��C�u�����y�у\�[�X�R�[�h�E�f�[�^�ɂ��쐬����Ă��܂��B
+	MUCOM88 Windowsは、以下のライブラリ及びソースコード・データにより作成されています。
 
-	�EPortable Z80 emulation��� Yasuo Kuwahara��
+	・Portable Z80 emulation作者 Yasuo Kuwahara氏
 	  http://www.geocities.jp/kwhr0/
-	�Efmgen��� cisc��
+	・fmgen作者 cisc氏
 	  http://www.retropc.net/cisc/
-	�EMUCOM88��� �Ñ�S�O��
+	・MUCOM88作者 古代祐三氏
 	  https://twitter.com/yuzokoshiro
-	�EHSPMUCOM��� ���ɂ���(ONION software)
+	・HSPMUCOM作者 おにたま(ONION software)
 	  https://www.onionsoft.net/
-	�Eadpcm converter/SCCI/FmToneEditor/mucom88DatToTxt���
-	  �����R(gasshi)��
+	・adpcm converter/SCCI/FmToneEditor/mucom88DatToTxt作者
+	  がし３(gasshi)氏
 	  http://www.pyonpyon.jp/~gasshi/fm/
 
-	�쐬�ɂ�����A�����͒������a�c��(�G�C���V�����g)�l�A
-	WING���l�AOXYGEN�l�A�����R(gasshi)�l�A@MUCOM88�l�AUME-3�l������
-	�I���W�i����PC-8801�ł��쐬�����Ñ�S�O�l�A�{���ɂ��肪�Ƃ��������܂����B
+	作成にあたり、ご協力頂いた和田誠(エインシャント)様、
+	WING☆様、OXYGEN様、がし３(gasshi)様、@MUCOM88様、UME-3様そして
+	オリジナルのPC-8801版を作成した古代祐三様、本当にありがとうございました。
 
-	MUCOM88 Windows�y�у\�[�X�R�[�h�́A�N���G�C�e�B�u�R�����Y�ŋK�肳�ꂽ
-	CC BY-NC-SA 4.0���C�Z���X�Ō��J����Ă��܂��B
+	WAVファイル出力及び、マルチプラットフォーム化については
+	ぼうきち様( @boukichi_numloc )に多くの協力を頂きました。ありがとうございました。
+
+	MUCOM88 Windows及びソースコードは、クリエイティブコモンズで規定された
+	CC BY-NC-SA 4.0ライセンスで公開されています。
 	https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ja
 
-	����(��c��)�ł������͎��R�ɏЉ�A�����A�Ĕz�z���\�ł��B
-	���̍ۂɂ͕K���h�L�������g�ƃ��C�Z���X�\�L(license.txt)���܂߂�悤��
-	���Ă��������B
+	無償(非営利)である限りは自由に紹介、複製、再配布が可能です。
+	その際には必ずドキュメントとライセンス表記(license.txt)も含めるように
+	してください。
 
-	�T���v���y��(sampl1.muc�Asampl2.muc�Asampl3.muc)�y�ѕt������f�[�^
-	(mucompcm.bin�Avoice.dat)�͊�����ЃG�C���V�����g�̌Ñ�S�O���ɂ��
-	�񋟂���Ă��܂��B
+	サンプル楽曲(sampl1.muc、sampl2.muc、sampl3.muc)及び付属するデータ
+	(mucompcm.bin、voice.dat)は株式会社エインシャントの古代祐三氏により
+	提供されています。
 	https://www.ancient.co.jp/yuzo.html
 
-	�Ñ�S�O���̃T���v���y�Ȃɂ��ẮA���쌠�̃��C�Z���X��K����������
-	�悤���肢�v���܂��B
+	古代祐三氏のサンプル楽曲については、著作権のライセンスを必ず明示する
+	ようお願い致します。
 
-	���C�Z���X�\�L�̗�:
-	�u�y�Ȗ�(�܂��̓t�@�C����) / Copyright(C) by Yuzo Koshiro�v
+	ライセンス表記の例:
+	「楽曲名(またはファイル名) / Copyright(C) by Yuzo Koshiro」
 
 
-	MUCOM88 Windows�́A���ɂ���(onion software)�����S�ƂȂ�쐬����Ă��܂��B
+	MUCOM88 Windowsは、おにたま(onion software)が中心となり作成されています。
 
 	ONION software Homepage
 	https://www.onionsoft.net/
 
-	���[�U�[��MUCOM88���g���č쐬�����I���W�i���̊y�ȁAMML�t�@�C���̌�����
-	������쐬�������[�U�[�ɑ����܂��B
-	onion software�͖{�v���O�����ɂ���Đ������A�����Ȃ鑹�Q�ɂ��Ă�
-	�ۏ؂������܂���B���Ȃ̐ӔC�͈̔͂Ŏg�p���Ă��������B
-	�܂��A�t����HSP�X�N���v�g�����R�ɉ��ρA���J���Ă��������č\���܂���B
+	ユーザーがMUCOM88を使って作成したオリジナルの楽曲、MMLファイルの権利は
+	それを作成したユーザーに属します。
+	onion softwareは本プログラムによって生じた、いかなる損害についても
+	保証いたしません。自己の責任の範囲で使用してください。
+	また、付属のHSPスクリプトも自由に改変、公開していただいて構いません。
 
 
-	fmgen�\�[�X�R�[�h�Ɋւ���z�z�K��́A��҂ł���cisc���̃��C�Z���X��
-	�]���Ă��������Bfmgen�\�[�X�R�[�h�̔z�z�K��͈ȉ��̒ʂ�ł��B
+	fmgenソースコードに関する配布規定は、作者であるcisc氏のライセンスに
+	従ってください。fmgenソースコードの配布規定は以下の通りです。
 
-	�Efmgen�\�[�X�R�[�h�͍��(cisc@retropc.net) �����쌠�����L���Ă��܂��B
+	・fmgenソースコードは作者(cisc@retropc.net) が著作権を所有しています。
 
-	�E�{�\�[�X�R�[�h�͂��邪�܂܂ɒ񋟂������̂ł���C
-	  �Öًy�і����I�ȕۏ؂���؊܂݂܂���D
+	・本ソースコードはあるがままに提供されるものであり，
+	  暗黙及び明示的な保証を一切含みません．
 
-	�E�{�\�[�X�R�[�h�𗘗p�������ƁC���p���Ȃ��������ƁC
-	  ���p�ł��Ȃ��������ƂɊւ��Đ��������邢�͐�����Ɨ\�������
-	  ���Q�ɂ��āC��҂͈�ؐӔC�𕉂��܂���D
+	・本ソースコードを利用したこと，利用しなかったこと，
+	  利用できなかったことに関して生じたあるいは生じると予測される
+	  損害について，作者は一切責任を負いません．
 
-	�E�{�\�[�X�R�[�h�́C�ȉ��̐����𖞂������莩�R�ɉ��ρE�g�ݍ��݁E
-	  �z�z�E���p���邱�Ƃ��ł��܂��D
+	・本ソースコードは，以下の制限を満たす限り自由に改変・組み込み・
+	  配布・利用することができます．
 
-	  1. �{�\�t�g�̗R��(���, ���쌠)�𖾋L���邱��.
-	  2. �z�z����ۂɂ̓t���[�\�t�g�Ƃ��邱�ƁD
-	  3. ���ς����\�[�X�R�[�h��z�z����ۂ͉��ϓ��e�𖾎����邱��.
-	  4. �\�[�X�R�[�h��z�z����ۂɂ͂��̃e�L�X�g����؉��ς�����
-	     ���̂܂ܓY�t���邱�ƁD
+	  1. 本ソフトの由来(作者, 著作権)を明記すること.
+	  2. 配布する際にはフリーソフトとすること．
+	  3. 改変したソースコードを配布する際は改変内容を明示すること.
+	  4. ソースコードを配布する際にはこのテキストを一切改変せずに
+	     そのまま添付すること．
 
-	�E���J�̍ۂɍ�҂ւ̘A���𒸂���΍K���ł��D
+	・公開の際に作者への連絡を頂ければ幸いです．
 
-	�E���p�\�t�g(�V�F�A�E�F�A�܂�) �ɖ{�\�[�X�R�[�h�̈ꕔ�C�܂���
-	  �S����g�ݍ��ލۂɂ́C���O�ɍ�҂̍��ӂ𓾂�K�v������܂��D
+	・商用ソフト(シェアウェア含む) に本ソースコードの一部，または
+	  全部を組み込む際には，事前に作者の合意を得る必要があります．
 
-	�e���C�u�����ɂ��Ă̏ڍׂ́A���ꂼ��̃\�[�X�R�[�h�y�уh�L�������g��
-	�Q�Ƃ��������B
-	�L���E���p�ł̔z�z�ɂ��ẮA�ʓr��҂܂ł��₢���킹���������B
+	各ライブラリについての詳細は、それぞれのソースコード及びドキュメントを
+	参照ください。
+	有償・商用での配布については、別途作者までお問い合わせください。
 
 
 -------------------------------------------------------------------------------
