@@ -65,6 +65,8 @@ MUCOM88 Windowsは、以下のライブラリ及びソースコード・デー�
 
 作成にあたり、ご協力頂いた和田誠(エインシャント)様、WING☆様、OXYGEN様、がし３(gasshi)様、@MUCOM88様、UME-3様そしてオリジナルのPC-8801版を作成した古代祐三様、本当にありがとうございました。
 
+WAVファイル出力及び、マルチプラットフォーム化については、ぼうきち様( @boukichi_numloc )に多くの協力を頂きました。ありがとうございました。
+
 MUCOM88 Windows及びソースコードは、クリエイティブコモンズで規定されたCC BY-NC-SA 4.0ライセンスで公開されています。<br>
 https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ja
 
