@@ -24,8 +24,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 46
-#define APP_VER "0.46"
+#const VER_NUMBER 47
+#define APP_VER "0.47"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -514,8 +514,10 @@
 		gosub *updatebuf
 		goto *to_main2
 	}
-	buf="Play["+fname+"].\n"
-	gosub *updatebuf
+	gosub *getmucominfo
+
+	;buf="Play["+fname+"].\n"
+	;gosub *updatebuf
 
 	mucomreset MUCOM_RESET_PLAYER
 	if tag_pcm="" {
@@ -1430,6 +1432,9 @@
 	return
 
 #deffunc msg str _p1
+
+	if main_enter=0 :return
+
 	redraw 0
 	clearmsg
 	color 0,255,0:pos mesx+16,mesy+3
