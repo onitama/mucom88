@@ -641,5 +641,5 @@ Windows version by ONION software/onitama 2018-2019(C)
 
 
 -------------------------------------------------------------------------------
-                                                HSP users manual / end of file 
+                                            MUCOM88 users manual / end of file 
 -------------------------------------------------------------------------------
