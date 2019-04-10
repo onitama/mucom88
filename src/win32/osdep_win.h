@@ -1,4 +1,4 @@
-// OsDependent 
+// OsDependent
 // BouKiCHi 2019
 
 #ifndef _OS_DEP_WIN_H_
@@ -61,7 +61,7 @@ private:
 	HWND master_window;
 
 	//		タイマー
-	static void CALLBACK TimeProc(UINT, UINT, DWORD, DWORD, DWORD);
+	static void CALLBACK TimeProc(UINT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
 	static DWORD WINAPI vThreadFunc(LPVOID pParam);
 
 	int StartThread(void);
