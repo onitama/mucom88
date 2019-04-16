@@ -123,7 +123,7 @@ bool OsDependentWin32::InitTimer() {
 
 		timer_period = caps.wPeriodMin;
 		timeBeginPeriod(timer_period);
-		timerid = timeSetEvent(timer_period, caps.wPeriodMin, TimeProc, reinterpret_cast<DWORD>(this), (UINT)TIME_PERIODIC);
+		timerid = timeSetEvent(timer_period, caps.wPeriodMin, TimeProc, reinterpret_cast<DWORD_PTR>(this), (UINT)TIME_PERIODIC);
 		if (!timerid)
 		{
 			timeEndPeriod(timer_period);
@@ -151,7 +151,7 @@ void OsDependentWin32::FreeTimer() {
 	StopThread();
 }
 
-static void CALLBACK TimerProc(UINT uid, UINT, DWORD user, DWORD, DWORD) {
+static void CALLBACK TimerProc(UINT uid, UINT, DWORD_PTR user, DWORD_PTR, DWORD_PTR) {
 	if (!user) return;
 	OsDependent* inst = (OsDependent *)(user);
 	inst->UpdateTimer();
@@ -274,7 +274,7 @@ void OsDependentWin32::ThreadFunc() {
 
 //  TimeProc
 //
-void CALLBACK OsDependentWin32::TimeProc(UINT uid, UINT, DWORD user, DWORD, DWORD)
+void CALLBACK OsDependentWin32::TimeProc(UINT uid, UINT, DWORD_PTR user, DWORD_PTR, DWORD_PTR)
 {
 	OsDependentWin32* inst = reinterpret_cast<OsDependentWin32*>(user);
 	if (inst){
@@ -456,6 +456,3 @@ int OsDependentWin32::KillFile(const char *filename)
 	if (remove(filename)) return -1;
 	return 0;
 }
-
-
-
