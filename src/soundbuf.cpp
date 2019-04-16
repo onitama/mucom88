@@ -12,6 +12,7 @@
 
 #include "soundbuf.h"
 
+#define BUFFER_RESET_VALUE 0x10000
 
 inline int Limit(int v, int max, int min)
 {
@@ -79,6 +80,13 @@ int SoundBuf::GetBuffer16(void *dst, int size)
 		m_readptr++;
 	}
 	m_rtick += size;
+
+	if (m_rtick > BUFFER_RESET_VALUE) {
+		m_rtick -= BUFFER_RESET_VALUE;
+		m_wtick -= BUFFER_RESET_VALUE;
+		//printf("#Recycle buffer(%d).\n", m_rtick);
+	}
+
 	return 0;
 }
 
@@ -97,6 +105,12 @@ int SoundBuf::GetBuffer32(void *dst, int size)
 		m_readptr++;
 	}
 	m_rtick += size;
+
+	if (m_rtick > BUFFER_RESET_VALUE) {
+		m_rtick -= BUFFER_RESET_VALUE;
+		m_wtick -= BUFFER_RESET_VALUE;
+	}
+
 	return 0;
 }
 
