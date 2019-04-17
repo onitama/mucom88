@@ -16,7 +16,7 @@
 
 void CMemBuf::InitMemBuf( int sz )
 {
-	//	ƒoƒbƒtƒ@‰Šú‰»
+	//	ãƒãƒƒãƒ•ã‚¡åˆæœŸåŒ–
 	size = sz;
 	if ( size<0x1000 ) {
 		size = 0x1000;
@@ -30,7 +30,7 @@ void CMemBuf::InitMemBuf( int sz )
 	mem_buf[0] = 0;
 	name[0] = 0;
 	cur = 0;
-	//	Indexƒoƒbƒtƒ@‰Šú‰»
+	//	Indexãƒãƒƒãƒ•ã‚¡åˆæœŸåŒ–
 	idxflag = 0;
 	idxmax = -1;
 	curidx = 0;
@@ -40,7 +40,7 @@ void CMemBuf::InitMemBuf( int sz )
 
 void CMemBuf::InitIndexBuf( int sz )
 {
-	//	Indexƒoƒbƒtƒ@‰Šú‰»
+	//	Indexãƒãƒƒãƒ•ã‚¡åˆæœŸåŒ–
 	idxflag = 1;
 	idxmax = sz;
 	curidx = 0;
@@ -50,9 +50,9 @@ void CMemBuf::InitIndexBuf( int sz )
 
 char *CMemBuf::PreparePtr( int sz )
 {
-	//	ƒoƒbƒtƒ@Šg’£ƒ`ƒFƒbƒN
-	//	(szƒTƒCƒY‚ğ‘‚«‚İ‰Â”\‚Èƒoƒbƒtƒ@‚ğ•Ô‚·)
-	//		(return:‚à‚Æ‚Ìƒoƒbƒtƒ@æ“ªptr)
+	//	ãƒãƒƒãƒ•ã‚¡æ‹¡å¼µãƒã‚§ãƒƒã‚¯
+	//	(szã‚µã‚¤ã‚ºã‚’æ›¸ãè¾¼ã¿å¯èƒ½ãªãƒãƒƒãƒ•ã‚¡ã‚’è¿”ã™)
+	//		(return:ã‚‚ã¨ã®ãƒãƒƒãƒ•ã‚¡å…ˆé ­ptr)
 	//
 	int i;
 	char *p;
@@ -61,7 +61,7 @@ char *CMemBuf::PreparePtr( int sz )
 		cur += sz;
 		return p;
 	}
-	//	expand buffer (VC‚Ìrealloc‚Í•|‚¢‚Ì‚Åg‚í‚È‚¢)
+	//	expand buffer (VCã®reallocã¯æ€–ã„ã®ã§ä½¿ã‚ãªã„)
 	i = size;
 	while( i<=(cur+sz) ) i+=limit_size;
 	p = (char *)malloc( i );
@@ -77,7 +77,7 @@ char *CMemBuf::PreparePtr( int sz )
 
 void CMemBuf::RegistIndex( int val )
 {
-	//	ƒCƒ“ƒfƒbƒNƒX‚ğ“o˜^
+	//	ã‚¤ãƒ³ãƒ‡ãƒƒã‚¯ã‚¹ã‚’ç™»éŒ²
 	int *p;
 	if ( idxflag==0 ) return;
 	idxbuf[ curidx++ ]= val;
@@ -155,7 +155,7 @@ void CMemBuf::PutStr( const char *data )
 
 void CMemBuf::PutStrDQ( const char *data )
 {
-	//		ƒ_ƒuƒ‹ƒNƒH[ƒg“àê—pstr
+	//		ãƒ€ãƒ–ãƒ«ã‚¯ã‚©ãƒ¼ãƒˆå†…å°‚ç”¨str
 	//
 	unsigned char *src;
 	unsigned char *p;
@@ -169,16 +169,16 @@ void CMemBuf::PutStrDQ( const char *data )
 		if ( a1 == 0 ) break;
 
 		fl = 0;
-		if ( a1 == '\\' ) {					// \‚ğ\\‚É
+		if ( a1 == '\\' ) {					// \ã‚’\\ã«
 			p = (unsigned char *) PreparePtr( 1 );
 			*p = a1;
 		}
-		if ( a1 == 13 ) {					// CR‚ğ\n‚É
+		if ( a1 == 13 ) {					// CRã‚’\nã«
 			fl = 1; a2 = 10;
 			if ( *src == 10 ) src++;
 		}
 
-		if (a1>=129) {						// ‘SŠp•¶šƒ`ƒFƒbƒN
+		if (a1>=129) {						// å…¨è§’æ–‡å­—ãƒã‚§ãƒƒã‚¯
 			if (a1<=159) { fl = 1; a2 = *src++; }
 			else if (a1>=224) {  fl = 1; a2 = *src++; }
 			if ( a2 == 0 ) break;
@@ -253,8 +253,8 @@ void CMemBuf::PutStrf(const char *format, ... )
 
 int CMemBuf::PutFile(const char *fname )
 {
-	//		ƒoƒbƒtƒ@‚Éw’èƒtƒ@ƒCƒ‹‚Ì“à—e‚ğ’Ç‰Á
-	//		(return:ƒtƒ@ƒCƒ‹ƒTƒCƒY(-1=error))
+	//		ãƒãƒƒãƒ•ã‚¡ã«æŒ‡å®šãƒ•ã‚¡ã‚¤ãƒ«ã®å†…å®¹ã‚’è¿½åŠ 
+	//		(return:ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚º(-1=error))
 	//
 	char *p;
 	int length;
@@ -290,7 +290,7 @@ void CMemBuf::ReduceSize( int new_cur )
 
 CMemBuf::CMemBuf( void )
 {
-	//		‹ó‚Ìƒoƒbƒtƒ@‚ğ‰Šú‰»(64K)
+	//		ç©ºã®ãƒãƒƒãƒ•ã‚¡ã‚’åˆæœŸåŒ–(64K)
 	//
 	InitMemBuf( 0x10000 );
 }
@@ -298,7 +298,7 @@ CMemBuf::CMemBuf( void )
 
 CMemBuf::CMemBuf( int sz )
 {
-	//		w’èƒTƒCƒY‚Ìƒoƒbƒtƒ@‚ğ‰Šú‰»(64K)
+	//		æŒ‡å®šã‚µã‚¤ã‚ºã®ãƒãƒƒãƒ•ã‚¡ã‚’åˆæœŸåŒ–(64K)
 	//
 	InitMemBuf( sz );
 }
@@ -383,8 +383,8 @@ int CMemBuf::SearchIndexValue( int val )
 
 int CMemBuf::SaveFile(const char *fname )
 {
-	//		ƒoƒbƒtƒ@‚ğƒtƒ@ƒCƒ‹‚ÉƒZ[ƒu
-	//		(return:ƒtƒ@ƒCƒ‹ƒTƒCƒY(-1=error))
+	//		ãƒãƒƒãƒ•ã‚¡ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚»ãƒ¼ãƒ–
+	//		(return:ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚º(-1=error))
 	//
 	FILE *fp;
 	int flen;
@@ -399,7 +399,7 @@ int CMemBuf::SaveFile(const char *fname )
 
 char *CMemBuf::GetFileName( void )
 {
-	//		ƒtƒ@ƒCƒ‹–¼‚ğæ“¾
+	//		ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—
 	//
 	return name;
 }

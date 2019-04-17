@@ -5,7 +5,7 @@
 #ifndef __mucomerror_h
 #define __mucomerror_h
 
-// ÉGÉâÅ[ÉRÅ[Éh
+// „Ç®„É©„Éº„Ç≥„Éº„Éâ
 
 #define MUCOMERR_NONE 0
 #define MUCOMERR_MAX 17

@@ -20,22 +20,22 @@ int dummyCallback(void *instance, int cmd, void *p1, void *p2)
 Mucom88Plugin::Mucom88Plugin()
 {
 	hwnd = NULL;
-	version = MUCOM88IF_VERSION;		// MUCOM88IFƒo[ƒWƒ‡ƒ“
-	filename[0] = 0;					// ƒvƒ‰ƒOƒCƒ“ƒtƒ@ƒCƒ‹–¼
-	instance = NULL;					// DLLƒCƒ“ƒXƒ^ƒ“ƒX
+	version = MUCOM88IF_VERSION;		// MUCOM88IFãƒãƒ¼ã‚¸ãƒ§ãƒ³
+	filename[0] = 0;					// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«å
+	instance = NULL;					// DLLã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 
-	type = MUCOM88IF_TYPE_NONE;			// ƒvƒ‰ƒOƒCƒ“ƒ^ƒCƒv(*)
-	info = "";							// ƒvƒ‰ƒOƒCƒ“î•ñƒeƒLƒXƒg‚Ìƒ|ƒCƒ“ƒ^(*)
+	type = MUCOM88IF_TYPE_NONE;			// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¿ã‚¤ãƒ—(*)
+	info = "";							// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³æƒ…å ±ãƒ†ã‚­ã‚¹ãƒˆã®ãƒã‚¤ãƒ³ã‚¿(*)
 
-	//	ƒR[ƒ‹ƒoƒbƒNƒtƒ@ƒ“ƒNƒVƒ‡ƒ“
+	//	ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³
 	if_notice = dummyCallback;
 
-	//	”Ä—pƒtƒ@ƒ“ƒNƒVƒ‡ƒ“
+	//	æ±Žç”¨ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³
 	//
 	if_mucomvm = NULL;
 	if_editor = NULL;
 
-	//	ƒNƒ‰ƒXî•ñ (ƒo[ƒWƒ‡ƒ“‚Å“à—e•ÏX‚Ì‰Â”\«‚ª‚ ‚è‚Ü‚·)
+	//	ã‚¯ãƒ©ã‚¹æƒ…å ± (ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã§å†…å®¹å¤‰æ›´ã®å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™)
 	vm = NULL;
 	mucom = NULL;
 

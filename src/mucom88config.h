@@ -10,16 +10,16 @@
 #define MINORVER 7
 
 //
-//		���t���O:�ȉ��̃��x���̓R���p�C���I�v�V�����Őݒ肳��܂�
+//		環境フラグ:以下のラベルはコンパイルオプションで設定されます
 //
 //#define MUCOM88WIN		// Windows(WIN32) version flag
 //#define MUCOM88LINUX		// Unix/Linux version flag
 //#define MUCOM88IOS		// iOS version flag
 //#define MUCOM88NDK		// android NDK version flag
 
-//		�����R�[�h�t���O:�ȉ��̃��x���͎����I�ɐݒ肳��܂�
+//		文字コードフラグ:以下のラベルは自動的に設定されます
 //
-//#define MUCOM88UTF8		// UTF8�g�p�t���O
+//#define MUCOM88UTF8		// UTF8使用フラグ
 
 #ifdef MUCOM88WIN
 #else

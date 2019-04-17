@@ -16,8 +16,8 @@ typedef unsigned short WORD;
 #endif
 
 typedef struct {
-	BYTE	bID[4];		// ƒwƒbƒ_
-	DWORD	dSize;		// ƒTƒCƒY
+	BYTE	bID[4];		// ãƒ˜ãƒƒãƒ€
+	DWORD	dSize;		// ã‚µã‚¤ã‚º
 } RIFF_HED;
 
 typedef struct {

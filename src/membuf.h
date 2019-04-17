@@ -9,8 +9,8 @@
 
 /*
 	rev 53
-	mingw : warning : �N���X�͉��z�֐������̂ɉ��z�f�X�g���N�^�łȂ��B
-	�ɑΏ��B
+	mingw : warning : クラスは仮想関数を持つのに仮想デストラクタでない。
+	に対処。
 */
 
 class CMemBuf {

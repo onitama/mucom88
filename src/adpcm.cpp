@@ -1,65 +1,65 @@
 #include	"adpcm.h"
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Adpcm::Adpcm(){
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 Adpcm::~Adpcm(){
 }
 
-// ADPCM•ÏŠ·iDELTAj
+// ADPCMå¤‰æ›ï¼ˆDELTAï¼‰
 BYTE* Adpcm::waveToAdpcm(void *pData,DWORD dSize,DWORD &dAdpcmSize,DWORD dRate,DWORD dPadSize){
-	// RIFFƒwƒbƒ_Šm”F
+	// RIFFãƒ˜ãƒƒãƒ€ç¢ºèª
 	m_pRiffHed = reinterpret_cast<RIFF_HED*>(pData);
-	// ƒwƒbƒ_ƒ`ƒFƒbƒN
+	// ãƒ˜ãƒƒãƒ€ãƒã‚§ãƒƒã‚¯
 	if(m_pRiffHed->bID[0] != 'R' && m_pRiffHed->bID[1] != 'I' && m_pRiffHed->bID[2] != 'F' && m_pRiffHed->bID[3] != 'F'){
 		return NULL;
 	}
-	// WAVEƒwƒbƒ_ƒ`ƒFƒbƒN(CHUNK_HED—¬—p)
+	// WAVEãƒ˜ãƒƒãƒ€ãƒã‚§ãƒƒã‚¯(CHUNK_HEDæµç”¨)
 	CHUNK_HED *pChunk = (CHUNK_HED *)((BYTE*)pData + 0x08);
 	if(pChunk->bID[0] != 'W' && pChunk->bID[1] != 'A' && pChunk->bID[2] != 'V' && pChunk->bID[3] != 'E'){
 		return NULL;
 	}
-	// æ“ªƒ`ƒƒƒ“ƒN‚ğİ’è
+	// å…ˆé ­ãƒãƒ£ãƒ³ã‚¯ã‚’è¨­å®š
 	pChunk = (CHUNK_HED *)((BYTE*)pChunk + 4);
 	m_pWaveChunk = NULL;
 	m_pDataChunk = NULL;
 	while((DWORD *)(pChunk) < (DWORD *)(pData) + dSize)
 	{
-		// fmtƒ`ƒƒƒ“ƒN‚Ìê‡
+		// fmtãƒãƒ£ãƒ³ã‚¯ã®å ´åˆ
 		if(pChunk->bID[0] == 'f' && pChunk->bID[1] == 'm' && pChunk->bID[2] == 't' && pChunk->bID[3] == ' '){
-			// fmtƒ`ƒƒƒ“ƒNƒAƒhƒŒƒX‚ğæ“¾
+			// fmtãƒãƒ£ãƒ³ã‚¯ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 			m_pWaveChunk = reinterpret_cast<WAVE_CHUNK*>(pChunk);
 		}
-		// dataƒ`ƒƒƒ“ƒN‚Ìê‡
+		// dataãƒãƒ£ãƒ³ã‚¯ã®å ´åˆ
 		if(pChunk->bID[0] == 'd' && pChunk->bID[1] == 'a' && pChunk->bID[2] == 't' && pChunk->bID[3] == 'a'){
-			// dataƒ`ƒƒƒ“ƒNƒAƒhƒŒƒX‚ğæ“¾
+			// dataãƒãƒ£ãƒ³ã‚¯ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’å–å¾—
 			m_pDataChunk = reinterpret_cast<DATA_CHUNK*>(pChunk);
 		}
-		// Ÿ‚Ìƒ`ƒƒƒ“ƒN‚ÖƒAƒhƒŒƒX‚ğ‰ÁZ‚·‚é
+		// æ¬¡ã®ãƒãƒ£ãƒ³ã‚¯ã¸ã‚¢ãƒ‰ãƒ¬ã‚¹ã‚’åŠ ç®—ã™ã‚‹
 		pChunk = (CHUNK_HED *)((BYTE*)pChunk + 8);
 	}
-	// fmtƒ`ƒƒƒ“ƒN‹y‚Ñdataƒ`ƒƒƒ“ƒN‚ª‘¶İ‚·‚é‚©
+	// fmtãƒãƒ£ãƒ³ã‚¯åŠã³dataãƒãƒ£ãƒ³ã‚¯ãŒå­˜åœ¨ã™ã‚‹ã‹
 	if(m_pWaveChunk == NULL || m_pDataChunk == NULL){
-		// ‘¶İ‚µ‚È‚¢ê‡‚ÍNG
+		// å­˜åœ¨ã—ãªã„å ´åˆã¯NG
 		return NULL;
 	}
-	// ƒŠƒjƒAPCMƒ`ƒFƒbƒN
+	// ãƒªãƒ‹ã‚¢PCMãƒã‚§ãƒƒã‚¯
 	if(m_pWaveChunk->wFmt != 0x0001){
-		// ƒŠƒjƒAPCMˆÈŠO‚ÍNG‚É‚·‚é
+		// ãƒªãƒ‹ã‚¢PCMä»¥å¤–ã¯NGã«ã™ã‚‹
 		return NULL;
 	}
 
-	// waveƒf[ƒ^ƒŠƒTƒ“ƒvƒŠƒ“ƒO
+	// waveãƒ‡ãƒ¼ã‚¿ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°
 	DWORD	dPcmSize;
 	short	*pPcm = resampling(dPcmSize,dRate,dPadSize);
-	// ƒŠƒTƒ“ƒvƒŠƒ“ƒO‚Å‚«‚È‚©‚Á‚½ê‡
+	// ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°ã§ããªã‹ã£ãŸå ´åˆ
 	if(pPcm == NULL){
 		return NULL;
 	}
 
-	// adpcm•ÏŠ·
+	// adpcmå¤‰æ›
 	BYTE	*pAdpcm = new BYTE[dPcmSize / 2];
 	encode(pPcm,pAdpcm,dPcmSize);
 	dAdpcmSize = dPcmSize / 2;
@@ -67,23 +67,23 @@ BYTE* Adpcm::waveToAdpcm(void *pData,DWORD dSize,DWORD &dAdpcmSize,DWORD dRate,D
 	return	pAdpcm;
 }
 
-// ƒŠƒTƒ“ƒvƒŠƒ“ƒO
+// ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°
 short* Adpcm::resampling(DWORD &dSize,DWORD dRate,DWORD dPadSize){
-	// ƒtƒH[ƒ}ƒbƒgƒ`ƒFƒbƒNi16bitˆÈŠO‚¾‚Á‚½‚ç‚m‚fj
+	// ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆãƒã‚§ãƒƒã‚¯ï¼ˆ16bitä»¥å¤–ã ã£ãŸã‚‰ï¼®ï¼§ï¼‰
 	if(m_pWaveChunk->wSample != 16){
 		return NULL;
 	}
-	// ƒ‚ƒmƒ‰ƒ‹‰»
+	// ãƒ¢ãƒãƒ©ãƒ«åŒ–
 	short *pPcm;
 	int		iPcmSize = 0;
 	if(m_pWaveChunk->wChannels == 2){
 		iPcmSize = static_cast<int>(m_pDataChunk->dSize / 4);
-		pPcm = new short[iPcmSize];		// ”¼•ª‚ÌƒTƒCƒY‚É‚È‚é
+		pPcm = new short[iPcmSize];		// åŠåˆ†ã®ã‚µã‚¤ã‚ºã«ãªã‚‹
 		short	*pSrc = reinterpret_cast<short*>(&m_pDataChunk->bData[0]);
 		short	*pDis = pPcm;
 		for(int iCnt = 0; iCnt < iPcmSize; iCnt++){
-			int	iPcm = *pSrc++;	// ‚k
-			iPcm += *pSrc++;	// ‚q
+			int	iPcm = *pSrc++;	// ï¼¬
+			iPcm += *pSrc++;	// ï¼²
 			iPcm /= 2;
 			*pDis++ = static_cast<short>(iPcm);
 		}
@@ -94,44 +94,44 @@ short* Adpcm::resampling(DWORD &dSize,DWORD dRate,DWORD dPadSize){
 	}else{
 		return NULL;
 	}
-	// ƒŠƒTƒ“ƒvƒŠƒ“ƒO
-	int iSrcRate = static_cast<int>(m_pWaveChunk->dRate);	// wave‚ÌƒŒ[ƒg
+	// ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°
+	int iSrcRate = static_cast<int>(m_pWaveChunk->dRate);	// waveã®ãƒ¬ãƒ¼ãƒˆ
 	int iDisRate = (int)dRate;
 	int iDiff = 0;
 	int	iSampleSize = 0;
-	// ƒŠƒTƒ“ƒvƒŠƒ“ƒOŒã‚Ìƒtƒ@ƒCƒ‹ƒTƒCƒY‚ğZo
+	// ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºã‚’ç®—å‡º
 	for(int iCnt = 0; iCnt < iPcmSize; iCnt++){
 		iDiff += iDisRate;
 		while(iDiff >= iSrcRate){
-			// ‘‚«o‚µ
+			// æ›¸ãå‡ºã—
 			iSampleSize++;
 			iDiff -= iSrcRate;
 		}
 	}
 	if(iDiff > 0) iSampleSize++;
 
-	// ƒŠƒTƒ“ƒvƒŠƒ“ƒOŒã‚Ìƒoƒbƒtƒ@‚ğì¬‚·‚é
+	// ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å¾Œã®ãƒãƒƒãƒ•ã‚¡ã‚’ä½œæˆã™ã‚‹
 	int iResampleBuffSize = iSampleSize;
 	if(iSampleSize % (dPadSize * 2) > 0) iResampleBuffSize += ((dPadSize * 2) - (iSampleSize % (dPadSize * 2)));
 	short *pResampleBuff = new short[iResampleBuffSize];
 	memset(pResampleBuff,0, sizeof(short) * iResampleBuffSize);
-	// ƒŠƒTƒ“ƒvƒŠƒ“ƒOˆ—‚ğÀ{‚·‚é
+	// ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å‡¦ç†ã‚’å®Ÿæ–½ã™ã‚‹
 	short iSampleCnt = 0;
 	int iSmple = 0;
 	iDiff = 0;
 	iSmple = 0;
 	short *pResampleDis = pResampleBuff;
-	// ƒŠƒTƒ“ƒvƒŠƒ“ƒOŒã‚Ìƒtƒ@ƒCƒ‹ƒTƒCƒY‚ğZo
+	// ãƒªã‚µãƒ³ãƒ—ãƒªãƒ³ã‚°å¾Œã®ãƒ•ã‚¡ã‚¤ãƒ«ã‚µã‚¤ã‚ºã‚’ç®—å‡º
 	BOOL	bUpdate = FALSE;
 	if(iDisRate != static_cast<int>(m_pWaveChunk->dRate)){
 		for(int iCnt = 0; iCnt < iPcmSize; iCnt++){
-			iSmple += static_cast<int>(pPcm[iCnt]);		// ƒTƒ“ƒvƒ‹‚ğ‰ÁZ‚·‚é
+			iSmple += static_cast<int>(pPcm[iCnt]);		// ã‚µãƒ³ãƒ—ãƒ«ã‚’åŠ ç®—ã™ã‚‹
 			iSampleCnt++;
 			iDiff += iDisRate;
 			bUpdate = FALSE;
 			while(iDiff >= iSrcRate){
 				*pResampleDis++ = static_cast<short>(iSmple / iSampleCnt);
-				// ‘‚«o‚µ
+				// æ›¸ãå‡ºã—
 				iDiff -= iSrcRate;
 				bUpdate = TRUE;
 			}
@@ -149,13 +149,13 @@ short* Adpcm::resampling(DWORD &dSize,DWORD dRate,DWORD dPadSize){
 			*pResampleDis++ = pPcm[iCnt];
 		}
 	}
-	// ƒ\[ƒXPCMƒoƒbƒtƒ@‚ğ”jŠü‚·‚é
+	// ã‚½ãƒ¼ã‚¹PCMãƒãƒƒãƒ•ã‚¡ã‚’ç ´æ£„ã™ã‚‹
 	delete [] pPcm;
 	dSize = iResampleBuffSize;
 	return	pResampleBuff;
 }
 
-// ƒGƒ“ƒR[ƒh
+// ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰
 int Adpcm::encode(short *pSrc,unsigned char *pDis,DWORD iSampleSize){
 	static long stepsizeTable[ 16 ] =
 	{
@@ -167,13 +167,13 @@ int Adpcm::encode(short *pSrc,unsigned char *pDis,DWORD iSampleSize){
 	unsigned char adpcm = 0;
 	unsigned char adpcmPack = 0;
 
-	// ‰Šú’lİ’è
+	// åˆæœŸå€¤è¨­å®š
 	xn			= 0;
 	stepSize	= 127;
 	
 	for( iCnt = 0 ; iCnt < static_cast<int>(iSampleSize) ; iCnt++ ){
-		// ƒGƒ“ƒR[ƒhˆ—
-		dn = *pSrc - xn;		// ·•ª’Šo
+		// ã‚¨ãƒ³ã‚³ãƒ¼ãƒ‰å‡¦ç†
+		dn = *pSrc - xn;		// å·®åˆ†æŠ½å‡º
 		pSrc++;
 		i = (abs((int)dn) << 16) / (stepSize << 14);
 		if(i > 7){
@@ -193,7 +193,7 @@ int Adpcm::encode(short *pSrc,unsigned char *pDis,DWORD iSampleSize){
 		}else if( stepSize > 24576 ){
 			stepSize = 24576;
 		}
-		// ADPCMƒf[ƒ^‡¬
+		// ADPCMãƒ‡ãƒ¼ã‚¿åˆæˆ
 		if((iCnt & 0x01) == 0){
 			adpcmPack = (adpcm << 4);
 		}else{

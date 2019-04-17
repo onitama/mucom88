@@ -1,9 +1,9 @@
 #ifndef __voiceformat_h
 #define __voiceformat_h
 
-// ‰¹ºƒtƒH[ƒ}ƒbƒg
+// éŸ³å£°ãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆ
 typedef struct {
-	unsigned char hed;		// ƒwƒbƒ_
+	unsigned char hed;		// ãƒ˜ãƒƒãƒ€
 	// DT/ML
 	unsigned char ml_op1 : 4;
 	unsigned char dt_op1 : 3;
@@ -94,7 +94,7 @@ typedef struct {
 	unsigned char al : 3;
 	unsigned char fb : 3;
 	unsigned char p6 : 2;
-	// •¶š—ñ
+	// æ–‡å­—åˆ—
 	char name[6];
 } MUCOM88_VOICEFORMAT;
 

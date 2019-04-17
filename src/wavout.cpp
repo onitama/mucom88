@@ -22,7 +22,7 @@ static void WriteDWORD(unsigned char *p, unsigned long v) {
 }
 
 
-// WAVƒwƒbƒ_o—Í
+// WAVãƒ˜ãƒƒãƒ€å‡ºåŠ›
 static void WriteWavHeader(FILE *fp, int frequency, int bits, int channels, long samples) {
   if (!fp) return;
   unsigned char hdr[0x80];
@@ -43,11 +43,11 @@ static void WriteWavHeader(FILE *fp, int frequency, int bits, int channels, long
   memcpy(hdr + 36, "data",4);
   WriteDWORD(hdr + 40, pcm_bytesize); // pcm size
 
-  // æ“ª‚Ìƒwƒbƒ_‚ðXV
+  // å…ˆé ­ã®ãƒ˜ãƒƒãƒ€ã‚’æ›´æ–°
   fseek(fp, 0, SEEK_SET);
   fwrite(hdr, 44, 1, fp);
 
-  // ƒtƒ@ƒCƒ‹ƒ|ƒCƒ“ƒ^‚ð––”ö‚É–ß‚·
+  // ãƒ•ã‚¡ã‚¤ãƒ«ãƒã‚¤ãƒ³ã‚¿ã‚’æœ«å°¾ã«æˆ»ã™
   fseek(fp, 0, SEEK_END);
 }
 
@@ -59,7 +59,7 @@ void RecordWave(CMucom *m, const char *fname, int rate, int seconds) {
 	int channels = 2;
 	long total_samples = 0;
 
-	m->SetVMOption(VM_OPTION_STEP, 1);		// ƒIƒvƒVƒ‡ƒ“‚ðÝ’è
+	m->SetVMOption(VM_OPTION_STEP, 1);		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’è¨­å®š
 	m->SetAudioRate(rate);
 
 	FILE *fp = fopen(fname, "wb");
@@ -82,7 +82,7 @@ void RecordWave(CMucom *m, const char *fname, int rate, int seconds) {
 	WriteWavHeader(fp, rate, bits, channels, total_samples);
 	fclose(fp);
 
-	m->SetVMOption(VM_OPTION_STEP, 2);		// ƒIƒvƒVƒ‡ƒ“‚ð‰ðœ
+	m->SetVMOption(VM_OPTION_STEP, 2);		// ã‚ªãƒ—ã‚·ãƒ§ãƒ³ã‚’è§£é™¤
 }
 
 /*----------------------------------------------------------*/
