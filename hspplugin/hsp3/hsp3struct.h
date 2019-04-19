@@ -9,15 +9,15 @@
 
 /*
 	rev 43
-	mingw : error : HSPERROR ‚ª–¢’è‹`
-	‚É‘Îˆ
+	mingw : error : HSPERROR ãŒæœªå®šç¾©
+	ã«å¯¾å‡¦
 */
 #include "hsp3debug.h"
 
 #ifdef _WIN64
-#define PTR64BIT        //  ƒ|ƒCƒ“ƒ^‚Í64bit
+#define PTR64BIT        //  ãƒã‚¤ãƒ³ã‚¿ã¯64bit
 #else
-#define PTR32BIT        //  ƒ|ƒCƒ“ƒ^‚Í32bit
+#define PTR32BIT        //  ãƒã‚¤ãƒ³ã‚¿ã¯32bit
 #endif
 
 // command type
@@ -107,19 +107,19 @@ typedef struct HSPHED
 
 } HSPHED;
 
-#define HSPHED_BOOTOPT_DEBUGWIN 1			// ‹N“®ŽžƒfƒoƒbƒOƒEƒCƒ“ƒhƒD•\Ž¦
-#define HSPHED_BOOTOPT_WINHIDE 2			// ‹N“®ŽžƒEƒCƒ“ƒhƒD”ñ•\Ž¦
-#define HSPHED_BOOTOPT_DIRSAVE 4			// ‹N“®ŽžƒJƒŒƒ“ƒgƒfƒBƒŒƒNƒgƒŠ•ÏX‚È‚µ
-#define HSPHED_BOOTOPT_SAVER 0x100			// ƒXƒNƒŠ[ƒ“ƒZ[ƒo[
+#define HSPHED_BOOTOPT_DEBUGWIN 1			// èµ·å‹•æ™‚ãƒ‡ãƒãƒƒã‚°ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¥è¡¨ç¤º
+#define HSPHED_BOOTOPT_WINHIDE 2			// èµ·å‹•æ™‚ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¥éžè¡¨ç¤º
+#define HSPHED_BOOTOPT_DIRSAVE 4			// èµ·å‹•æ™‚ã‚«ãƒ¬ãƒ³ãƒˆãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒªå¤‰æ›´ãªã—
+#define HSPHED_BOOTOPT_SAVER 0x100			// ã‚¹ã‚¯ãƒªãƒ¼ãƒ³ã‚»ãƒ¼ãƒãƒ¼
 
-#define HSPHED_BOOTOPT_RUNTIME 0x1000		// “®“Iƒ‰ƒ“ƒ^ƒCƒ€‚ð—LŒø‚É‚·‚é
-#define HSPHED_BOOTOPT_NOMMTIMER 0x2000		// ƒ}ƒ‹ƒ`ƒƒfƒBƒAƒ^ƒCƒ}[‚ð–³Œø‚É‚·‚é
-#define HSPHED_BOOTOPT_NOGDIP 0x4000		// GDI+‚É‚æ‚é•`‰æ‚ð–³Œø‚É‚·‚é
-#define HSPHED_BOOTOPT_FLOAT32 0x8000		// ŽÀ”‚ð32bit float‚Æ‚µ‚Äˆ—‚·‚é
-#define HSPHED_BOOTOPT_ORGRND 0x10000		// •W€‚Ì—””­¶‚ðŽg—p‚·‚é
-#define HSPHED_BOOTOPT_UTF8 0x20000			// UTF8ƒ‰ƒ“ƒ^ƒCƒ€‚ðŽg—p‚·‚é(ƒR[ƒhŽ¯•Ê—p)
-#define HSPHED_BOOTOPT_HSP64 0x40000		// 64bitƒ‰ƒ“ƒ^ƒCƒ€‚ðŽg—p‚·‚é(ƒR[ƒhŽ¯•Ê—p)
-#define HSPHED_BOOTOPT_IORESUME 0x80000		// ƒtƒ@ƒCƒ‹I/OƒGƒ‰[‚ð–³Ž‹‚µ‚Äˆ—‚ð‘±s‚·‚é
+#define HSPHED_BOOTOPT_RUNTIME 0x1000		// å‹•çš„ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã‚’æœ‰åŠ¹ã«ã™ã‚‹
+#define HSPHED_BOOTOPT_NOMMTIMER 0x2000		// ãƒžãƒ«ãƒãƒ¡ãƒ‡ã‚£ã‚¢ã‚¿ã‚¤ãƒžãƒ¼ã‚’ç„¡åŠ¹ã«ã™ã‚‹
+#define HSPHED_BOOTOPT_NOGDIP 0x4000		// GDI+ã«ã‚ˆã‚‹æç”»ã‚’ç„¡åŠ¹ã«ã™ã‚‹
+#define HSPHED_BOOTOPT_FLOAT32 0x8000		// å®Ÿæ•°ã‚’32bit floatã¨ã—ã¦å‡¦ç†ã™ã‚‹
+#define HSPHED_BOOTOPT_ORGRND 0x10000		// æ¨™æº–ã®ä¹±æ•°ç™ºç”Ÿã‚’ä½¿ç”¨ã™ã‚‹
+#define HSPHED_BOOTOPT_UTF8 0x20000			// UTF8ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã‚’ä½¿ç”¨ã™ã‚‹(ã‚³ãƒ¼ãƒ‰è­˜åˆ¥ç”¨)
+#define HSPHED_BOOTOPT_HSP64 0x40000		// 64bitãƒ©ãƒ³ã‚¿ã‚¤ãƒ ã‚’ä½¿ç”¨ã™ã‚‹(ã‚³ãƒ¼ãƒ‰è­˜åˆ¥ç”¨)
+#define HSPHED_BOOTOPT_IORESUME 0x80000		// ãƒ•ã‚¡ã‚¤ãƒ«I/Oã‚¨ãƒ©ãƒ¼ã‚’ç„¡è¦–ã—ã¦å‡¦ç†ã‚’ç¶šè¡Œã™ã‚‹
 
 
 #define HPIDAT_FLAG_TYPEFUNC 0
@@ -483,7 +483,7 @@ typedef struct LOOPDAT {
 } LOOPDAT;
 
 
-// ŽÀsƒ‚[ƒh
+// å®Ÿè¡Œãƒ¢ãƒ¼ãƒ‰
 enum
 {
 RUNMODE_RUN = 0,
@@ -571,37 +571,37 @@ struct HSPCTX
 #define HSPSTAT_UTF8 0x20000
 #define HSPSTAT_HSP64 0x40000
 
-#define TYPE_EX_SUBROUTINE 0x100		// gosub—p‚ÌƒXƒ^ƒbƒNƒ^ƒCƒv
-#define TYPE_EX_CUSTOMFUNC 0x101		// deffuncŒÄ‚Ño‚µ—p‚ÌƒXƒ^ƒbƒNƒ^ƒCƒv
-#define TYPE_EX_ENDOFPARAM 0x200		// ƒpƒ‰ƒ[ƒ^[I’[(HSPtoC)
-#define TYPE_EX_ARRAY_VARS 0x201		// ”z—ñ—v‘f•t‚«•Ï”—pƒXƒ^ƒbƒNƒ^ƒCƒv(HSPtoC)
-#define TYPE_EX_LOCAL_VARS 0x202		// ƒ[ƒJƒ‹•Ï”—pƒXƒ^ƒbƒNƒ^ƒCƒv(HSPtoC)
+#define TYPE_EX_SUBROUTINE 0x100		// gosubç”¨ã®ã‚¹ã‚¿ãƒƒã‚¯ã‚¿ã‚¤ãƒ—
+#define TYPE_EX_CUSTOMFUNC 0x101		// deffuncå‘¼ã³å‡ºã—ç”¨ã®ã‚¹ã‚¿ãƒƒã‚¯ã‚¿ã‚¤ãƒ—
+#define TYPE_EX_ENDOFPARAM 0x200		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼çµ‚ç«¯(HSPtoC)
+#define TYPE_EX_ARRAY_VARS 0x201		// é…åˆ—è¦ç´ ä»˜ãå¤‰æ•°ç”¨ã‚¹ã‚¿ãƒƒã‚¯ã‚¿ã‚¤ãƒ—(HSPtoC)
+#define TYPE_EX_LOCAL_VARS 0x202		// ãƒ­ãƒ¼ã‚«ãƒ«å¤‰æ•°ç”¨ã‚¹ã‚¿ãƒƒã‚¯ã‚¿ã‚¤ãƒ—(HSPtoC)
 
 typedef struct
 {
 	//	Subroutine Context
 	//
-	int stacklev;						// ƒTƒuƒ‹[ƒ`ƒ“ŠJŽnŽž‚ÌƒXƒ^ƒbƒNƒŒƒxƒ‹
-	unsigned short *mcsret;				// ŒÄ‚Ño‚µŒ³PCƒ|ƒCƒ“ƒ^(•œ‹A—p)
-	STRUCTDAT *param;					// ˆø”ƒpƒ‰ƒ[ƒ^[ƒŠƒXƒg
-	void *oldtack;						// ˆÈ‘O‚ÌƒXƒ^ƒbƒNƒAƒhƒŒƒX
-	int oldlev;							// ˆÈ‘O‚ÌƒXƒ^ƒbƒNƒŒƒxƒ‹
+	int stacklev;						// ã‚µãƒ–ãƒ«ãƒ¼ãƒãƒ³é–‹å§‹æ™‚ã®ã‚¹ã‚¿ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«
+	unsigned short *mcsret;				// å‘¼ã³å‡ºã—å…ƒPCãƒã‚¤ãƒ³ã‚¿(å¾©å¸°ç”¨)
+	STRUCTDAT *param;					// å¼•æ•°ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ãƒªã‚¹ãƒˆ
+	void *oldtack;						// ä»¥å‰ã®ã‚¹ã‚¿ãƒƒã‚¯ã‚¢ãƒ‰ãƒ¬ã‚¹
+	int oldlev;							// ä»¥å‰ã®ã‚¹ã‚¿ãƒƒã‚¯ãƒ¬ãƒ™ãƒ«
 
 } HSPROUTINE;
 
 
 
-//		ƒR[ƒ‹ƒoƒbƒN‚ÌƒIƒvƒVƒ‡ƒ“
+//		ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ã®ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 //
-#define HSPEVENT_ENABLE_COMMAND 1	// ‚PƒXƒeƒbƒvŽÀsŽž
-#define HSPEVENT_ENABLE_HSPIRQ 2	// HSP“à‚Å‚ÌŠ„‚èž‚Ý”­¶Žž
-#define HSPEVENT_ENABLE_GETKEY 4	// ƒL[ƒ`ƒFƒbƒNŽž
-#define HSPEVENT_ENABLE_FILE 8		// ƒtƒ@ƒCƒ‹“üo—ÍŽž
-#define HSPEVENT_ENABLE_MEDIA 16	// ƒƒfƒBƒA“üo—ÍŽž
-#define HSPEVENT_ENABLE_PICLOAD 32	// picload–½—ßŽÀsŽž
+#define HSPEVENT_ENABLE_COMMAND 1	// ï¼‘ã‚¹ãƒ†ãƒƒãƒ—å®Ÿè¡Œæ™‚
+#define HSPEVENT_ENABLE_HSPIRQ 2	// HSPå†…ã§ã®å‰²ã‚Šè¾¼ã¿ç™ºç”Ÿæ™‚
+#define HSPEVENT_ENABLE_GETKEY 4	// ã‚­ãƒ¼ãƒã‚§ãƒƒã‚¯æ™‚
+#define HSPEVENT_ENABLE_FILE 8		// ãƒ•ã‚¡ã‚¤ãƒ«å…¥å‡ºåŠ›æ™‚
+#define HSPEVENT_ENABLE_MEDIA 16	// ãƒ¡ãƒ‡ã‚£ã‚¢å…¥å‡ºåŠ›æ™‚
+#define HSPEVENT_ENABLE_PICLOAD 32	// picloadå‘½ä»¤å®Ÿè¡Œæ™‚
 
 
-//		ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“Œ^
+//		ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³åž‹
 //
 typedef int (* HSP3_CMDFUNC) (int);
 typedef void *(* HSP3_REFFUNC) (int *,int);
@@ -611,29 +611,29 @@ typedef int (* HSP3_EVENTFUNC) (int,int,int,void *);
 
 
 typedef struct {
-	//	Œ^‚²‚Æ‚Ìî•ñ
-	//	(*‚Ì€–Ú‚ÍAeƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÅÝ’è‚³‚ê‚Ü‚·)
+	//	åž‹ã”ã¨ã®æƒ…å ±
+	//	(*ã®é …ç›®ã¯ã€è¦ªã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã§è¨­å®šã•ã‚Œã¾ã™)
 	//
-	short type;							// *Œ^ƒ^ƒCƒv’l
-	short option;						// *ƒIƒvƒVƒ‡ƒ“î•ñ
-	HSPCTX *hspctx;						// *HSP Context\‘¢‘Ì‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	HSPEXINFO *hspexinfo;				// *HSPEXINFO\‘¢‘Ì‚Ö‚Ìƒ|ƒCƒ“ƒ^
+	short type;							// *åž‹ã‚¿ã‚¤ãƒ—å€¤
+	short option;						// *ã‚ªãƒ—ã‚·ãƒ§ãƒ³æƒ…å ±
+	HSPCTX *hspctx;						// *HSP Contextæ§‹é€ ä½“ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	HSPEXINFO *hspexinfo;				// *HSPEXINFOæ§‹é€ ä½“ã¸ã®ãƒã‚¤ãƒ³ã‚¿
 
-	//	ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“î•ñ
+	//	ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³æƒ…å ±
 	//
-	int (* cmdfunc) (int);				// ƒRƒ}ƒ“ƒhŽó‚¯Žæ‚èƒtƒ@ƒ“ƒNƒVƒ‡ƒ“
-	void *(* reffunc) (int *,int);		// ŽQÆŽó‚¯Žæ‚èƒtƒ@ƒ“ƒNƒVƒ‡ƒ“
-	int (* termfunc) (int);				// I—¹Žó‚¯Žæ‚èƒtƒ@ƒ“ƒNƒVƒ‡ƒ“
+	int (* cmdfunc) (int);				// ã‚³ãƒžãƒ³ãƒ‰å—ã‘å–ã‚Šãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³
+	void *(* reffunc) (int *,int);		// å‚ç…§å—ã‘å–ã‚Šãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³
+	int (* termfunc) (int);				// çµ‚äº†å—ã‘å–ã‚Šãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³
 
-	// ƒCƒxƒ“ƒgƒR[ƒ‹ƒoƒbƒNƒtƒ@ƒ“ƒNƒVƒ‡ƒ“
+	// ã‚¤ãƒ™ãƒ³ãƒˆã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³
 	//
-	int (* msgfunc) (int,int,int);				// WindowƒƒbƒZ[ƒWƒR[ƒ‹ƒoƒbƒN
-	int (* eventfunc) (int,int,int,void *);		// HSPƒCƒxƒ“ƒgƒR[ƒ‹ƒoƒbƒN
+	int (* msgfunc) (int,int,int);				// Windowãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
+	int (* eventfunc) (int,int,int,void *);		// HSPã‚¤ãƒ™ãƒ³ãƒˆã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
 
 } HSP3TYPEINFO;
 
 
-// HSPŠ„‚èž‚ÝID
+// HSPå‰²ã‚Šè¾¼ã¿ID
 enum
 {
 HSPIRQ_ONEXIT = 0,
@@ -644,7 +644,7 @@ HSPIRQ_USERDEF,
 HSPIRQ_MAX
 };
 
-// HSPƒCƒxƒ“ƒgID
+// HSPã‚¤ãƒ™ãƒ³ãƒˆID
 enum
 {
 HSPEVENT_NONE = 0,
@@ -667,7 +667,7 @@ HSPEVENT_PICLOAD,
 HSPEVENT_MAX
 };
 
-// ginfoŠg’£—pƒtƒB[ƒƒh
+// ginfoæ‹¡å¼µç”¨ãƒ•ã‚£ãƒ¼ãƒ¡ãƒ‰
 #define GINFO_EXINFO_MAX 16
 #define GINFO_EXINFO_BASE 0x100
 #define GINFO_EXINFO_ACCEL_X (GINFO_EXINFO_BASE+0)

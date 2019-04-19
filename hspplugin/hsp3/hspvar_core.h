@@ -13,7 +13,7 @@
 #define HSPVAR_FLAG_STRUCT 5
 #define HSPVAR_FLAG_COMSTRUCT 6
 
-//	7‚ÍVARIANT‚Å—\–ñÏ‚Ý
+//	7ã¯VARIANTã§äºˆç´„æ¸ˆã¿
 
 #define HSPVAR_FLAG_USERDEF 8
 #define HSPVAR_FLAG_MAX 8
@@ -28,22 +28,22 @@
 #define HSPVAR_ERROR_ARRAYOVER HSPERR_ARRAY_OVERFLOW
 #define HSPVAR_ERROR_ILLEGALPRM HSPERR_ILLEGAL_FUNCTION
 
-#define HSPVAR_SUPPORT_STORAGE 1				// ŒÅ’è’·ƒXƒgƒŒ[ƒWƒTƒ|[ƒg
-#define HSPVAR_SUPPORT_FLEXSTORAGE 2			// ‰Â•Ï’·ƒXƒgƒŒ[ƒWƒTƒ|[ƒg
-#define HSPVAR_SUPPORT_FIXEDARRAY 4				// ”z—ñƒTƒ|[ƒg
-#define HSPVAR_SUPPORT_FLEXARRAY 8				// ‰Â•Ï’·”z—ñƒTƒ|[ƒg
-#define HSPVAR_SUPPORT_ARRAYOBJ 16				// ˜A‘z”z—ñƒTƒ|[ƒg
-#define HSPVAR_SUPPORT_FLEXSIZE 32				// —v‘f‚²‚Æ‚Ìƒf[ƒ^‚ª‰Â•Ï’·
-#define HSPVAR_SUPPORT_NOCONVERT 64				// ‘ã“üŽž‚ÌŒ^•ÏŠ·‚ð–³Œø‚É‚·‚é
-#define HSPVAR_SUPPORT_VARUSE 128				// varuseŠÖ”‚Ìƒ`ƒFƒbƒN‚ð—LŒø‚É‚·‚é
-#define HSPVAR_SUPPORT_TEMPVAR 256				// ƒeƒ“ƒ|ƒ‰ƒŠ•Ï”‚Æ‚µ‚ÄŽg—p‚·‚é
-#define HSPVAR_SUPPORT_USER1 0x4000				// ƒ†[ƒU[ƒtƒ‰ƒO1
-#define HSPVAR_SUPPORT_USER2 0x8000				// ƒ†[ƒU[ƒtƒ‰ƒO2
+#define HSPVAR_SUPPORT_STORAGE 1				// å›ºå®šé•·ã‚¹ãƒˆãƒ¬ãƒ¼ã‚¸ã‚µãƒãƒ¼ãƒˆ
+#define HSPVAR_SUPPORT_FLEXSTORAGE 2			// å¯å¤‰é•·ã‚¹ãƒˆãƒ¬ãƒ¼ã‚¸ã‚µãƒãƒ¼ãƒˆ
+#define HSPVAR_SUPPORT_FIXEDARRAY 4				// é…åˆ—ã‚µãƒãƒ¼ãƒˆ
+#define HSPVAR_SUPPORT_FLEXARRAY 8				// å¯å¤‰é•·é…åˆ—ã‚µãƒãƒ¼ãƒˆ
+#define HSPVAR_SUPPORT_ARRAYOBJ 16				// é€£æƒ³é…åˆ—ã‚µãƒãƒ¼ãƒˆ
+#define HSPVAR_SUPPORT_FLEXSIZE 32				// è¦ç´ ã”ã¨ã®ãƒ‡ãƒ¼ã‚¿ãŒå¯å¤‰é•·
+#define HSPVAR_SUPPORT_NOCONVERT 64				// ä»£å…¥æ™‚ã®åž‹å¤‰æ›ã‚’ç„¡åŠ¹ã«ã™ã‚‹
+#define HSPVAR_SUPPORT_VARUSE 128				// varuseé–¢æ•°ã®ãƒã‚§ãƒƒã‚¯ã‚’æœ‰åŠ¹ã«ã™ã‚‹
+#define HSPVAR_SUPPORT_TEMPVAR 256				// ãƒ†ãƒ³ãƒãƒ©ãƒªå¤‰æ•°ã¨ã—ã¦ä½¿ç”¨ã™ã‚‹
+#define HSPVAR_SUPPORT_USER1 0x4000				// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ•ãƒ©ã‚°1
+#define HSPVAR_SUPPORT_USER2 0x8000				// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ•ãƒ©ã‚°2
 
 #define HSPVAR_SUPPORT_MISCTYPE (HSPVAR_SUPPORT_ARRAYOBJ)
 
-typedef void * PDAT;							// ƒf[ƒ^‚ÌŽÀ‘Ô‚Ö‚Ìƒ|ƒCƒ“ƒ^
-typedef int APTR;								// ”z—ñƒf[ƒ^‚Ö‚ÌƒIƒtƒZƒbƒg’l
+typedef void * PDAT;							// ãƒ‡ãƒ¼ã‚¿ã®å®Ÿæ…‹ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+typedef int APTR;								// é…åˆ—ãƒ‡ãƒ¼ã‚¿ã¸ã®ã‚ªãƒ•ã‚»ãƒƒãƒˆå€¤
 
 enum
 {
@@ -93,51 +93,51 @@ typedef struct
 //
 typedef struct
 {
-	//		ƒf[ƒ^ƒtƒB[ƒ‹ƒh
+	//		ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚£ãƒ¼ãƒ«ãƒ‰
 	//
-	short flag;							// Œ^ƒ^ƒCƒv’l (eƒAƒvƒŠƒP[ƒVƒ‡ƒ“‚ÅÝ’è‚³‚ê‚Ü‚·)
-	short aftertype;					// ‰‰ŽZŒã‚Ìƒ^ƒCƒv’l
-	short version;						// Œ^ƒ^ƒCƒvƒ‰ƒ“ƒ^ƒCƒ€ƒo[ƒWƒ‡ƒ“(0x100 = 1.0)
-	unsigned short support;				// ƒTƒ|[ƒgó‹µƒtƒ‰ƒO(HSPVAR_SUPPORT_*)
-	short basesize;						// ‚P‚Â‚Ìƒf[ƒ^‚ªŽg—p‚·‚éƒTƒCƒY(byte) / ‰Â•Ï’·‚ÌŽž‚Í-1
-	short opt;							// (–¢Žg—p)
+	short flag;							// åž‹ã‚¿ã‚¤ãƒ—å€¤ (è¦ªã‚¢ãƒ—ãƒªã‚±ãƒ¼ã‚·ãƒ§ãƒ³ã§è¨­å®šã•ã‚Œã¾ã™)
+	short aftertype;					// æ¼”ç®—å¾Œã®ã‚¿ã‚¤ãƒ—å€¤
+	short version;						// åž‹ã‚¿ã‚¤ãƒ—ãƒ©ãƒ³ã‚¿ã‚¤ãƒ ãƒãƒ¼ã‚¸ãƒ§ãƒ³(0x100 = 1.0)
+	unsigned short support;				// ã‚µãƒãƒ¼ãƒˆçŠ¶æ³ãƒ•ãƒ©ã‚°(HSPVAR_SUPPORT_*)
+	short basesize;						// ï¼‘ã¤ã®ãƒ‡ãƒ¼ã‚¿ãŒä½¿ç”¨ã™ã‚‹ã‚µã‚¤ã‚º(byte) / å¯å¤‰é•·ã®æ™‚ã¯-1
+	short opt;							// (æœªä½¿ç”¨)
 
-	char *vartype_name;					// Œ^ƒ^ƒCƒv–¼•¶Žš—ñ‚Ö‚Ìƒ|ƒCƒ“ƒ^
-	char *user;							// ƒ†[ƒU[ƒf[ƒ^(–¢Žg—p)
+	char *vartype_name;					// åž‹ã‚¿ã‚¤ãƒ—åæ–‡å­—åˆ—ã¸ã®ãƒã‚¤ãƒ³ã‚¿
+	char *user;							// ãƒ¦ãƒ¼ã‚¶ãƒ¼ãƒ‡ãƒ¼ã‚¿(æœªä½¿ç”¨)
 
-	//		ƒVƒXƒeƒ€ŽQÆEŒ^•ÏŠ·—p
+	//		ã‚·ã‚¹ãƒ†ãƒ å‚ç…§ãƒ»åž‹å¤‰æ›ç”¨
 	//
 	void *(*Cnv)( const void *buffer, int flag );
 	void *(*CnvCustom)( const void *buffer, int flag );
 	PDAT *(*GetPtr)( PVal *pval );
 
-	void *(*ArrayObjectRead)( PVal *pval, int *mptype );// ”z—ñ—v‘f‚ÌŽw’è (˜A‘z”z—ñ/“Ç‚Ýo‚µ)
-	void (*ArrayObject)( PVal *pval );							// ”z—ñ—v‘f‚ÌŽw’è (˜A‘z”z—ñ/‘‚«ž‚Ý€”õ)
-	void (*ObjectWrite)( PVal *pval, void *data, int type );		// HSPVAR_SUPPORT_NOCONVERTŽw’èŽž‚Ì‘ã“ü
-	void (*ObjectMethod)( PVal *pval );							// •Ï”‚É‘Î‚·‚éƒƒ\ƒbƒh‚ÌŽw’è
+	void *(*ArrayObjectRead)( PVal *pval, int *mptype );// é…åˆ—è¦ç´ ã®æŒ‡å®š (é€£æƒ³é…åˆ—/èª­ã¿å‡ºã—)
+	void (*ArrayObject)( PVal *pval );							// é…åˆ—è¦ç´ ã®æŒ‡å®š (é€£æƒ³é…åˆ—/æ›¸ãè¾¼ã¿æº–å‚™)
+	void (*ObjectWrite)( PVal *pval, void *data, int type );		// HSPVAR_SUPPORT_NOCONVERTæŒ‡å®šæ™‚ã®ä»£å…¥
+	void (*ObjectMethod)( PVal *pval );							// å¤‰æ•°ã«å¯¾ã™ã‚‹ãƒ¡ã‚½ãƒƒãƒ‰ã®æŒ‡å®š
 
-	void (*Alloc)( PVal *pval, const PVal *pval2 );		// •Ï”ƒƒ‚ƒŠ‚ðŠm•Û‚·‚é
-	void (*Free)( PVal *pval );						// •Ï”ƒƒ‚ƒŠ‚ð‰ð•ú‚·‚é
+	void (*Alloc)( PVal *pval, const PVal *pval2 );		// å¤‰æ•°ãƒ¡ãƒ¢ãƒªã‚’ç¢ºä¿ã™ã‚‹
+	void (*Free)( PVal *pval );						// å¤‰æ•°ãƒ¡ãƒ¢ãƒªã‚’è§£æ”¾ã™ã‚‹
 
-	int (*GetSize)( const PDAT *pdat );			// —v‘f‚ªŽg—p‚·‚éƒƒ‚ƒŠƒTƒCƒY‚ð•Ô‚·(‰Â•Ï’·‚Ì‚½‚ß)
-	int (*GetUsing)( const PDAT *pdat );			// —v‘f‚ªŽg—p’†‚Å‚ ‚é‚©‚ð•Ô‚·(varuseŠÖ”—p)
+	int (*GetSize)( const PDAT *pdat );			// è¦ç´ ãŒä½¿ç”¨ã™ã‚‹ãƒ¡ãƒ¢ãƒªã‚µã‚¤ã‚ºã‚’è¿”ã™(å¯å¤‰é•·ã®ãŸã‚)
+	int (*GetUsing)( const PDAT *pdat );			// è¦ç´ ãŒä½¿ç”¨ä¸­ã§ã‚ã‚‹ã‹ã‚’è¿”ã™(varuseé–¢æ•°ç”¨)
 
-	//		•Ï”ƒoƒbƒtƒ@(ƒoƒCƒiƒŠ)‚Ìƒ|ƒCƒ“ƒ^‚ÆƒTƒCƒY‚ð•Ô‚·
-	//		(—v‘f‚ª‰Â•Ï’·(str)‚Ìê‡‚ÍŠY“–‚·‚é‚P”z—ñƒoƒCƒiƒŠ‚Ì‚Ý)
-	//		(—v‘f‚ªŒÅ’è’·(int,double)‚Ìê‡‚Í‘S”z—ñƒoƒCƒiƒŠ)
-	//		(ƒTƒCƒY‚Íƒƒ‚ƒŠŠm•ÛƒTƒCƒY‚ð•Ô‚·)
+	//		å¤‰æ•°ãƒãƒƒãƒ•ã‚¡(ãƒã‚¤ãƒŠãƒª)ã®ãƒã‚¤ãƒ³ã‚¿ã¨ã‚µã‚¤ã‚ºã‚’è¿”ã™
+	//		(è¦ç´ ãŒå¯å¤‰é•·(str)ã®å ´åˆã¯è©²å½“ã™ã‚‹ï¼‘é…åˆ—ãƒã‚¤ãƒŠãƒªã®ã¿)
+	//		(è¦ç´ ãŒå›ºå®šé•·(int,double)ã®å ´åˆã¯å…¨é…åˆ—ãƒã‚¤ãƒŠãƒª)
+	//		(ã‚µã‚¤ã‚ºã¯ãƒ¡ãƒ¢ãƒªç¢ºä¿ã‚µã‚¤ã‚ºã‚’è¿”ã™)
 	void *(*GetBlockSize)( PVal *pval, PDAT *pdat, int *size );
 
-	//		ƒoƒCƒiƒŠƒf[ƒ^—p‚Éƒƒ‚ƒŠƒuƒƒbƒN‚ðŠm•Û‚·‚é
-	//		(—v‘f‚ª‰Â•Ï’·(str)‚Ìê‡‚ÉƒuƒƒbƒNƒTƒCƒY‚ð‹­§“I‚ÉŠm•Û‚·‚é)
-	//		(ŒÅ’è’·‚Ìê‡‚Í‰½‚à‚µ‚È‚¢)
+	//		ãƒã‚¤ãƒŠãƒªãƒ‡ãƒ¼ã‚¿ç”¨ã«ãƒ¡ãƒ¢ãƒªãƒ–ãƒ­ãƒƒã‚¯ã‚’ç¢ºä¿ã™ã‚‹
+	//		(è¦ç´ ãŒå¯å¤‰é•·(str)ã®å ´åˆã«ãƒ–ãƒ­ãƒƒã‚¯ã‚µã‚¤ã‚ºã‚’å¼·åˆ¶çš„ã«ç¢ºä¿ã™ã‚‹)
+	//		(å›ºå®šé•·ã®å ´åˆã¯ä½•ã‚‚ã—ãªã„)
 	void (*AllocBlock)( PVal *pval, PDAT *pdat, int size );
 
-	//		‘ã“ü—pŠÖ”(Œ^‚Ìˆê’v‚ª•Ûá‚³‚ê‚Ü‚·)
+	//		ä»£å…¥ç”¨é–¢æ•°(åž‹ã®ä¸€è‡´ãŒä¿éšœã•ã‚Œã¾ã™)
 	//
 	void (*Set)( PVal *pval, PDAT *pdat, const void *in );
 
-	//		‰‰ŽZ—pŠÖ”(Œ^‚Ìˆê’v‚ª•Ûá‚³‚ê‚Ü‚·)
+	//		æ¼”ç®—ç”¨é–¢æ•°(åž‹ã®ä¸€è‡´ãŒä¿éšœã•ã‚Œã¾ã™)
 	//
 	void (*AddI)( PDAT *pval, const void *val );
 	void (*SubI)( PDAT *pval, const void *val );
@@ -177,7 +177,7 @@ extern PVal *mem_pval;
 typedef struct
 {
 	short type;			// typeID
-	short myid;			// ŒÅ—LID(–¢Žg—p)
+	short myid;			// å›ºæœ‰ID(æœªä½¿ç”¨)
 	short customid;		// structure ID
 	short clonetype;	// typeID for clone
 	int size;			// data size
@@ -188,10 +188,10 @@ typedef struct
 /*
 	typefunc
 
-	Šî–{ƒ^ƒCƒv HSPVAR_FLAG_STR ` HSPVAR_FLAG_DOUBLE
-	Šg’£ƒ^ƒCƒv HSPVAR_FLAG_USERDEF ˆÈ~
+	åŸºæœ¬ã‚¿ã‚¤ãƒ— HSPVAR_FLAG_STR ï½ž HSPVAR_FLAG_DOUBLE
+	æ‹¡å¼µã‚¿ã‚¤ãƒ— HSPVAR_FLAG_USERDEF ä»¥é™
 
-	Ž®‚Ì•]‰¿‚Åpval->pt‚ðŽQÆ‚·‚é‚½‚ßAí‚É”z—ñ0‚Ìƒ|ƒCƒ“ƒg‚Ípval->pt‚ªŽw‚µŽ¦‚·•K—v‚ª‚ ‚éB
+	å¼ã®è©•ä¾¡ã§pval->ptã‚’å‚ç…§ã™ã‚‹ãŸã‚ã€å¸¸ã«é…åˆ—0ã®ãƒã‚¤ãƒ³ãƒˆã¯pval->ptãŒæŒ‡ã—ç¤ºã™å¿…è¦ãŒã‚ã‚‹ã€‚
 */
 
 
@@ -225,10 +225,10 @@ void HspVarCoreAllocPODArray( PVal *pval, const PVal *pval2, int basesize );
 #define HspVarCoreDispose( pv ) hspvarproc[(pv)->flag].Free(pv)
 #define HspVarCoreReset( pv ) ((pv)->offset=0,(pv)->arraycnt=0)
 #define HspVarCorePtr( pv ) (hspvarproc[(pv)->flag].GetPtr(pv))
-#define HspVarCoreArrayObject( pv,in ) (hspvarproc[(pv)->flag].ArrayObject(pv,in))	//	”z—ñ‚Ì—v‘f‚ðŽw’è‚·‚é(Å‰‚ÉReset‚ðŒÄ‚ñ‚Å‚¨‚­‚±‚Æ)
+#define HspVarCoreArrayObject( pv,in ) (hspvarproc[(pv)->flag].ArrayObject(pv,in))	//	é…åˆ—ã®è¦ç´ ã‚’æŒ‡å®šã™ã‚‹(æœ€åˆã«Resetã‚’å‘¼ã‚“ã§ãŠãã“ã¨)
 
 #define HspVarCoreSet( pv,in ) hspvarproc[(pv)->flag].Set( pv, in )
-#define HspVarCoreCnv( in1,in2,in3 ) hspvarproc[in2].Cnv( in3,in1 )		// in1->in2‚ÌŒ^‚Éin3ƒ|ƒCƒ“ƒ^‚ð•ÏŠ·‚·‚é
+#define HspVarCoreCnv( in1,in2,in3 ) hspvarproc[in2].Cnv( in3,in1 )		// in1->in2ã®åž‹ã«in3ãƒã‚¤ãƒ³ã‚¿ã‚’å¤‰æ›ã™ã‚‹
 
 #define HspVarCoreGetBlockSize( pv,in1,out ) hspvarproc[(pv)->flag].GetBlockSize( pv,in1,out )
 #define HspVarCoreAllocBlock( pv,in1,in2 ) hspvarproc[(pv)->flag].AllocBlock( pv,in1,in2 )
@@ -241,8 +241,8 @@ void HspVarCoreAllocPODArray( PVal *pval, const PVal *pval2, int basesize );
 
 inline PDAT *HspVarCorePtrAPTR( PVal *pv, APTR ofs )
 {
-	//		•Ï”ƒf[ƒ^‚ÌŽÀ‘Ôƒ|ƒCƒ“ƒ^‚ð“¾‚é
-	//		(APTR‚Æpval‚©‚çŽÀ‘Ô‚ð‹‚ß‚é)
+	//		å¤‰æ•°ãƒ‡ãƒ¼ã‚¿ã®å®Ÿæ…‹ãƒã‚¤ãƒ³ã‚¿ã‚’å¾—ã‚‹
+	//		(APTRã¨pvalã‹ã‚‰å®Ÿæ…‹ã‚’æ±‚ã‚ã‚‹)
 	//
 	pv->offset=ofs;
 	return hspvarproc[(pv)->flag].GetPtr(pv);

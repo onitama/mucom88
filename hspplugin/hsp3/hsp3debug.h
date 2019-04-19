@@ -5,10 +5,10 @@
 #ifndef __hsp3debug_h
 #define __hsp3debug_h
 
-// ƒGƒ‰[ƒR[ƒh
+// ã‚¨ãƒ©ãƒ¼ã‚³ãƒ¼ãƒ‰
 typedef enum {
 
-HSPERR_NONE = 0,				// ƒXƒNƒŠƒvƒgI—¹
+HSPERR_NONE = 0,				// ã‚¹ã‚¯ãƒªãƒ—ãƒˆçµ‚äº†æ™‚
 HSPERR_UNKNOWN_CODE,
 HSPERR_SYNTAX,
 HSPERR_ILLEGAL_FUNCTION,
@@ -51,8 +51,8 @@ HSPERR_COMDLL_ERROR,
 HSPERR_NORETVAL,
 HSPERR_FUNCTION_SYNTAX,
 
-HSPERR_INTJUMP,					// Š„‚è‚İƒWƒƒƒ“ƒv
-HSPERR_EXITRUN,					// ŠO•”ƒtƒ@ƒCƒ‹Às
+HSPERR_INTJUMP,					// å‰²ã‚Šè¾¼ã¿ã‚¸ãƒ£ãƒ³ãƒ—æ™‚
+HSPERR_EXITRUN,					// å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«å®Ÿè¡Œ
 HSPERR_MAX
 
 } HSPERROR;
@@ -85,25 +85,25 @@ HSPDEBUG_MAX
 typedef struct HSP3DEBUG
 {
 	//	[in/out] tranfer value
-	//	(ƒVƒXƒeƒ€‚Æ‚Ì’ÊM—p)
+	//	(ã‚·ã‚¹ãƒ†ãƒ ã¨ã®é€šä¿¡ç”¨)
 	//
 	int	flag;				// Flag ID
-	int	line;				// s”Ô†î•ñ
-	char *fname;			// ƒtƒ@ƒCƒ‹–¼î•ñ
-	void *dbgwin;			// Debug Window‚ÌHandle
-	char *dbgval;			// debugî•ñæ“¾ƒoƒbƒtƒ@
+	int	line;				// è¡Œç•ªå·æƒ…å ±
+	char *fname;			// ãƒ•ã‚¡ã‚¤ãƒ«åæƒ…å ±
+	void *dbgwin;			// Debug Windowã®Handle
+	char *dbgval;			// debugæƒ…å ±å–å¾—ãƒãƒƒãƒ•ã‚¡
 
 	//	[in] system value
-	//	(‰Šú‰»Œã‚Éİ’è‚³‚ê‚Ü‚·)
+	//	(åˆæœŸåŒ–å¾Œã«è¨­å®šã•ã‚Œã¾ã™)
 	//
 	struct HSPCTX 	*hspctx;
 	//
-	char *	(* get_value) (int);			// debugî•ñæ“¾ƒR[ƒ‹ƒoƒbƒN
-	char *	(* get_varinf) (char *,int);	// •Ï”î•ñæ“¾ƒR[ƒ‹ƒoƒbƒN
-	void	(* dbg_close) (char *);			// debugî•ñæ“¾I—¹
-	void	(* dbg_curinf)( void );			// Œ»İsEƒtƒ@ƒCƒ‹–¼‚Ìæ“¾
-	int		(* dbg_set) (int);				// debugƒ‚[ƒhİ’è
-	char *  (* dbg_callstack) ( void );     // ƒR[ƒ‹ƒXƒ^ƒbƒN‚Ìæ“¾
+	char *	(* get_value) (int);			// debugæƒ…å ±å–å¾—ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
+	char *	(* get_varinf) (char *,int);	// å¤‰æ•°æƒ…å ±å–å¾—ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
+	void	(* dbg_close) (char *);			// debugæƒ…å ±å–å¾—çµ‚äº†
+	void	(* dbg_curinf)( void );			// ç¾åœ¨è¡Œãƒ»ãƒ•ã‚¡ã‚¤ãƒ«åã®å–å¾—
+	int		(* dbg_set) (int);				// debugãƒ¢ãƒ¼ãƒ‰è¨­å®š
+	char *  (* dbg_callstack) ( void );     // ã‚³ãƒ¼ãƒ«ã‚¹ã‚¿ãƒƒã‚¯ã®å–å¾—
 
 } HSP3DEBUG;
 

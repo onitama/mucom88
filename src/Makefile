@@ -59,11 +59,7 @@ SRCS += soundbuf.cpp
 SRCS += cmucom.cpp
 SRCS += mucomvm.cpp
 
-ifeq ($(WIN32),1)
 SRCS += mucomerror.cpp
-else
-SRCS += mucomerror_utf8.cpp
-endif
 
 SRCS += plugin/plugin.cpp
 
