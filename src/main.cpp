@@ -13,7 +13,7 @@
 #include "cmucom.h"
 #include "wavout.h"
 
-// main‚ğSDL_main‚É‚·‚é‚½‚ß‚É•K—v
+// mainã‚’SDL_mainã«ã™ã‚‹ãŸã‚ã«å¿…è¦
 #ifdef USE_SDL
 #include <SDL.h>
 #endif
@@ -216,7 +216,7 @@ int main( int argc, char *argv[] )
 		if (mucom.CompileFile(fname, outfile) < 0) {
 			st = 1;
 		}
-		// Œ»ó‚ÍƒRƒ“ƒpƒCƒ‹‚ÍÄ¶‚Å‚«‚È‚¢
+		// ç¾çŠ¶ã¯ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«æ™‚ã¯å†ç”Ÿã§ããªã„
 		st = 1;
 	} else {
 		if (mucom.LoadMusic(fname) < 0) {

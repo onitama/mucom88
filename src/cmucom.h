@@ -20,11 +20,11 @@
 #define MUCOM_CH_FM2 7
 #define MUCOM_CH_RHYTHM 6
 #define MUCOM_CH_ADPCM 10
-#define MUCOM_MAXCH 11				// �ő�ch(�Œ�)
+#define MUCOM_MAXCH 11				// 最大ch(固定)
 
-#define MUCOM_CHDATA_SIZE 64		// ch�f�[�^�̃T�C�Y
-#define MUCOM_LINE_MAXSTR 512		// 1�s������̍ő啶����
-#define MUCOM_FILE_MAXSTR 512		// �t�@�C�����̍ő啶����
+#define MUCOM_CHDATA_SIZE 64		// chデータのサイズ
+#define MUCOM_LINE_MAXSTR 512		// 1行あたりの最大文字数
+#define MUCOM_FILE_MAXSTR 512		// ファイル名の最大文字数
 
 #define MUCOM_DATA_ADDRESS 0xc200
 
@@ -65,21 +65,21 @@
 #define MUCOM_HEADER_VERSION1 1		// 1.0 Header
 #define MUCOM_HEADER_VERSION2 2		// 2.0 Header
 
-#define MUCOM_FLAG_SJISTAG 0		// TAG data�̕����R�[�h��SJIS
-#define MUCOM_FLAG_UTF8TAG 1		// TAG data�̕����R�[�h��UTF8
+#define MUCOM_FLAG_SJISTAG 0		// TAG dataの文字コードはSJIS
+#define MUCOM_FLAG_UTF8TAG 1		// TAG dataの文字コードはUTF8
 
-//	MUB�̃o�C�i���f�[�^�����Ɋւ�����
-#define MUCOM_SYSTEM_UNKNOWN 0		// �s���ȃV�X�e���ɂ�鐶��
-#define MUCOM_SYSTEM_PC88 1			// PC88�݊��̃V�X�e���ɂ�鐶��
-#define MUCOM_SYSTEM_PC88UC 2		// PC88�Ə�ʌ݊��̃V�X�e���ɂ�鐶��
-#define MUCOM_SYSTEM_NATIVE 3		// �l�C�e�B�u�ȃV�X�e���ɂ�鐶��
+//	MUBのバイナリデータ生成に関する情報
+#define MUCOM_SYSTEM_UNKNOWN 0		// 不明なシステムによる生成
+#define MUCOM_SYSTEM_PC88 1			// PC88互換のシステムによる生成
+#define MUCOM_SYSTEM_PC88UC 2		// PC88と上位互換のシステムによる生成
+#define MUCOM_SYSTEM_NATIVE 3		// ネイティブなシステムによる生成
 
-//	MUB�����t���ɑz�肷��V�X�e���̏��
-#define MUCOM_TARGET_UNKNOWN 0		// ���w��
-#define MUCOM_TARGET_YM2203 1		// YM2203�ɂ�鉉�t
-#define MUCOM_TARGET_YM2608 2		// YM2608�ɂ�鉉�t
-#define MUCOM_TARGET_YM2151 3		// YM2151�ɂ�鉉�t
-#define MUCOM_TARGET_MULTI 0x80		// �����̃`�b�v�ɂ�鉉�t
+//	MUBが演奏時に想定するシステムの情報
+#define MUCOM_TARGET_UNKNOWN 0		// 未指定
+#define MUCOM_TARGET_YM2203 1		// YM2203による演奏
+#define MUCOM_TARGET_YM2608 2		// YM2608による演奏
+#define MUCOM_TARGET_YM2151 3		// YM2151による演奏
+#define MUCOM_TARGET_MULTI 0x80		// 複数のチップによる演奏
 
 #define MUCOM_FMVOICE_MAX 32
 
@@ -95,23 +95,23 @@
 #define MUCOM_FMVOICE_SIZE 0x2000
 #define MUCOM_FMVOICE_MAXNO 256
 
-#define MUCOM_FMVOICE_MODE_EXTERNAL 0		// ���F�t�@�C�����I���W�i���t�@�C������ǂݍ���Ŏg�p
-#define MUCOM_FMVOICE_MODE_INTERNAL 1		// ���F�t�@�C�����ꎞ�t�@�C������ǂݍ���Ŏg�p
+#define MUCOM_FMVOICE_MODE_EXTERNAL 0		// 音色ファイルをオリジナルファイルから読み込んで使用
+#define MUCOM_FMVOICE_MODE_INTERNAL 1		// 音色ファイルを一時ファイルから読み込んで使用
 
-#define MUCOM_NOTICE_MMLCHANGE 1	// MML�R�[�h�ύX�̒ʒm
-#define MUCOM_NOTICE_VOICECHANGE 2	// ���F�ύX�̒ʒm
-#define MUCOM_NOTICE_PCMCHANGE 4	// PCM�ύX�̒ʒm
-#define MUCOM_NOTICE_MMLERROR 0x100	// MML�������̃G���[�ʒm
+#define MUCOM_NOTICE_MMLCHANGE 1	// MMLコード変更の通知
+#define MUCOM_NOTICE_VOICECHANGE 2	// 音色変更の通知
+#define MUCOM_NOTICE_PCMCHANGE 4	// PCM変更の通知
+#define MUCOM_NOTICE_MMLERROR 0x100	// MMLが原因のエラー通知
 
-#define MUCOM_NOTICE_SYSERROR 0x1000	// �s���ȃV�X�e���G���[�ʒm
+#define MUCOM_NOTICE_SYSERROR 0x1000	// 不明なシステムエラー通知
 
-#define MUCOM_EDIT_STATUS_NONE 0		// �ҏW��MML�Ȃ�
-#define MUCOM_EDIT_STATUS_SAVED 1		// �ҏW��MML(�ۑ��ς�)
-#define MUCOM_EDIT_STATUS_CHANGED 2		// �ҏW��MML(���ۑ�)
-#define MUCOM_EDIT_STATUS_VOICEEDIT 4	// ���F�ҏW��(���ۑ�)
+#define MUCOM_EDIT_STATUS_NONE 0		// 編集中MMLなし
+#define MUCOM_EDIT_STATUS_SAVED 1		// 編集中MML(保存済み)
+#define MUCOM_EDIT_STATUS_CHANGED 2		// 編集中MML(未保存)
+#define MUCOM_EDIT_STATUS_VOICEEDIT 4	// 音色編集中(未保存)
 
-#define MUCOM_EDIT_OPTION_SJIS 0	// �ҏW��MML�̕����R�[�h��SJIS
-#define MUCOM_EDIT_OPTION_UTF8 1	// �ҏW��MML�̕����R�[�h��UTF-8
+#define MUCOM_EDIT_OPTION_SJIS 0	// 編集中MMLの文字コードはSJIS
+#define MUCOM_EDIT_OPTION_UTF8 1	// 編集中MMLの文字コードはUTF-8
 
 
 
@@ -152,24 +152,24 @@ typedef struct
 {
 	//	Player Channel Data structure
 	//
-	int length;				// LENGTH �����		IX + 0
-	int vnum;				// �ݼ�� ���ް		1
+	int length;				// LENGTH ｶｳﾝﾀｰ		IX + 0
+	int vnum;				// ｵﾝｼｮｸ ﾅﾝﾊﾞｰ		1
 	int wadr,wadr2;			// DATA ADDRES WORK	2, 3
 	int tadr, tadr2;		// DATA TOP ADDRES	4, 5
 	int volume;				// VOLUME DATA		6
-	int alg;				// �ٺ�ؽ�� No.		7
-	int chnum;				// ����� ���ް     	8
-	int detune, dtmp;		// ������ DATA		9, 10
+	int alg;				// ｱﾙｺﾞﾘｽﾞﾑ No.		7
+	int chnum;				// ﾁｬﾝﾈﾙ ﾅﾝﾊﾞｰ     	8
+	int detune, dtmp;		// ﾃﾞﾁｭｰﾝ DATA		9, 10
 	int tllfo;				// for TLLFO		11
-	int reverb;				// for ��ް��		12
+	int reverb;				// for ﾘﾊﾞｰﾌﾞ		12
 	int d1, d2, d3, d4, d5;
 							// SOFT ENVE DUMMY	13 - 17
-	int quantize;			// q������		18
+	int quantize;			// qｵﾝﾀｲｽﾞ		18
 	int lfo_delay;			// LFO DELAY		19
 	int work1;				// WORK			20
 	int lfo_counter;		// LFO COUNTER		21
 	int work2;				// WORK			22
-	int lfo_diff, ldtmp;	// LFO �ݶخ� 2BYTE	23, 24
+	int lfo_diff, ldtmp;	// LFO ﾍﾝｶﾘｮｳ 2BYTE	23, 24
 	int work3, work4;		// WORK			25, 26
 	int lfo_peak;			// LFO PEAK LEVEL	27
 	int work5;				// WORK			28
@@ -188,11 +188,11 @@ typedef struct
 	int flag2;				// bit 6 = TL LFO FLAG     33
 							// bit 5 = REVERVE FLAG
 							// bit 4 = REVERVE MODE
-	int retadr1, retadr2;	// ���ݱ��ڽ	34, 35
-	int pan, keyon;			// 36, 37 (��) = �����pan,keyon data�����Ă���
+	int retadr1, retadr2;	// ﾘﾀｰﾝｱﾄﾞﾚｽ	34, 35
+	int pan, keyon;			// 36, 37 (ｱｷ) = 代わりにpan,keyon dataを入れている
 
-	int vnum_org;			// ���FNo.(�I���W�i��)
-	int vol_org;			// �{�����[��(�I���W�i��)
+	int vnum_org;			// 音色No.(オリジナル)
+	int vol_org;			// ボリューム(オリジナル)
 
 } PCHDATA;
 

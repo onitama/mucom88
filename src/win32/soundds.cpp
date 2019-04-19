@@ -1,7 +1,7 @@
 
 //
 //		DirectSound based driver
-//		(ƒXƒgƒŠ[ƒ€Ä¶—pDirectSoundƒhƒ‰ƒCƒo)
+//		(ã‚¹ãƒˆãƒªãƒ¼ãƒ å†ç”Ÿç”¨DirectSoundãƒ‰ãƒ©ã‚¤ãƒ)
 //			Based on soundds.cpp,v 1.10 2002/05/31 09:45:21 cisc
 //			onion software/onitama 2018/11
 //
@@ -25,7 +25,7 @@ using namespace WinSoundDriver;
 const uint DriverDS::num_blocks = 5;
 
 // ---------------------------------------------------------------------------
-//	\’zE”jŠü ---------------------------------------------------------------
+//	æ§‹ç¯‰ãƒ»ç ´æ£„ ---------------------------------------------------------------
 
 DriverDS::DriverDS()
 {
@@ -44,7 +44,7 @@ DriverDS::~DriverDS()
 }
 
 // ---------------------------------------------------------------------------
-//  ‰Šú‰» -------------------------------------------------------------------
+//  åˆæœŸåŒ– -------------------------------------------------------------------
 
 bool DriverDS::Init(uint rate, uint ch, uint buflen)
 {
@@ -54,17 +54,17 @@ bool DriverDS::Init(uint rate, uint ch, uint buflen)
 	buffer_length = buflen;
 	sampleshift = 1 + (ch == 2 ? 1 : 0);
 
-	// ŒvZ
+	// è¨ˆç®—
 	buffersize = (rate * ch * sizeof(Sample) * buffer_length / 1000) & ~7;
 
-	// DirectSound object ì¬
+	// DirectSound object ä½œæˆ
 	HRESULT result = CoCreateInstance(CLSID_DirectSound, 0, CLSCTX_ALL, IID_IDirectSound, (void**) &lpds);
 	if (FAILED(result))
 		return false;
 	if (FAILED(lpds->Initialize(0)))
 		return false;
 
-	// ‹¦’²ƒŒƒxƒ‹İ’è
+	// å”èª¿ãƒ¬ãƒ™ãƒ«è¨­å®š
 	HWND hwnd = master_hwnd;
 	if (hwnd == NULL) hwnd = GetDesktopWindow();
 	if (DS_OK != lpds->SetCooperativeLevel(hwnd, DSSCL_PRIORITY))
@@ -82,7 +82,7 @@ bool DriverDS::Init(uint rate, uint ch, uint buflen)
 	if (DS_OK != lpds->CreateSoundBuffer(&dsbd, &lpdsb_primary, 0))
 		return false;
 
-	// Ä¶ƒtƒH[ƒ}ƒbƒgİ’è
+	// å†ç”Ÿãƒ•ã‚©ãƒ¼ãƒãƒƒãƒˆè¨­å®š
 	WAVEFORMATEX wf;
     memset(&wf, 0, sizeof(WAVEFORMATEX));
     wf.wFormatTag = WAVE_FORMAT_PCM;
@@ -94,7 +94,7 @@ bool DriverDS::Init(uint rate, uint ch, uint buflen)
 
 	lpdsb_primary->SetFormat(&wf);
 
-	// ƒZƒJƒ“ƒ_ƒŠƒoƒbƒtƒ@ì¬
+	// ã‚»ã‚«ãƒ³ãƒ€ãƒªãƒãƒƒãƒ•ã‚¡ä½œæˆ
     memset(&dsbd, 0, sizeof(DSBUFFERDESC));
     dsbd.dwSize = sizeof(DSBUFFERDESC);
 	dsbd.dwFlags = DSBCAPS_LOCSOFTWARE | DSBCAPS_CTRLPAN | DSBCAPS_CTRLVOLUME | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_GLOBALFOCUS;
@@ -106,14 +106,14 @@ bool DriverDS::Init(uint rate, uint ch, uint buflen)
 	if (DS_OK != res)
 		return false;
 
-	// Ä¶
+	// å†ç”Ÿ
 	lpdsb->SetVolume(0);
 	lpdsb->SetPan(0);
 	lpdsb->Play(0, 0, DSBPLAY_LOOPING);
 
 	nextwrite = 1 << sampleshift;
 	
-	//	ƒTƒEƒ“ƒhƒoƒbƒtƒ@
+	//	ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ•ã‚¡
 	sndbuf = new SoundBuf;
 	sndbuf->Reset(rate * ch);
 
@@ -123,7 +123,7 @@ bool DriverDS::Init(uint rate, uint ch, uint buflen)
 
 
 // ---------------------------------------------------------------------------
-//  Œã•Ğ•t‚¯ -----------------------------------------------------------------
+//  å¾Œç‰‡ä»˜ã‘ -----------------------------------------------------------------
 
 bool DriverDS::Cleanup()
 {
@@ -145,11 +145,11 @@ bool DriverDS::Cleanup()
 }
 
 // ---------------------------------------------------------------------------
-//  ƒuƒƒbƒN‘—‚é -------------------------------------------------------------
+//  ãƒ–ãƒ­ãƒƒã‚¯é€ã‚‹ -------------------------------------------------------------
 
 int DriverDS::PrepareSend()
 {
-	//		ƒXƒgƒŠ[ƒ€‘—M€”õ(PrepareSend->Send‚Ì‡”Ô‚ÅŒÄ‚Ño‚·‚±‚Æ)
+	//		ã‚¹ãƒˆãƒªãƒ¼ãƒ é€ä¿¡æº–å‚™(PrepareSend->Sendã®é †ç•ªã§å‘¼ã³å‡ºã™ã“ã¨)
 	//
 	DWORD status;
 
@@ -165,7 +165,7 @@ int DriverDS::PrepareSend()
 		restored = true;
 	}
 
-	// ˆÊ’uæ“¾
+	// ä½ç½®å–å¾—
 	DWORD cplay, cwrite;
 	lpdsb->GetCurrentPosition(&cplay, &cwrite);
 
@@ -173,7 +173,7 @@ int DriverDS::PrepareSend()
 
 	if (cplay == nextwrite && !restored) return 0;
 
-	// ‘‚«‚±‚İƒTƒCƒYŒvZ
+	// æ›¸ãã“ã¿ã‚µã‚¤ã‚ºè¨ˆç®—
 	if (cplay < nextwrite)
 		writelength = cplay + buffersize - nextwrite;
 	else
@@ -201,7 +201,7 @@ void DriverDS::Send()
 	if (DS_OK != lpdsb->Lock(nextwrite, writelength,
 		(void**)&a1, &al1, (void**)&a2, &al2, 0)) return;
 
-	// ‘‚«‚±‚İ
+	// æ›¸ãã“ã¿
 	if (sndbuf) {
 		if (a1) {
 			sndbuf->GetBuffer16(a1, (al1 >> sampleshift)*2);

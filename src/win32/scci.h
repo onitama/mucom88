@@ -18,8 +18,8 @@ typedef struct {
 	DWORD	dClock;						// Sound Chip clock
 	DWORD	dCompatibleClock[2];		// Sound Chip clock
 	BOOL	bIsUsed;					// Sound Chip Used Check
-	DWORD	dBusID;						// Ú‘±ƒoƒXID
-	DWORD	dSoundLocation;				// ƒTƒEƒ“ƒhƒƒP[ƒVƒ‡ƒ“
+	DWORD	dBusID;						// æ¥ç¶šãƒã‚¹ID
+	DWORD	dSoundLocation;				// ã‚µã‚¦ãƒ³ãƒ‰ãƒ­ã‚±ãƒ¼ã‚·ãƒ§ãƒ³
 } SCCI_SOUND_CHIP_INFO;
 
 class	SoundInterfaceManager;
@@ -107,9 +107,9 @@ public:
 	virtual BOOL __stdcall reset() = 0;
 	// initialize sound chips
 	virtual BOOL __stdcall init() = 0;
-	// ƒTƒEƒ“ƒhƒ`ƒbƒv”æ“¾
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ—æ•°å–å¾—
 	virtual DWORD	__stdcall getSoundChipCount() = 0;
-	// ƒTƒEƒ“ƒhƒ`ƒbƒvæ“¾
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ—å–å¾—
 	virtual	SoundChip* __stdcall getSoundChip(DWORD dNum) = 0;
 };
 

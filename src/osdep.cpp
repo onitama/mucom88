@@ -2,7 +2,7 @@
 //
 //		OsDependent
 //		BouKiCHi 2019
-//		(OSˆË‘¶‚Ìƒ‹[ƒ`ƒ“‚ğ‚Ü‚Æ‚ß‚Ü‚·)
+//		(OSä¾å­˜ã®ãƒ«ãƒ¼ãƒãƒ³ã‚’ã¾ã¨ã‚ã¾ã™)
 //		onion software/onitama 2019/1
 //
 

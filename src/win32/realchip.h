@@ -3,38 +3,38 @@
 #include "scci.h"
 #include "SCCIDefines.h"
 
-// ƒŠƒAƒ‹ƒ`ƒbƒv§Œä—p
+// ãƒªã‚¢ãƒ«ãƒãƒƒãƒ—åˆ¶å¾¡ç”¨
 class realchip
 {
 public:
-	// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+	// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	realchip();
-	// ƒfƒXƒgƒ‰ƒNƒ^
+	// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 	~realchip();
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	void Initialize();
-	// ŠJ•ú
+	// é–‹æ”¾
 	void UnInitialize();
-	// ƒŠƒZƒbƒg
+	// ãƒªã‚»ãƒƒãƒˆ
 	void Reset();
-	// ƒŠƒAƒ‹ƒ`ƒbƒv‚Ìg—pƒ`ƒFƒbƒN
+	// ãƒªã‚¢ãƒ«ãƒãƒƒãƒ—ã®ä½¿ç”¨ãƒã‚§ãƒƒã‚¯
 	bool IsRealChip();
-	// ƒŒƒWƒXƒ^‚Ìİ’è
+	// ãƒ¬ã‚¸ã‚¹ã‚¿ã®è¨­å®š
 	void SetRegister(DWORD reg, DWORD data);
-	// ADPCM‚Ì“]‘—
+	// ADPCMã®è»¢é€
 	void SendAdpcmData(void *pData, DWORD size);
-	// ”F¯‚µ‚Ä‚¢‚éƒ`ƒbƒv‚Ìƒ^ƒCƒv
+	// èªè­˜ã—ã¦ã„ã‚‹ãƒãƒƒãƒ—ã®ã‚¿ã‚¤ãƒ—
 	SC_CHIP_TYPE GetChipType(void) { return m_chiptype; }
 
 private:
-	// SCCIŠÖ˜A
+	// SCCIé–¢é€£
 	HMODULE					m_hScci;
 	SoundInterfaceManager	*m_pManager;
 	SoundChip				*m_pSoundChip;
-	// Àƒ`ƒbƒvƒtƒ‰ƒO
+	// å®Ÿãƒãƒƒãƒ—ãƒ•ãƒ©ã‚°
 	bool					m_IsRealChip;
-	// ADPCM—p
+	// ADPCMç”¨
 	BYTE					m_bADPCMBuff[0x40000];
-	// typeî•ñ
+	// typeæƒ…å ±
 	SC_CHIP_TYPE			m_chiptype;
 };

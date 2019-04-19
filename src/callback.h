@@ -9,7 +9,7 @@ typedef void (*CALLBACK_PTR)(void *CallbackInstance, void *MethodInstance);
 
 class Callback  {
 public:
-	// コールバック
+	// 繧ｳ繝ｼ繝ｫ繝舌ャ繧ｯ
     Callback();
 
     void Set(void *MethodInstance, CALLBACK_PTR MethodPointer);

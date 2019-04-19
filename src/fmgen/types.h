@@ -1,7 +1,7 @@
 #if !defined(win32_types_h)
 #define win32_types_h
 
-//  �Œ蒷�^�Ƃ�
+//  固定長型とか
 typedef unsigned char uchar;
 typedef unsigned short ushort;
 typedef unsigned int uint;

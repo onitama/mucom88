@@ -16,16 +16,16 @@ public:
 	OsDependentWin32();
 	~OsDependentWin32();
 
-	// COM‚Ì‰Šú‰»(Å‰‚Ì‚P‰ñ‚Ì‚İ)
+	// COMã®åˆæœŸåŒ–(æœ€åˆã®ï¼‘å›ã®ã¿)
 	bool CoInitialize();
 
-	// ƒTƒEƒ“ƒh
+	// ã‚µã‚¦ãƒ³ãƒ‰
 	bool InitAudio(void *hwnd, int Rate, int BufferSize);
 	void FreeAudio();
 	bool SendAudio(int ms);
 	void WaitSendingAudio();
 
-	// Àƒ`ƒbƒv
+	// å®Ÿãƒãƒƒãƒ—
 	bool InitRealChip();
 	void FreeRealChip();
 	void ResetRealChip();
@@ -33,34 +33,34 @@ public:
 	void OutputRealChip(unsigned int Register, unsigned int Data);
 	void OutputRealChipAdpcm(void *pData, int size);
 
-	// ƒ^ƒCƒ}[
+	// ã‚¿ã‚¤ãƒãƒ¼
 	bool InitTimer();
 	void FreeTimer();
 	void UpdateTimer();
 	void ResetTime();
 	int GetElapsedTime();
 
-	// ŠÔ
+	// æ™‚é–“
 	int GetMilliseconds();
 	void Delay(int ms);
 
-	// ƒvƒ‰ƒOƒCƒ“Šg’£
+	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³æ‹¡å¼µ
 	int InitPlugin(Mucom88Plugin *plg, const char *filename, int bootopt);
 	void FreePlugin(Mucom88Plugin *plg);
 	int ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *);
 	int ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *);
 
-	// ƒtƒ@ƒCƒ‹‘€ìŠÖ˜A
+	// ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œé–¢é€£
 	int GetDirectory(char *buf, int size);
 	int ChangeDirectory(const char *dir);
 	int KillFile(const char *filename);
 
 private:
-	//		ƒTƒEƒ“ƒhÄ¶
+	//		ã‚µã‚¦ãƒ³ãƒ‰å†ç”Ÿ
 	WinSoundDriver::DriverDS *snddrv;
 	HWND master_window;
 
-	//		ƒ^ƒCƒ}[
+	//		ã‚¿ã‚¤ãƒãƒ¼
 	static void CALLBACK TimeProc(UINT, UINT, DWORD_PTR, DWORD_PTR, DWORD_PTR);
 	static DWORD WINAPI vThreadFunc(LPVOID pParam);
 
@@ -85,7 +85,7 @@ private:
 	DWORD threadid;
 	LONG sending;
 
-	//		Àƒ`ƒbƒv‘Î‰
+	//		å®Ÿãƒãƒƒãƒ—å¯¾å¿œ
 	realchip *RealChipInstance;
 
 };

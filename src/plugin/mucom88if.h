@@ -9,7 +9,7 @@
 //	for MUCOM88Win interface
 /*------------------------------------------------------------*/
 
-//		ƒtƒ@ƒ“ƒNƒVƒ‡ƒ“Œ^
+//		ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³åž‹
 //
 typedef int (*MUCOM88IF_COMMAND) (void *,int,int,int,void *,void *);
 typedef int(*MUCOM88IF_CALLBACK)(void *, int, void *, void *);
@@ -20,48 +20,48 @@ typedef int(*MUCOM88IF_STARTUP)(void *, int);
 #define MUCOM88IF_VERSION	0x100		// 1.0
 
 #define MUCOM88IF_TYPE_NONE 0
-#define MUCOM88IF_TYPE_SILENT 1			// “à•”“I‚É“®ì‚·‚é‚à‚Ì(ƒfƒtƒHƒ‹ƒg)
-#define MUCOM88IF_TYPE_TOOL 2			// ‹N“®‚³‚¹‚éƒ^ƒCƒv‚ÌŠO•”ƒc[ƒ‹
+#define MUCOM88IF_TYPE_SILENT 1			// å†…éƒ¨çš„ã«å‹•ä½œã™ã‚‹ã‚‚ã®(ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆ)
+#define MUCOM88IF_TYPE_TOOL 2			// èµ·å‹•ã•ã›ã‚‹ã‚¿ã‚¤ãƒ—ã®å¤–éƒ¨ãƒ„ãƒ¼ãƒ«
 
-//	if_notice‚Å’Ê’m‚³‚ê‚éƒR[ƒh
+//	if_noticeã§é€šçŸ¥ã•ã‚Œã‚‹ã‚³ãƒ¼ãƒ‰
 #define	MUCOM88IF_NOTICE_NONE 0
-#define	MUCOM88IF_NOTICE_BOOT 0x1000		// Å‰‚Ì‰Šú‰»Žž(‹N“®Žž‚Ì‚Ý)
-#define	MUCOM88IF_NOTICE_TERMINATE 0x1001	// I—¹(‰ð•ú)Žž
-#define MUCOM88IF_NOTICE_INTDONE 0x1002		// ‰‰‘tŠ„‚èž‚Ý(‰‰‘tƒ‹[ƒ`ƒ“ŽÀs)Œã
-#define MUCOM88IF_NOTICE_SESSION 0x1003		// ƒGƒfƒBƒ^‚ÌƒZƒbƒVƒ‡ƒ“ŠJŽnŒã
-#define	MUCOM88IF_NOTICE_RESET 1			// VMƒŠƒZƒbƒgŽž(ƒRƒ“ƒpƒCƒ‹A‰‰‘tŠJŽnŽž)
-#define MUCOM88IF_NOTICE_DRVINT 2			// VMƒhƒ‰ƒCƒoŽÀsŽž(Š„‚èž‚Ýƒ^ƒCƒ~ƒ“ƒO)
-#define MUCOM88IF_NOTICE_TOOLSTART 3		// ƒvƒ‰ƒOƒCƒ“ƒc[ƒ‹‹N“®ƒŠƒNƒGƒXƒg
-#define MUCOM88IF_NOTICE_PREPLAY 4			// ‰‰‘tŠJŽn’¼‘O(MUB“Ç‚Ýž‚Ý’¼Œã)
-#define MUCOM88IF_NOTICE_PLAY 5				// ‰‰‘tŠJŽn
-#define MUCOM88IF_NOTICE_STOP 6				// ‰‰‘t’âŽ~
-#define MUCOM88IF_NOTICE_MMLSEND 7			// ƒRƒ“ƒpƒCƒ‹MMLŠm’èŽž
-#define MUCOM88IF_NOTICE_COMPEND 8			// ƒRƒ“ƒpƒCƒ‹I—¹Œã
-#define MUCOM88IF_NOTICE_LOADMUB 9			// MUB“Ç‚Ýž‚ÝŒã
-#define MUCOM88IF_NOTICE_TOOLHIDE 10		// ƒvƒ‰ƒOƒCƒ“ƒc[ƒ‹”ñ•\Ž¦ƒŠƒNƒGƒXƒg
+#define	MUCOM88IF_NOTICE_BOOT 0x1000		// æœ€åˆã®åˆæœŸåŒ–æ™‚(èµ·å‹•æ™‚ã®ã¿)
+#define	MUCOM88IF_NOTICE_TERMINATE 0x1001	// çµ‚äº†(è§£æ”¾)æ™‚
+#define MUCOM88IF_NOTICE_INTDONE 0x1002		// æ¼”å¥å‰²ã‚Šè¾¼ã¿(æ¼”å¥ãƒ«ãƒ¼ãƒãƒ³å®Ÿè¡Œ)å¾Œ
+#define MUCOM88IF_NOTICE_SESSION 0x1003		// ã‚¨ãƒ‡ã‚£ã‚¿ã®ã‚»ãƒƒã‚·ãƒ§ãƒ³é–‹å§‹å¾Œ
+#define	MUCOM88IF_NOTICE_RESET 1			// VMãƒªã‚»ãƒƒãƒˆæ™‚(ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ã€æ¼”å¥é–‹å§‹æ™‚)
+#define MUCOM88IF_NOTICE_DRVINT 2			// VMãƒ‰ãƒ©ã‚¤ãƒå®Ÿè¡Œæ™‚(å‰²ã‚Šè¾¼ã¿ã‚¿ã‚¤ãƒŸãƒ³ã‚°)
+#define MUCOM88IF_NOTICE_TOOLSTART 3		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ„ãƒ¼ãƒ«èµ·å‹•ãƒªã‚¯ã‚¨ã‚¹ãƒˆ
+#define MUCOM88IF_NOTICE_PREPLAY 4			// æ¼”å¥é–‹å§‹ç›´å‰(MUBèª­ã¿è¾¼ã¿ç›´å¾Œ)
+#define MUCOM88IF_NOTICE_PLAY 5				// æ¼”å¥é–‹å§‹
+#define MUCOM88IF_NOTICE_STOP 6				// æ¼”å¥åœæ­¢
+#define MUCOM88IF_NOTICE_MMLSEND 7			// ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«MMLç¢ºå®šæ™‚
+#define MUCOM88IF_NOTICE_COMPEND 8			// ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«çµ‚äº†å¾Œ
+#define MUCOM88IF_NOTICE_LOADMUB 9			// MUBèª­ã¿è¾¼ã¿å¾Œ
+#define MUCOM88IF_NOTICE_TOOLHIDE 10		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ„ãƒ¼ãƒ«éžè¡¨ç¤ºãƒªã‚¯ã‚¨ã‚¹ãƒˆ
 
-//	if_editor‚ÅŽg—p‚·‚éƒRƒ}ƒ“ƒh
+//	if_editorã§ä½¿ç”¨ã™ã‚‹ã‚³ãƒžãƒ³ãƒ‰
 #define	MUCOM88IF_EDITOR_CMD_NONE 0
-#define	MUCOM88IF_EDITOR_CMD_PASTECLIP 1	// ƒGƒfƒBƒ^‚ÉƒNƒŠƒbƒvƒ{[ƒhƒeƒLƒXƒg‚ð“\‚è•t‚¯
-#define	MUCOM88IF_EDITOR_CMD_GETTEXTSIZE 2	// ƒGƒfƒBƒ^‚ÌƒeƒLƒXƒgƒTƒCƒY‚ðŽæ“¾
-#define	MUCOM88IF_EDITOR_CMD_GETTEXT 3		// ƒGƒfƒBƒ^‚ÌƒeƒLƒXƒg‚ðŽæ“¾
-#define	MUCOM88IF_EDITOR_CMD_UPDATETEXT 4	// ƒGƒfƒBƒ^‚ÌƒeƒLƒXƒg‚ðXV
-#define	MUCOM88IF_EDITOR_CMD_GETCURSOR 5	// ƒGƒfƒBƒ^‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚ðŽæ“¾
-#define	MUCOM88IF_EDITOR_CMD_SETCURSOR 6	// ƒGƒfƒBƒ^‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚ð•ÏX
+#define	MUCOM88IF_EDITOR_CMD_PASTECLIP 1	// ã‚¨ãƒ‡ã‚£ã‚¿ã«ã‚¯ãƒªãƒƒãƒ—ãƒœãƒ¼ãƒ‰ãƒ†ã‚­ã‚¹ãƒˆã‚’è²¼ã‚Šä»˜ã‘
+#define	MUCOM88IF_EDITOR_CMD_GETTEXTSIZE 2	// ã‚¨ãƒ‡ã‚£ã‚¿ã®ãƒ†ã‚­ã‚¹ãƒˆã‚µã‚¤ã‚ºã‚’å–å¾—
+#define	MUCOM88IF_EDITOR_CMD_GETTEXT 3		// ã‚¨ãƒ‡ã‚£ã‚¿ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’å–å¾—
+#define	MUCOM88IF_EDITOR_CMD_UPDATETEXT 4	// ã‚¨ãƒ‡ã‚£ã‚¿ã®ãƒ†ã‚­ã‚¹ãƒˆã‚’æ›´æ–°
+#define	MUCOM88IF_EDITOR_CMD_GETCURSOR 5	// ã‚¨ãƒ‡ã‚£ã‚¿ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’å–å¾—
+#define	MUCOM88IF_EDITOR_CMD_SETCURSOR 6	// ã‚¨ãƒ‡ã‚£ã‚¿ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‚’å¤‰æ›´
 
-//	if_mucomvm‚ÅŽg—p‚·‚éƒRƒ}ƒ“ƒh
+//	if_mucomvmã§ä½¿ç”¨ã™ã‚‹ã‚³ãƒžãƒ³ãƒ‰
 #define	MUCOM88IF_MUCOMVM_CMD_NONE 0
-#define	MUCOM88IF_MUCOMVM_CMD_FMWRITE 1			// FMƒŒƒWƒXƒ^‚É‘‚«ž‚Ý
-#define	MUCOM88IF_MUCOMVM_CMD_FMREAD 2			// FMƒŒƒWƒXƒ^‚Ìƒe[ƒuƒ‹‚ðŽæ“¾
-#define	MUCOM88IF_MUCOMVM_CMD_GETCHDATA 3		// ch‚Ì‰‰‘tƒf[ƒ^‚ðŽæ“¾
-#define	MUCOM88IF_MUCOMVM_CMD_CHDATA 4			// ch‚Ì‰‰‘tƒf[ƒ^‚ðŽæ“¾
-#define	MUCOM88IF_MUCOMVM_CMD_TAGDATA 5			// TAGƒf[ƒ^‚ðŽæ“¾
-#define	MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE 6		// ‰¹Fƒf[ƒ^‚ðXV
-#define	MUCOM88IF_MUCOMVM_CMD_VOICESAVE 7		// ‰¹Fƒf[ƒ^ƒtƒ@ƒCƒ‹‚ð•Û‘¶
-#define	MUCOM88IF_MUCOMVM_CMD_GETVOICENUM 8		// ‰¹F”Ô†‚ðŽæ“¾
-#define	MUCOM88IF_MUCOMVM_CMD_GETVOICEDATA 9	// ‰¹Fƒf[ƒ^‚ðŽæ“¾
-#define	MUCOM88IF_MUCOMVM_CMD_GETVOICENAME 10	// ‰¹Fƒtƒ@ƒCƒ‹–¼‚ðŽæ“¾
-#define	MUCOM88IF_MUCOMVM_CMD_GETVMMEMMAP 11	// VM‚ÌZ80ƒƒ‚ƒŠƒ}ƒbƒv‚ðŽæ“¾
+#define	MUCOM88IF_MUCOMVM_CMD_FMWRITE 1			// FMãƒ¬ã‚¸ã‚¹ã‚¿ã«æ›¸ãè¾¼ã¿
+#define	MUCOM88IF_MUCOMVM_CMD_FMREAD 2			// FMãƒ¬ã‚¸ã‚¹ã‚¿ã®ãƒ†ãƒ¼ãƒ–ãƒ«ã‚’å–å¾—
+#define	MUCOM88IF_MUCOMVM_CMD_GETCHDATA 3		// chã®æ¼”å¥ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
+#define	MUCOM88IF_MUCOMVM_CMD_CHDATA 4			// chã®æ¼”å¥ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
+#define	MUCOM88IF_MUCOMVM_CMD_TAGDATA 5			// TAGãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
+#define	MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE 6		// éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’æ›´æ–°
+#define	MUCOM88IF_MUCOMVM_CMD_VOICESAVE 7		// éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜
+#define	MUCOM88IF_MUCOMVM_CMD_GETVOICENUM 8		// éŸ³è‰²ç•ªå·ã‚’å–å¾—
+#define	MUCOM88IF_MUCOMVM_CMD_GETVOICEDATA 9	// éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—
+#define	MUCOM88IF_MUCOMVM_CMD_GETVOICENAME 10	// éŸ³è‰²ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾—
+#define	MUCOM88IF_MUCOMVM_CMD_GETVMMEMMAP 11	// VMã®Z80ãƒ¡ãƒ¢ãƒªãƒžãƒƒãƒ—ã‚’å–å¾—
 
 class mucomvm;
 class CMucom;
@@ -73,28 +73,28 @@ public:
 	Mucom88Plugin();
 	~Mucom88Plugin();
 
-	//	‚ ‚ç‚©‚¶‚ßÝ’è‚³‚ê‚éî•ñ
+	//	ã‚ã‚‰ã‹ã˜ã‚è¨­å®šã•ã‚Œã‚‹æƒ…å ±
 	//
-	void *hwnd;							// ƒƒCƒ“ƒEƒBƒ“ƒhƒEƒnƒ“ƒhƒ‹
-	int version;						// MUCOM88IFƒo[ƒWƒ‡ƒ“
-	char filename[MUCOM88IF_FILENAME_MAX];		// ƒvƒ‰ƒOƒCƒ“ƒtƒ@ƒCƒ‹–¼
-	void *instance;								// DLLƒCƒ“ƒXƒ^ƒ“ƒX
+	void *hwnd;							// ãƒ¡ã‚¤ãƒ³ã‚¦ã‚£ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«
+	int version;						// MUCOM88IFãƒãƒ¼ã‚¸ãƒ§ãƒ³
+	char filename[MUCOM88IF_FILENAME_MAX];		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãƒ•ã‚¡ã‚¤ãƒ«å
+	void *instance;								// DLLã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹
 
 	//	Memory Data structure
-	//	(*) = DLL‘¤‚Å‘‚«Š·‚¦‰Â
+	//	(*) = DLLå´ã§æ›¸ãæ›ãˆå¯
 	//
-	int	type;							// ƒvƒ‰ƒOƒCƒ“ƒ^ƒCƒv(*)
-	const char *info;				// ƒvƒ‰ƒOƒCƒ“î•ñƒeƒLƒXƒg‚Ìƒ|ƒCƒ“ƒ^(*)
+	int	type;							// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¿ã‚¤ãƒ—(*)
+	const char *info;				// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³æƒ…å ±ãƒ†ã‚­ã‚¹ãƒˆã®ãƒã‚¤ãƒ³ã‚¿(*)
 
-	//	ƒR[ƒ‹ƒoƒbƒNƒtƒ@ƒ“ƒNƒVƒ‡ƒ“(ƒvƒ‰ƒOƒCƒ“‚ªÝ’è‚µ‚Ü‚·)
-	MUCOM88IF_CALLBACK if_notice;		// ƒRƒ}ƒ“ƒh’Ê’m(*)
+	//	ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³(ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ãŒè¨­å®šã—ã¾ã™)
+	MUCOM88IF_CALLBACK if_notice;		// ã‚³ãƒžãƒ³ãƒ‰é€šçŸ¥(*)
 
-	//	”Ä—pƒtƒ@ƒ“ƒNƒVƒ‡ƒ“(Ž©“®Ý’è‚³‚ê‚Ü‚·)
+	//	æ±Žç”¨ãƒ•ã‚¡ãƒ³ã‚¯ã‚·ãƒ§ãƒ³(è‡ªå‹•è¨­å®šã•ã‚Œã¾ã™)
 	//
-	MUCOM88IF_COMMAND if_mucomvm;	// MUCOM88 VM‚ÌƒAƒNƒZƒX
-	MUCOM88IF_COMMAND if_editor;	// ƒGƒfƒBƒ^Œn‚ÌƒT[ƒrƒX
+	MUCOM88IF_COMMAND if_mucomvm;	// MUCOM88 VMã®ã‚¢ã‚¯ã‚»ã‚¹
+	MUCOM88IF_COMMAND if_editor;	// ã‚¨ãƒ‡ã‚£ã‚¿ç³»ã®ã‚µãƒ¼ãƒ“ã‚¹
 
-	//	ƒNƒ‰ƒXî•ñ (ƒo[ƒWƒ‡ƒ“‚Å“à—e•ÏX‚Ì‰Â”\«‚ª‚ ‚è‚Ü‚·)
+	//	ã‚¯ãƒ©ã‚¹æƒ…å ± (ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã§å†…å®¹å¤‰æ›´ã®å¯èƒ½æ€§ãŒã‚ã‚Šã¾ã™)
 	mucomvm *vm;
 	CMucom *mucom;
 

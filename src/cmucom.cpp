@@ -1,7 +1,7 @@
 
 //
 //		MUCOM88 access class
-//		(PC-8801‚ÌVM‚ğ‰î‚µ‚ÄMUCOM88‚Ì‹@”\‚ğ’ñ‹Ÿ‚µ‚Ü‚·)
+//		(PC-8801ã®VMã‚’ä»‹ã—ã¦MUCOM88ã®æ©Ÿèƒ½ã‚’æä¾›ã—ã¾ã™)
 //			MUCOM88 by Yuzo Koshiro Copyright 1987-2019(C) 
 //			Windows version by onion software/onitama 2018/11
 //
@@ -44,7 +44,7 @@ int CMucom::htoi_sub(char hstr)
 
 int CMucom::htoi(char *str)
 {
-	//	16i->10i•ÏŠ·
+	//	16é€²->10é€²å¤‰æ›
 	//
 	char a1;
 	int d;
@@ -60,7 +60,7 @@ int CMucom::htoi(char *str)
 
 int CMucom::strpick_spc(char *target, char *dest, int strmax)
 {
-	//		str‚Ìæ“ª‚©‚çspace‚Ü‚Å‚ğ¬•¶š‚Æ‚µ‚Äæ‚èo‚·
+	//		strã®å…ˆé ­ã‹ã‚‰spaceã¾ã§ã‚’å°æ–‡å­—ã¨ã—ã¦å–ã‚Šå‡ºã™
 	//
 	unsigned char *p;
 	unsigned char *dst;
@@ -118,15 +118,15 @@ CMucom::~CMucom( void )
 
 void CMucom::Init(void *window, int option, int rate)
 {
-	//		MUCOM88‚Ì‰Šú‰»(‰‰ñ‚¾‚¯ŒÄ‚Ño‚µ‚Ä‚­‚¾‚³‚¢)
-	//		window : 0   = ƒEƒCƒ“ƒhƒEƒnƒ“ƒhƒ‹(HWND)
-	//		               (NULL‚Ìê‡‚ÍƒAƒNƒeƒBƒuƒEƒCƒ“ƒhƒE‚ª‘I‘ğ‚³‚ê‚é)
-	//		option : 0   = 1:FM‚ğƒ~ƒ…[ƒg  2:SCCI‚ğg—p
+	//		MUCOM88ã®åˆæœŸåŒ–(åˆå›ã ã‘å‘¼ã³å‡ºã—ã¦ãã ã•ã„)
+	//		window : 0   = ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãƒãƒ³ãƒ‰ãƒ«(HWND)
+	//		               (NULLã®å ´åˆã¯ã‚¢ã‚¯ãƒ†ã‚£ãƒ–ã‚¦ã‚¤ãƒ³ãƒ‰ã‚¦ãŒé¸æŠã•ã‚Œã‚‹)
+	//		option : 0   = 1:FMã‚’ãƒŸãƒ¥ãƒ¼ãƒˆ  2:SCCIã‚’ä½¿ç”¨
 	//
 	vm = new mucomvm;
 	flag = 1;
 
-	// ƒŒ[ƒgİ’è
+	// ãƒ¬ãƒ¼ãƒˆè¨­å®š
 	int myrate = rate;
 	if (rate == 0) myrate = MUCOM_AUDIO_RATE;
 	SetAudioRate(myrate);
@@ -137,14 +137,14 @@ void CMucom::Init(void *window, int option, int rate)
 	vm->SetOption(option);
 	vm->InitSoundSystem(myrate);
 	MusicBufferInit();
-	vm->SetMucomInstance(this);			// Mucom‚ÌƒCƒ“ƒXƒ^ƒ“ƒX‚ğ’Ê’m‚·‚é(ƒvƒ‰ƒOƒCƒ“—p)
+	vm->SetMucomInstance(this);			// Mucomã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’é€šçŸ¥ã™ã‚‹(ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ç”¨)
 
-	//		ƒI[ƒgƒZ[ƒu‚ğ‰Šú‰»(ƒfƒtƒHƒ‹ƒg‚Í–³Œø)
+	//		ã‚ªãƒ¼ãƒˆã‚»ãƒ¼ãƒ–ã‚’åˆæœŸåŒ–(ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯ç„¡åŠ¹)
 	edit_autosave = 0;
 	edit_autosave_time = 0;
 	edit_autosave_next = 0;
 
-	//		ƒGƒfƒBƒ^‚ª•Û‚·‚éî•ñ‚ÌƒŠƒZƒbƒg
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ãŒä¿æŒã™ã‚‹æƒ…å ±ã®ãƒªã‚»ãƒƒãƒˆ
 	EditorReset();
 	InitFMVoice();
 }
@@ -152,9 +152,9 @@ void CMucom::Init(void *window, int option, int rate)
 
 int CMucom::AddPlugins(const char *filename, int bootopt)
 {
-	//		ƒvƒ‰ƒOƒCƒ“’Ç‰Á
-	//		filename = DLLƒtƒ@ƒCƒ‹–¼(¡‚Ì‚Æ‚±‚ëWin‚Ì‚İ)
-	//		bootopt = ‹N“®ƒIƒvƒVƒ‡ƒ“
+	//		ãƒ—ãƒ©ã‚°ã‚¤ãƒ³è¿½åŠ 
+	//		filename = DLLãƒ•ã‚¡ã‚¤ãƒ«å(ä»Šã®ã¨ã“ã‚Winã®ã¿)
+	//		bootopt = èµ·å‹•ã‚ªãƒ—ã‚·ãƒ§ãƒ³
 	//
 	return vm->AddPlugins(filename, bootopt);
 }
@@ -162,7 +162,7 @@ int CMucom::AddPlugins(const char *filename, int bootopt)
 
 void CMucom::NoticePlugins(int cmd, void *p1, void *p2)
 {
-	//		ƒvƒ‰ƒOƒCƒ“’Ê’m
+	//		ãƒ—ãƒ©ã‚°ã‚¤ãƒ³é€šçŸ¥
 	//
 	vm->NoticePlugins(cmd,p1,p2);
 }
@@ -170,7 +170,7 @@ void CMucom::NoticePlugins(int cmd, void *p1, void *p2)
 
 void CMucom::SetAudioRate(int rate)
 {
-	//		ŠO•”ƒŒƒ“ƒ_ƒŠƒ“ƒO—p‚Ìo—ÍƒŒ[ƒgİ’è
+	//		å¤–éƒ¨ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ç”¨ã®å‡ºåŠ›ãƒ¬ãƒ¼ãƒˆè¨­å®š
 	//
 	AudioStep = (double)1000.0 / rate;
 	AudioLeftMs = 0.0;
@@ -179,10 +179,10 @@ void CMucom::SetAudioRate(int rate)
 
 void CMucom::Reset(int option)
 {
-	//		MUCOM88‚ÌƒŠƒZƒbƒg(‰½“x‚Å‚àŒÄ‚×‚Ü‚·)
-	//		option : 0   = “à•”‚ÌƒvƒŒƒCƒ„[‰Šú‰»
-	//		         1   = ŠO•”ƒtƒ@ƒCƒ‹‚É‚æ‚é‰Šú‰»
-	//		         2,3 = ƒRƒ“ƒpƒCƒ‰‚ğ‰Šú‰»
+	//		MUCOM88ã®ãƒªã‚»ãƒƒãƒˆ(ä½•åº¦ã§ã‚‚å‘¼ã¹ã¾ã™)
+	//		option : 0   = å†…éƒ¨ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼åˆæœŸåŒ–
+	//		         1   = å¤–éƒ¨ãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚ˆã‚‹åˆæœŸåŒ–
+	//		         2,3 = ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã‚’åˆæœŸåŒ–
 	//
 	int devres;
 	vm->Reset();
@@ -196,7 +196,7 @@ void CMucom::Reset(int option)
 
 	if (option & MUCOM_CMPOPT_COMPILE) {
 		if (option & MUCOM_CMPOPT_USE_EXTROM) {
-			//	ƒRƒ“ƒpƒCƒ‰‚ğƒtƒ@ƒCƒ‹‚©‚ç“Ç‚Ş
+			//	ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã‚€
 			vm->LoadMem("expand", 0xab00, 0);
 			vm->LoadMem("errmsg", 0x8800, 0);
 			vm->LoadMem("msub", 0x9000, 0);
@@ -207,7 +207,7 @@ void CMucom::Reset(int option)
 			LoadFMVoice(MUCOM_DEFAULT_VOICEFILE,true);
 		}
 		else {
-			//	“à•”‚ÌƒRƒ“ƒpƒCƒ‰‚ğ“Ç‚Ş
+			//	å†…éƒ¨ã®ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ã‚’èª­ã‚€
 			vm->SendMem(bin_expand, 0xab00, expand_size);
 			vm->SendMem(bin_errmsg, 0x8800, errmsg_size);
 			vm->SendMem(bin_msub, 0x9000, msub_size);
@@ -220,15 +220,15 @@ void CMucom::Reset(int option)
 		}
 
 		int i;
-		// music‘¤‚Ìƒ_ƒ~[ƒ‹[ƒ`ƒ“
+		// musicå´ã®ãƒ€ãƒŸãƒ¼ãƒ«ãƒ¼ãƒãƒ³
 		for (i = 0; i < 0x40; i++) {
 			vm->Poke(0xb000 + i, 0xc9);
 		}
-		// basic rom‘¤‚Ìƒ_ƒ~[ƒ‹[ƒ`ƒ“
+		// basic romå´ã®ãƒ€ãƒŸãƒ¼ãƒ«ãƒ¼ãƒãƒ³
 		for (i = 0; i < 0x4000; i++) {
 			vm->Poke(0x1000 + i, 0xc9);
 		}
-		// ƒ[ƒNİ’è—pƒ‹[ƒ`ƒ“
+		// ãƒ¯ãƒ¼ã‚¯è¨­å®šç”¨ãƒ«ãƒ¼ãƒãƒ³
 		i = 0xb036;
 		vm->Poke(i++, 0xdd);	// LD IX,$c9bf
 		vm->Poke(i++, 0x21);
@@ -239,15 +239,15 @@ void CMucom::Reset(int option)
 		return;
 	}
 	if (option & MUCOM_CMPOPT_USE_EXTROM) {
-		//	ƒvƒŒƒCƒ„[‚ğƒtƒ@ƒCƒ‹‚©‚ç“Ç‚Ş
+		//	ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã‹ã‚‰èª­ã‚€
 		vm->LoadMem("music", 0xb000, 0);
 	}
 	else {
-		//	“à•”‚ÌƒvƒŒƒCƒ„[‚ğ“Ç‚Ş
+		//	å†…éƒ¨ã®ãƒ—ãƒ¬ã‚¤ãƒ¤ãƒ¼ã‚’èª­ã‚€
 		vm->SendMem(bin_music2, 0xb000, music2_size);
 	}
 
-	//	Às—pƒƒ‚ƒŠ‚ğƒVƒƒƒh[ƒRƒs[‚Æ‚µ‚Ä•Û‘¶‚µ‚Ä‚¨‚­
+	//	å®Ÿè¡Œç”¨ãƒ¡ãƒ¢ãƒªã‚’ã‚·ãƒ£ãƒ‰ãƒ¼ã‚³ãƒ”ãƒ¼ã¨ã—ã¦ä¿å­˜ã—ã¦ãŠã
 	vm->SendMemoryToShadow();
 
 	DeleteInfoBuffer();
@@ -279,9 +279,9 @@ const char *CMucom::GetMessageBuffer(void)
 
 int CMucom::Play(int num)
 {
-	//		MUCOM88‰¹ŠyÄ¶
-	//		num : 0   = ‰¹ŠyNo. (0`15)
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88éŸ³æ¥½å†ç”Ÿ
+	//		num : 0   = éŸ³æ¥½No. (0ã€œ15)
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	char *data;
 	char *pcmdata;
@@ -310,11 +310,11 @@ int CMucom::Play(int num)
 		int skippcm = 0;
 		const char *pcmname = GetInfoBufferByName("pcm");
 		if (pcmname[0] != 0) {
-			//	Šù‚É“¯–¼‚ÌPCM‚ª“Ç‚İ‚Ü‚ê‚Ä‚¢‚é‚©?
+			//	æ—¢ã«åŒåã®PCMãŒèª­ã¿è¾¼ã¾ã‚Œã¦ã„ã‚‹ã‹?
 			if (strcmp(pcmname, pcmfilename) == 0) skippcm = 1;
 		}
 		if (skippcm==0) {
-			//	–„‚ß‚İPCM‚ğ“Ç‚İ‚Ş
+			//	åŸ‹ã‚è¾¼ã¿PCMã‚’èª­ã¿è¾¼ã‚€
 			pcmdata = MUBGetPCMData(hedmusic, pcmsize);
 			vm->LoadPcmFromMem(pcmdata, pcmsize);
 		}
@@ -350,7 +350,7 @@ void CMucom::PlayLoop() {
 }
 
 
-// ŠÔ‚ği‚ß‚ÄƒŒƒ“ƒ_ƒŠƒ“ƒO‚ğs‚¤
+// æ™‚é–“ã‚’é€²ã‚ã¦ãƒ¬ãƒ³ãƒ€ãƒªãƒ³ã‚°ã‚’è¡Œã†
 void CMucom::RenderAudio(void *mix, int size) {
 	AudioLeftMs += size * AudioStep;
 	int ms = (int)AudioLeftMs;
@@ -362,7 +362,7 @@ void CMucom::RenderAudio(void *mix, int size) {
 }
 
 
-// ŠÔ‚Ì‚İXV
+// æ™‚é–“ã®ã¿æ›´æ–°
 void CMucom::UpdateTime(int tick_ms) {
 	vm->UpdateTime(tick_ms << TICK_SHIFT);
 }
@@ -370,9 +370,9 @@ void CMucom::UpdateTime(int tick_ms) {
 
 int CMucom::LoadTagFromMusic(int num)
 {
-	//		MUCOM88‰¹Šyƒf[ƒ^‚©‚çƒ^ƒOˆê——‚ğæ“¾‚·‚é
-	//		num : 0   = ‰¹ŠyNo. (0`15)
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿ã‹ã‚‰ã‚¿ã‚°ä¸€è¦§ã‚’å–å¾—ã™ã‚‹
+	//		num : 0   = éŸ³æ¥½No. (0ã€œ15)
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	MUBHED *hed;
 	int ver;
@@ -407,8 +407,8 @@ int CMucom::LoadTagFromMusic(int num)
 
 int CMucom::Stop(int option)
 {
-	//		MUCOM88‰¹ŠyÄ¶‚Ì’â~
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88éŸ³æ¥½å†ç”Ÿã®åœæ­¢
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	playflag = false;
 	if (option & 1) {
@@ -427,8 +427,8 @@ int CMucom::Stop(int option)
 
 int CMucom::Restart(void)
 {
-	//		MUCOM88‰¹ŠyÄ¶‚ÌÄŠJ(’â~Œã)
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88éŸ³æ¥½å†ç”Ÿã®å†é–‹(åœæ­¢å¾Œ)
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	NoticePlugins(MUCOM88IF_NOTICE_PLAY);
 	vm->RestartINT3();
@@ -439,8 +439,8 @@ int CMucom::Restart(void)
 
 int CMucom::Fade(void)
 {
-	//		MUCOM88‰¹ŠyƒtƒF[ƒhƒAƒEƒg
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88éŸ³æ¥½ãƒ•ã‚§ãƒ¼ãƒ‰ã‚¢ã‚¦ãƒˆ
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	if (playflag == false) return -1;
 	vm->CallAndHalt(0xb006);
@@ -450,11 +450,11 @@ int CMucom::Fade(void)
 
 int CMucom::LoadPCM(const char * fname)
 {
-	//		ADPCMƒf[ƒ^“Ç‚İ‚İ
-	//		fname = PCMƒf[ƒ^ƒtƒ@ƒCƒ‹ (ƒfƒtƒHƒ‹ƒg‚ÍMUCOM_DEFAULT_PCMFILE)
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		ADPCMãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿
+	//		fname = PCMãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ« (ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆã¯MUCOM_DEFAULT_PCMFILE)
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
-	if (strcmp(pcmfilename,fname)==0) return 0;			// Šù‚É“Ç‚İ‚ñ‚Å‚¢‚éê‡‚ÍƒXƒLƒbƒv
+	if (strcmp(pcmfilename,fname)==0) return 0;			// æ—¢ã«èª­ã¿è¾¼ã‚“ã§ã„ã‚‹å ´åˆã¯ã‚¹ã‚­ãƒƒãƒ—
 	strncpy(pcmfilename, fname, MUCOM_FILE_MAXSTR-1);
 	if (vm->LoadPcm(fname) == 0) return 0;
 	PRINTF("#PCM file not found [%s].\r\n", fname);
@@ -463,10 +463,10 @@ int CMucom::LoadPCM(const char * fname)
 
 int CMucom::LoadMusic(const char * fname, int num)
 {
-	//		‰¹Šyƒf[ƒ^“Ç‚İ‚İ
-	//		fname = ‰¹Šyƒf[ƒ^ƒtƒ@ƒCƒ‹
-	//		num : 0   = ‰¹ŠyNo. (0`15)
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿
+	//		fname = éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
+	//		num : 0   = éŸ³æ¥½No. (0ã€œ15)
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	if ((num < 0) || (num >= MUCOM_MUSICBUFFER_MAX)) return -1;
 
@@ -508,13 +508,13 @@ void CMucom::MusicBufferTerm(void)
 
 int CMucom::GetStatus(int option)
 {
-	//		MUCOMƒXƒe[ƒ^ƒX“Ç‚İo‚µ
-	//		option : 0  ’â~=0/‰‰‘t’†=1
-	//		         1  ‰‰‘tŠJn‚©‚ç‚ÌŠ„‚è‚İƒJƒEƒ“ƒg
-	//		         2  ƒXƒgƒŠ[ƒ€Ä¶‚É‚©‚©‚Á‚½•‰‰×(ms)
-	//		         3  ƒƒWƒƒ[ƒo[ƒWƒ‡ƒ“ƒR[ƒh
-	//		         4  ƒ}ƒCƒi[ƒo[ƒWƒ‡ƒ“ƒR[ƒh
-	//		(–ß‚è’l‚Í32bit®”)
+	//		MUCOMã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹èª­ã¿å‡ºã—
+	//		option : 0  åœæ­¢=0/æ¼”å¥ä¸­=1
+	//		         1  æ¼”å¥é–‹å§‹ã‹ã‚‰ã®å‰²ã‚Šè¾¼ã¿ã‚«ã‚¦ãƒ³ãƒˆ
+	//		         2  ã‚¹ãƒˆãƒªãƒ¼ãƒ å†ç”Ÿã«ã‹ã‹ã£ãŸè² è·(ms)
+	//		         3  ãƒ¡ã‚¸ãƒ£ãƒ¼ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚³ãƒ¼ãƒ‰
+	//		         4  ãƒã‚¤ãƒŠãƒ¼ãƒãƒ¼ã‚¸ãƒ§ãƒ³ã‚³ãƒ¼ãƒ‰
+	//		(æˆ»ã‚Šå€¤ã¯32bitæ•´æ•°)
 	//
 	int i;
 	switch (option) {
@@ -562,7 +562,7 @@ FM Voice file support
 
 void CMucom::InitFMVoice(unsigned char *voice)
 {
-	//	FM‰¹Fƒf[ƒ^‚ğ‰Šú‰»‚·‚é
+	//	FMéŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’åˆæœŸåŒ–ã™ã‚‹
 	//
 	fmvoice_mode = MUCOM_FMVOICE_MODE_EXTERNAL;
 	fmvoice_original = fmvoice_internal;
@@ -574,20 +574,20 @@ void CMucom::InitFMVoice(unsigned char *voice)
 
 int CMucom::SaveFMVoice(bool sw)
 {
-	//	FM‰¹Fƒf[ƒ^‚ğ•Û‘¶‚·‚é
-	//	(sw true=•Û‘¶Afalse=•Û‘¶‚¹‚¸‚Éˆêƒtƒ@ƒCƒ‹‚ğÁ‹)
+	//	FMéŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’ä¿å­˜ã™ã‚‹
+	//	(sw true=ä¿å­˜ã€false=ä¿å­˜ã›ãšã«ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¶ˆå»)
 	//
 	int res;
 	char curdir[MUCOM_FILE_MAXSTR];
 
-	if (fmvoice_mode == MUCOM_FMVOICE_MODE_EXTERNAL) return 0;	// ˆêƒtƒ@ƒCƒ‹‚ª‚È‚¯‚ê‚Î•Û‘¶‚Ì•K—v‚È‚µ
+	if (fmvoice_mode == MUCOM_FMVOICE_MODE_EXTERNAL) return 0;	// ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ãŒãªã‘ã‚Œã°ä¿å­˜ã®å¿…è¦ãªã—
 	if (voicefilename.empty()) return -1;
 
 	*curdir = 0;
-	vm->GetDirectory(curdir, MUCOM_FILE_MAXSTR);			// Œ»İ‚ÌƒfƒBƒŒƒNƒgƒŠ
+	vm->GetDirectory(curdir, MUCOM_FILE_MAXSTR);			// ç¾åœ¨ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 	vm->ChangeDirectory(voice_pathname.c_str());
 
-	//	•Û‘¶
+	//	ä¿å­˜
 	res = 0;
 	if (sw) {
 		vm->SendMem((unsigned char *)fmvoice_internal, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
@@ -595,7 +595,7 @@ int CMucom::SaveFMVoice(bool sw)
 		//Alertf("[%s]%s", voice_pathname.c_str(), voicefilename.c_str());
 	}
 
-	//	FM‰¹Fƒf[ƒ^‚Ìˆêƒtƒ@ƒCƒ‹‚ğ”jŠü‚·‚é
+	//	FMéŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã®ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ç ´æ£„ã™ã‚‹
 	if (tempfilename.empty() == false) {
 		if (res == 0) {
 			vm->KillFile(tempfilename.c_str());
@@ -611,7 +611,7 @@ int CMucom::SaveFMVoice(bool sw)
 
 void CMucom::StoreFMVoice(unsigned char *voice)
 {
-	//	FM‰¹Fƒf[ƒ^‚ğƒƒ‚ƒŠ‚É“]‘—‚·‚é
+	//	FMéŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ¡ãƒ¢ãƒªã«è»¢é€ã™ã‚‹
 	//
 	if (voice == NULL) return;
 	vm->SendMem(voice, MUCOM_FMVOICE_ADR, MUCOM_FMVOICE_SIZE);
@@ -621,10 +621,10 @@ void CMucom::StoreFMVoice(unsigned char *voice)
 
 int CMucom::LoadFMVoice(const char *fname, bool sw)
 {
-	//		FM‰¹Fƒf[ƒ^“Ç‚İ‚İ
-	//		fname = FM‰¹Fƒf[ƒ^ƒtƒ@ƒCƒ‹ (‹ó•¶š‚ÍMUCOM_DEFAULT_VOICEFILE)
-	//		sw = true‚Ìê‡‚Í‹­§“I‚É“Ç‚İ‚ŞAfalse‚Ìê‡‚Í‰¼ƒtƒ@ƒCƒ‹‚ğŒŸõ‚·‚é
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		FMéŸ³è‰²ãƒ‡ãƒ¼ã‚¿èª­ã¿è¾¼ã¿
+	//		fname = FMéŸ³è‰²ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ« (ç©ºæ–‡å­—ã¯MUCOM_DEFAULT_VOICEFILE)
+	//		sw = trueã®å ´åˆã¯å¼·åˆ¶çš„ã«èª­ã¿è¾¼ã‚€ã€falseã®å ´åˆã¯ä»®ãƒ•ã‚¡ã‚¤ãƒ«ã‚’æ¤œç´¢ã™ã‚‹
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	int voicesize;
 	char *voicedata;
@@ -652,7 +652,7 @@ int CMucom::LoadFMVoice(const char *fname, bool sw)
 	voicedata_org = NULL;
 
 	if (fmvoice_original != fmvoice_internal) {
-		vm->LoadAllocFree((char *)fmvoice_original);		// ƒIƒŠƒWƒiƒ‹ƒf[ƒ^‚ª‚ ‚ê‚Î”jŠü‚·‚é
+		vm->LoadAllocFree((char *)fmvoice_original);		// ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒ‡ãƒ¼ã‚¿ãŒã‚ã‚Œã°ç ´æ£„ã™ã‚‹
 		fmvoice_original = fmvoice_internal;
 	}
 
@@ -668,12 +668,12 @@ int CMucom::LoadFMVoice(const char *fname, bool sw)
 	}
 
 	if (voicedata == NULL) {
-		// ƒIƒŠƒWƒiƒ‹ƒtƒ@ƒCƒ‹‚Ì‚İ‚Ìê‡
+		// ã‚ªãƒªã‚¸ãƒŠãƒ«ãƒ•ã‚¡ã‚¤ãƒ«ã®ã¿ã®å ´åˆ
 		StoreFMVoice((unsigned char *)voicedata_org);
 		//Alertf("[%s]%s", voice_pathname.c_str(), voicefilename.c_str());
 	}
 	else {
-		// ˆêƒtƒ@ƒCƒ‹‚ª‚ ‚Á‚½ê‡
+		// ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ãŒã‚ã£ãŸå ´åˆ
 		StoreFMVoice((unsigned char *)voicedata);
 		vm->LoadAllocFree(voicedata);
 		fmvoice_mode = MUCOM_FMVOICE_MODE_INTERNAL;
@@ -685,8 +685,8 @@ int CMucom::LoadFMVoice(const char *fname, bool sw)
 
 MUCOM88_VOICEFORMAT *CMucom::GetFMVoice(int no)
 {
-	//	“à•”•Û‘¶‚³‚ê‚½‰¹Fƒf[ƒ^‚ğæ“¾‚·‚é
-	//	(no=‰¹F”Ô†0`255)
+	//	å†…éƒ¨ä¿å­˜ã•ã‚ŒãŸéŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’å–å¾—ã™ã‚‹
+	//	(no=éŸ³è‰²ç•ªå·0ã€œ255)
 	//
 	if ((no < 0) || (no >= MUCOM_FMVOICE_MAXNO)) return NULL;
 	return &fmvoice_internal[no];
@@ -695,8 +695,8 @@ MUCOM88_VOICEFORMAT *CMucom::GetFMVoice(int no)
 
 int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
 {
-	//	‰¹Fƒf[ƒ^‚ğXV‚·‚é
-	//	(no=‰¹F”Ô†0`255)
+	//	éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’æ›´æ–°ã™ã‚‹
+	//	(no=éŸ³è‰²ç•ªå·0ã€œ255)
 	//
 	char curdir[MUCOM_FILE_MAXSTR];
 
@@ -708,7 +708,7 @@ int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
 	if (voicefilename.empty()) return -1;
 
 
-	vm->GetDirectory(curdir, MUCOM_FILE_MAXSTR);			// Œ»İ‚ÌƒfƒBƒŒƒNƒgƒŠ
+	vm->GetDirectory(curdir, MUCOM_FILE_MAXSTR);			// ç¾åœ¨ã®ãƒ‡ã‚£ãƒ¬ã‚¯ãƒˆãƒª
 	vm->ChangeDirectory(voice_pathname.c_str());
 
 	if (tempfilename.empty() == false) {
@@ -724,8 +724,8 @@ int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
 
 void CMucom::DumpFMVoice(int no)
 {
-	//	‰¹Fƒf[ƒ^‚ğ•\¦‚·‚é
-	//	(no=‰¹F”Ô†1`255)
+	//	éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’è¡¨ç¤ºã™ã‚‹
+	//	(no=éŸ³è‰²ç•ªå·1ã€œ255)
 	//
 	unsigned char name[8];
 	unsigned char *p;
@@ -738,8 +738,8 @@ void CMucom::DumpFMVoice(int no)
 	while (1) {
 		if (len >= 6) break;
 		a1 = *p++;
-		if (a1 < 32) a1 = 32;		// ƒRƒ“ƒgƒ[ƒ‹ƒR[ƒh‚ÍƒXƒy[ƒX‚É•ÏŠ·
-		if (a1 >= 128) a1 = 32;		// ”¼Šp•¶š‚ÍƒXƒy[ƒX‚É•ÏŠ·
+		if (a1 < 32) a1 = 32;		// ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«ã‚³ãƒ¼ãƒ‰ã¯ã‚¹ãƒšãƒ¼ã‚¹ã«å¤‰æ›
+		if (a1 >= 128) a1 = 32;		// åŠè§’æ–‡å­—ã¯ã‚¹ãƒšãƒ¼ã‚¹ã«å¤‰æ›
 		name[len++] = a1;
 	}
 	name[len++] = 0;
@@ -758,10 +758,10 @@ void CMucom::DumpFMVoice(int no)
 
 int CMucom::StoreFMVoiceFromEmbed(void)
 {
-	//	‰‰‘tƒf[ƒ^(MUB)‚ª‚Â‰¹Fƒf[ƒ^‚ğ“à•”•Û‘¶ƒf[ƒ^‚É”½‰f‚³‚¹‚é
-	//	(VM‚Ì$c200‚©‚ç‰‰‘tƒf[ƒ^‚ğ“Ç‚İ‚ñ‚Å‚¨‚­‚±‚Æ)
-	//		voicelist = o—Í‚³‚ê‚é‰¹F”Ô†‚ÌƒŠƒXƒg
-	//		•Ô’l = voicelist‚Éo—Í‚³‚ê‚½‰¹F”Ô†‚Ì”
+	//	æ¼”å¥ãƒ‡ãƒ¼ã‚¿(MUB)ãŒæŒã¤éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’å†…éƒ¨ä¿å­˜ãƒ‡ãƒ¼ã‚¿ã«åæ˜ ã•ã›ã‚‹
+	//	(VMã®$c200ã‹ã‚‰æ¼”å¥ãƒ‡ãƒ¼ã‚¿ã‚’èª­ã¿è¾¼ã‚“ã§ãŠãã“ã¨)
+	//		voicelist = å‡ºåŠ›ã•ã‚Œã‚‹éŸ³è‰²ç•ªå·ã®ãƒªã‚¹ãƒˆ
+	//		è¿”å€¤ = voicelistã«å‡ºåŠ›ã•ã‚ŒãŸéŸ³è‰²ç•ªå·ã®æ•°
 	//
 	int i,j,no;
 	char *v;
@@ -778,7 +778,7 @@ int CMucom::StoreFMVoiceFromEmbed(void)
 		vmmem = no * sizeof(MUCOM88_VOICEFORMAT) + MUCOM_FMVOICE_ADR;
 		vm->SendMem( (unsigned char *)v, vmmem, sizeof(MUCOM88_VOICEFORMAT));
 		v++;
-		for (j = 0; j < 25; j++) {			// 25byte‚Ì‰¹Fƒf[ƒ^‚ğƒRƒs[
+		for (j = 0; j < 25; j++) {			// 25byteã®éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼
 			*v++ = vm->Peek(vdata++);
 		}
 	}
@@ -788,10 +788,10 @@ int CMucom::StoreFMVoiceFromEmbed(void)
 
 int CMucom::LoadFMVoiceFromTAG(void)
 {
-	//	(#voice)ƒ^ƒOî•ñ‚©‚ç‰¹Fƒf[ƒ^‚ğƒ[ƒh‚·‚é(‰¹FƒGƒfƒBƒ^—p‚Ì€”õ)
+	//	(#voice)ã‚¿ã‚°æƒ…å ±ã‹ã‚‰éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹(éŸ³è‰²ã‚¨ãƒ‡ã‚£ã‚¿ç”¨ã®æº–å‚™)
 	//
 
-	//	voiceƒtƒ@ƒCƒ‹‚ğƒ[ƒh‚µ‚Ä‚¨‚­
+	//	voiceãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰ã—ã¦ãŠã
 	char voicefile[MUCOM_FILE_MAXSTR];
 	strncpy(voicefile, GetInfoBufferByName("voice"), MUCOM_FILE_MAXSTR);
 	if (voicefile[0]) {
@@ -810,8 +810,8 @@ Editor support
 
 void CMucom::EditorReset(const char *mml, int option)
 {
-	//		ƒGƒfƒBƒ^•ÒW€–Ú‚ÌƒŠƒZƒbƒg
-	//		(mml=•ÒW“Ç‚İ‚İ‚ÌMMLƒoƒbƒtƒ@“à—e/NULL‚Ìê‡‚Í‹ó‚É‚È‚é)
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ç·¨é›†é …ç›®ã®ãƒªã‚»ãƒƒãƒˆ
+	//		(mml=ç·¨é›†èª­ã¿è¾¼ã¿æ™‚ã®MMLãƒãƒƒãƒ•ã‚¡å†…å®¹/NULLã®å ´åˆã¯ç©ºã«ãªã‚‹)
 	//		(option=MUCOM_EDIT_OPTION_*)
 	//
 	edit_status = MUCOM_EDIT_STATUS_NONE;
@@ -831,10 +831,10 @@ void CMucom::EditorReset(const char *mml, int option)
 
 void CMucom::EditorSetFileName(const char *filename, const char *pathname,bool sessionstart)
 {
-	//		ƒGƒfƒBƒ^•ÒWƒtƒ@ƒCƒ‹–¼EƒpƒX‚ğİ’è‚·‚é
-	//		(EditorResetŒã‚Éİ’è‚·‚é‚±‚Æ)
-	//		(filename+pathname‚ª•Û‘¶‚³‚ê‚éƒtƒ@ƒCƒ‹‚É‚È‚è‚Ü‚·)
-	//		(sessionstart=true‚Íƒtƒ@ƒCƒ‹‚Ì“à—e‚ğƒ`ƒFƒbƒN‚µ‚Ü‚·)
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ç·¨é›†ãƒ•ã‚¡ã‚¤ãƒ«åãƒ»ãƒ‘ã‚¹ã‚’è¨­å®šã™ã‚‹
+	//		(EditorResetå¾Œã«è¨­å®šã™ã‚‹ã“ã¨)
+	//		(filename+pathnameãŒä¿å­˜ã•ã‚Œã‚‹ãƒ•ã‚¡ã‚¤ãƒ«ã«ãªã‚Šã¾ã™)
+	//		(sessionstart=trueæ™‚ã¯ãƒ•ã‚¡ã‚¤ãƒ«ã®å†…å®¹ã‚’ãƒã‚§ãƒƒã‚¯ã—ã¾ã™)
 	//
 	if (filename) edit_filename = std::string(filename);
 	if (pathname) edit_pathname = std::string(pathname);
@@ -850,8 +850,8 @@ void CMucom::EditorSetFileName(const char *filename, const char *pathname,bool s
 
 int CMucom::CheckEditorUpdate(void)
 {
-	//		ƒGƒfƒBƒ^•ÒW€–Ú‚ªC³‚³‚ê‚Ä‚¢‚é‚©?
-	//		return 0=–¢‰Šú‰»A1=•Û‘¶Ï‚İA2=•ÒW’†
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ç·¨é›†é …ç›®ãŒä¿®æ­£ã•ã‚Œã¦ã„ã‚‹ã‹?
+	//		return 0=æœªåˆæœŸåŒ–ã€1=ä¿å­˜æ¸ˆã¿ã€2=ç·¨é›†ä¸­
 	//
 	char *p = (char *)edit_master.c_str();
 	if (edit_status == MUCOM_EDIT_STATUS_NONE) return MUCOM_EDIT_STATUS_NONE;
@@ -871,8 +871,8 @@ int CMucom::CheckEditorUpdate(void)
 
 int CMucom::SaveEditorMML(const char *filename)
 {
-	//		ƒGƒfƒBƒ^•ÒW“à—e‚ğ•Û‘¶‚·‚é
-	//		(filename‚ª""‚Ìê‡‚ÍƒfƒtƒHƒ‹ƒg–¼Aw’è‚³‚ê‚½ê‡‚Í‚»‚Ì–¼‘O‚Å•Û‘¶‚·‚é)
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ç·¨é›†å†…å®¹ã‚’ä¿å­˜ã™ã‚‹
+	//		(filenameãŒ""ã®å ´åˆã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆåã€æŒ‡å®šã•ã‚ŒãŸå ´åˆã¯ãã®åå‰ã§ä¿å­˜ã™ã‚‹)
 	//
 	SaveFMVoice();
 	//
@@ -888,9 +888,9 @@ int CMucom::SaveEditorMML(const char *filename)
 
 int CMucom::UpdateEditorMML(const char *mml)
 {
-	//		ƒGƒfƒBƒ^•ÒW“à—e‚ğXV‚·‚é
-	//		(ŠO•”‚ÌƒGƒfƒBƒ^‚ÅMML‚ª•Ï‰»‚µ‚½‚±‚Æ‚ğ’Ê’m‚µ‚Ü‚·)
-	//		(mml‚Ìƒ|ƒCƒ“ƒ^‚Ì‚İXV‚µ‚Ü‚·A“à—e‚ÍŠO•”‚Å•Û‚³‚ê‚Ä‚¢‚é•K—v‚ª‚ ‚è‚Ü‚·)
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ç·¨é›†å†…å®¹ã‚’æ›´æ–°ã™ã‚‹
+	//		(å¤–éƒ¨ã®ã‚¨ãƒ‡ã‚£ã‚¿ã§MMLãŒå¤‰åŒ–ã—ãŸã“ã¨ã‚’é€šçŸ¥ã—ã¾ã™)
+	//		(mmlã®ãƒã‚¤ãƒ³ã‚¿ã®ã¿æ›´æ–°ã—ã¾ã™ã€å†…å®¹ã¯å¤–éƒ¨ã§ä¿æŒã•ã‚Œã¦ã„ã‚‹å¿…è¦ãŒã‚ã‚Šã¾ã™)
 	//
 	edit_buffer = (char *)mml;
 	edit_status = MUCOM_EDIT_STATUS_CHANGED;
@@ -900,7 +900,7 @@ int CMucom::UpdateEditorMML(const char *mml)
 
 int CMucom::GetEditorPosToLine(int pos)
 {
-	//		ƒGƒfƒBƒ^‚ÌƒJ[ƒ\ƒ‹ˆÊ’u‚©‚çs”‚ğ“¾‚é
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ã®ã‚«ãƒ¼ã‚½ãƒ«ä½ç½®ã‹ã‚‰è¡Œæ•°ã‚’å¾—ã‚‹
 	//
 	int line = 1;
 	int myline = 1;
@@ -920,8 +920,8 @@ int CMucom::GetEditorPosToLine(int pos)
 
 int CMucom::RequestEditorMML(const char *mml)
 {
-	//		ƒGƒfƒBƒ^‚ÌMMLƒtƒ@ƒCƒ‹‚ğŠO•”‚©‚çXV‚·‚éƒŠƒNƒGƒXƒg‚ğo‚·
-	//		(ƒŠƒNƒGƒXƒg‚ğƒGƒfƒBƒ^‘¤‚ªæ“¾‚µ‚È‚¢ŒÀ‚èXV‚³‚ê‚Ü‚¹‚ñ)
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ã®MMLãƒ•ã‚¡ã‚¤ãƒ«ã‚’å¤–éƒ¨ã‹ã‚‰æ›´æ–°ã™ã‚‹ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‚’å‡ºã™
+	//		(ãƒªã‚¯ã‚¨ã‚¹ãƒˆã‚’ã‚¨ãƒ‡ã‚£ã‚¿å´ãŒå–å¾—ã—ãªã„é™ã‚Šæ›´æ–°ã•ã‚Œã¾ã›ã‚“)
 	//
 	edit_notice |= MUCOM_NOTICE_MMLCHANGE;
 	edit_request = std::string(mml);
@@ -931,8 +931,8 @@ int CMucom::RequestEditorMML(const char *mml)
 
 const char *CMucom::GetRequestMML(void)
 {
-	//		ŠO•”ƒŠƒNƒGƒXƒg‚É‚æ‚éMML‚ğæ“¾‚·‚é
-	//		(ƒŠƒNƒGƒXƒg‚ª‚È‚¢ê‡‚ÍNULL‚ğ•Ô‚·)
+	//		å¤–éƒ¨ãƒªã‚¯ã‚¨ã‚¹ãƒˆã«ã‚ˆã‚‹MMLã‚’å–å¾—ã™ã‚‹
+	//		(ãƒªã‚¯ã‚¨ã‚¹ãƒˆãŒãªã„å ´åˆã¯NULLã‚’è¿”ã™)
 	//
 	if (edit_notice & MUCOM_NOTICE_MMLCHANGE) {
 		edit_notice ^= MUCOM_NOTICE_MMLCHANGE;
@@ -944,7 +944,7 @@ const char *CMucom::GetRequestMML(void)
 
 int CMucom::UpdateEditor(void)
 {
-	//		ƒGƒfƒBƒ^XV
+	//		ã‚¨ãƒ‡ã‚£ã‚¿æ›´æ–°
 	//
 	return edit_notice;
 }
@@ -958,7 +958,7 @@ Compiler support
 
 int CMucom::GetMultibyteCharacter(const unsigned char *text)
 {
-	//		ƒ}ƒ‹ƒ`ƒoƒCƒg•¶š‚ÌƒTƒCƒY‚ğ“¾‚é
+	//		ãƒãƒ«ãƒãƒã‚¤ãƒˆæ–‡å­—ã®ã‚µã‚¤ã‚ºã‚’å¾—ã‚‹
 	//
 	const unsigned char *p = text;
 	unsigned char a1;
@@ -967,7 +967,7 @@ int CMucom::GetMultibyteCharacter(const unsigned char *text)
 	a1 = *p;
 
 #ifndef MUCOM88UTF8
-	if (a1 >= 129) {				// ‘SŠp•¶šƒ`ƒFƒbƒN(SJIS)
+	if (a1 >= 129) {				// å…¨è§’æ–‡å­—ãƒã‚§ãƒƒã‚¯(SJIS)
 		if ((a1 <= 159) || (a1 >= 224)) {
 			mulchr++;
 		}
@@ -975,7 +975,7 @@ int CMucom::GetMultibyteCharacter(const unsigned char *text)
 #endif
 
 #ifdef MUCOM88UTF8
-	if (a1 >= 128) {				// ‘SŠp•¶šƒ`ƒFƒbƒN(UTF8)
+	if (a1 >= 128) {				// å…¨è§’æ–‡å­—ãƒã‚§ãƒƒã‚¯(UTF8)
 		int utf8cnt = 0;
 		if ((a1 >= 192) && (p[1] != 0)) utf8cnt++;
 		if ((a1 >= 224) && (p[2] != 0)) utf8cnt++;
@@ -992,7 +992,7 @@ int CMucom::GetMultibyteCharacter(const unsigned char *text)
 
 const char *CMucom::GetTextLine(const char *text)
 {
-	//	1s•ª‚Ìƒf[ƒ^‚ğŠi”[
+	//	1è¡Œåˆ†ã®ãƒ‡ãƒ¼ã‚¿ã‚’æ ¼ç´
 	//
 	const unsigned char *p = (const unsigned char *)text;
 	unsigned char a1;
@@ -1041,9 +1041,9 @@ const char *CMucom::GetInfoBuffer(void)
 
 const char *CMucom::GetInfoBufferByName(const char *name)
 {
-	//		infobuf“à‚Ìw’èƒ^ƒO€–Ú‚ğæ“¾
-	//		name = ƒ^ƒO–¼(‰p¬•¶š)
-	//		(Œ‹‰Ê‚ª""‚Ìê‡‚ÍŠY“–€–Ú‚È‚µ)
+	//		infobufå†…ã®æŒ‡å®šã‚¿ã‚°é …ç›®ã‚’å–å¾—
+	//		name = ã‚¿ã‚°å(è‹±å°æ–‡å­—)
+	//		(çµæœãŒ""ã®å ´åˆã¯è©²å½“é …ç›®ãªã—)
 	//
 	int len;
 
@@ -1076,7 +1076,7 @@ void CMucom::DeleteInfoBuffer(void)
 
 void CMucom::PrintInfoBuffer(void)
 {
-	//		infobuf‚Ì“à—e‚ğo—Í
+	//		infobufã®å†…å®¹ã‚’å‡ºåŠ›
 	//
 	PRINTF("%s", GetInfoBuffer());
 }
@@ -1084,10 +1084,10 @@ void CMucom::PrintInfoBuffer(void)
 
 int CMucom::ProcessFile(const char *fname)
 {
-	//		MUCOM88 MMLƒ\[ƒXƒtƒ@ƒCƒ‹“à‚Ìƒ^ƒO‚ğˆ—
-	//		fname = MML‘®‚ÌƒeƒLƒXƒgƒf[ƒ^ƒtƒ@ƒCƒ‹(UTF8)
-	//		(Œ‹‰Ê‚ÍAinfobuf‚É“ü‚è‚Ü‚·)
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88 MMLã‚½ãƒ¼ã‚¹ãƒ•ã‚¡ã‚¤ãƒ«å†…ã®ã‚¿ã‚°ã‚’å‡¦ç†
+	//		fname = MMLæ›¸å¼ã®ãƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«(UTF8)
+	//		(çµæœã¯ã€infobufã«å…¥ã‚Šã¾ã™)
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	int sz;
 	char *mml;
@@ -1105,9 +1105,9 @@ int CMucom::ProcessFile(const char *fname)
 
 bool CMucom::hasMacro(char *text)
 {
-	//		MMLƒ\[ƒX‚Ìs‚Éƒ}ƒNƒ’è‹`(*nn{})‚ªŠÜ‚Ü‚ê‚é‚©’²‚×‚é
-	//		(ƒ^ƒO’è‹`‚Æ‚ÌØ‚è•ª‚¯‚ğ‚·‚é)
-	//		(–ß‚è’l‚ªtrue‚Ìê‡‚Íƒ}ƒNƒ’è‹`)
+	//		MMLã‚½ãƒ¼ã‚¹ã®è¡Œã«ãƒã‚¯ãƒ­å®šç¾©(*nn{})ãŒå«ã¾ã‚Œã‚‹ã‹èª¿ã¹ã‚‹
+	//		(ã‚¿ã‚°å®šç¾©ã¨ã®åˆ‡ã‚Šåˆ†ã‘ã‚’ã™ã‚‹)
+	//		(æˆ»ã‚Šå€¤ãŒtrueã®å ´åˆã¯ãƒã‚¯ãƒ­å®šç¾©)
 	//
 	const unsigned char *p = (const unsigned char *)text;
 	unsigned char a1;
@@ -1139,9 +1139,9 @@ bool CMucom::hasMacro(char *text)
 
 int CMucom::ProcessHeader(char *text)
 {
-	//		MUCOM88 MMLƒ\[ƒX“à‚Ìƒ^ƒO‚ğˆ—
-	//		text         = MML‘®‚ÌƒeƒLƒXƒgƒf[ƒ^(UTF8)(I’[=0)
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88 MMLã‚½ãƒ¼ã‚¹å†…ã®ã‚¿ã‚°ã‚’å‡¦ç†
+	//		text         = MMLæ›¸å¼ã®ãƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿(UTF8)(çµ‚ç«¯=0)
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	//		#mucom88 1.5
 	//		#voice voice.dat
@@ -1159,8 +1159,8 @@ int CMucom::ProcessHeader(char *text)
 	while (1) {
 		if (src == NULL) break;
 		src = GetTextLine(src);
-		if (linebuf[0] == '#'){							// ƒ^ƒO‚©?
-			if (hasMacro((char *)linebuf)==false) {		// ƒ}ƒNƒ‚©?
+		if (linebuf[0] == '#'){							// ã‚¿ã‚°ã‹?
+			if (hasMacro((char *)linebuf)==false) {		// ãƒã‚¯ãƒ­ã‹?
 				//printf("[%s]\n", linebuf);
 				infobuf->PutStr((char *)linebuf);
 				infobuf->PutCR();
@@ -1174,7 +1174,7 @@ int CMucom::ProcessHeader(char *text)
 
 int CMucom::StoreBasicSource(char *text, int line, int add)
 {
-	//	BASICƒ\[ƒX‚ÌŒ`®‚ÅƒŠƒXƒg‚ğì¬
+	//	BASICã‚½ãƒ¼ã‚¹ã®å½¢å¼ã§ãƒªã‚¹ãƒˆã‚’ä½œæˆ
 	//
 	const char *src = text;
 	int ln = line;
@@ -1207,10 +1207,10 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 			mulchr = GetMultibyteCharacter(linebuf+i);
 			i += mulchr;
 			if ( mulchr==1) {
-				vm->Poke(mptr++, a1);	// ”¼Šp‚Ì•¶š‚Ì‚İ“o˜^‚·‚é
+				vm->Poke(mptr++, a1);	// åŠè§’ã®æ–‡å­—ã®ã¿ç™»éŒ²ã™ã‚‹
 			}
 		}
-		vm->Pokew(linkptr, mptr);		// Ÿ‚Ìƒ|ƒCƒ“ƒ^‚ğ•Û‘¶‚·‚é
+		vm->Pokew(linkptr, mptr);		// æ¬¡ã®ãƒã‚¤ãƒ³ã‚¿ã‚’ä¿å­˜ã™ã‚‹
 		ln += add;
 	}
 
@@ -1221,13 +1221,13 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 
 int CMucom::Compile(char *text, const char *filename, int option)
 {
-	//		MUCOM88ƒRƒ“ƒpƒCƒ‹(Reset‚ª•K—v)
-	//		text         = MML‘®‚ÌƒeƒLƒXƒgƒf[ƒ^(UTF8)(I’[=0)
-	//		filename     = o—Í‚³‚ê‚é‰¹Šyƒf[ƒ^ƒtƒ@ƒCƒ‹
-	//		option : 1   = #ƒ^ƒO‚É‚æ‚évoiceİ’è‚ğ–³‹
-	//		         2   = PCM–„‚ß‚İ‚ğƒXƒLƒbƒv
-	//		         4   = ‰¹F‚Ìˆêƒoƒbƒtƒ@ì¬‚ğ‹–‰Â‚·‚é
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«(ResetãŒå¿…è¦)
+	//		text         = MMLæ›¸å¼ã®ãƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿(UTF8)(çµ‚ç«¯=0)
+	//		filename     = å‡ºåŠ›ã•ã‚Œã‚‹éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
+	//		option : 1   = #ã‚¿ã‚°ã«ã‚ˆã‚‹voiceè¨­å®šã‚’ç„¡è¦–
+	//		         2   = PCMåŸ‹ã‚è¾¼ã¿ã‚’ã‚¹ã‚­ãƒƒãƒ—
+	//		         4   = éŸ³è‰²ã®ä¸€æ™‚ãƒãƒƒãƒ•ã‚¡ä½œæˆã‚’è¨±å¯ã™ã‚‹
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	int i, res;
 	int start, length;
@@ -1236,11 +1236,11 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	int workadr;
 	int pcmflag;
 
-	maxch = MUCOM_MAXCH;				// ƒ[ƒN‚Ìæ“¾‚ª“ï‚µ‚¢‚½‚ßŒÅ’è’l
+	maxch = MUCOM_MAXCH;				// ãƒ¯ãƒ¼ã‚¯ã®å–å¾—ãŒé›£ã—ã„ãŸã‚å›ºå®šå€¤
 
 	AddExtraInfo(text);
 
-	//		voiceƒ^ƒO‚Ì‰ğÍ
+	//		voiceã‚¿ã‚°ã®è§£æ
 	if ((option & MUCOM_COMPILE_IGNOREVOICE) == 0) {
 		char voicefile[MUCOM_FILE_MAXSTR];
 		strncpy(voicefile, GetInfoBufferByName("voice"), MUCOM_FILE_MAXSTR);
@@ -1258,7 +1258,7 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	PRINTF("#poll a $%x.\r\n", vec);
 
 	int loopst = 0xf25a;
-	vm->Pokew( loopst, 0x0101 );		// ƒ‹[ƒvî•ñƒXƒ^ƒbƒN‚ğ‰Šú‰»‚·‚é(ƒ‹[ƒvŠO‚Ì'/'‚ÅƒGƒ‰[‚ğo‚·‚½‚ß)
+	vm->Pokew( loopst, 0x0101 );		// ãƒ«ãƒ¼ãƒ—æƒ…å ±ã‚¹ã‚¿ãƒƒã‚¯ã‚’åˆæœŸåŒ–ã™ã‚‹(ãƒ«ãƒ¼ãƒ—å¤–ã®'/'ã§ã‚¨ãƒ©ãƒ¼ã‚’å‡ºã™ãŸã‚)
 
 	res = vm->CallAndHalt2(vec, 'A');
 	if (res){
@@ -1274,7 +1274,7 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	}
 	
 	char stmp[128];
-	vm->PeekToStr(stmp,0xf3c8,80);		// ‰æ–ÊÅã’i‚ÌƒƒbƒZ[ƒW
+	vm->PeekToStr(stmp,0xf3c8,80);		// ç”»é¢æœ€ä¸Šæ®µã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 	PRINTF("%s\r\n", stmp);
 
 	workadr = 0xf320;
@@ -1283,8 +1283,8 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	maxcount = 0;
 	mubsize = 0;
 
-	jumpcount = vm->Peekw(0x8c90);		// JCLOCK‚Ì’l(JƒRƒ}ƒ“ƒh‚Ìƒ^ƒOˆÊ’u)
-	jumpline = vm->Peekw(0x8c92);		// JPLINE‚Ì’l(JƒRƒ}ƒ“ƒh‚Ìs”Ô†)
+	jumpcount = vm->Peekw(0x8c90);		// JCLOCKã®å€¤(Jã‚³ãƒãƒ³ãƒ‰ã®ã‚¿ã‚°ä½ç½®)
+	jumpline = vm->Peekw(0x8c92);		// JPLINEã®å€¤(Jã‚³ãƒãƒ³ãƒ‰ã®è¡Œç•ªå·)
 
 	PRINTF("Used FM voice:%d", fmvoice);
 
@@ -1327,7 +1327,7 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	PRINTF("#Data Buffer $%04x-$%04x ($%04x)\r\n", start, start + length - 1,length);
 	PRINTF("#MaxCount:%d Basic:%04x Data:%04x\r\n", maxcount, basicsize, mubsize);
 
-	if (tcount[maxch-1]==0) pcmflag = 2;	// PCM ch‚ªg‚í‚ê‚Ä‚È‚¯‚ê‚ÎPCM–„‚ß‚İ‚ÍƒXƒLƒbƒv
+	if (tcount[maxch-1]==0) pcmflag = 2;	// PCM chãŒä½¿ã‚ã‚Œã¦ãªã‘ã‚Œã°PCMåŸ‹ã‚è¾¼ã¿ã¯ã‚¹ã‚­ãƒƒãƒ—
 
 	NoticePlugins(MUCOM88IF_NOTICE_COMPEND);
 
@@ -1337,11 +1337,11 @@ int CMucom::Compile(char *text, const char *filename, int option)
 
 int CMucom::CompileFile(const char *fname, const char *sname, int option)
 {
-	//		MUCOM88ƒRƒ“ƒpƒCƒ‹(Reset‚ª•K—v)
-	//		fname     = MML‘®‚ÌƒeƒLƒXƒgƒtƒ@ƒCƒ‹(UTF8)
-	//		sname     = o—Í‚³‚ê‚é‰¹Šyƒf[ƒ^ƒtƒ@ƒCƒ‹
-	//		option : 1   = #ƒ^ƒO‚É‚æ‚évoiceİ’è‚ğ–³‹
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		MUCOM88ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«(ResetãŒå¿…è¦)
+	//		fname     = MMLæ›¸å¼ã®ãƒ†ã‚­ã‚¹ãƒˆãƒ•ã‚¡ã‚¤ãƒ«(UTF8)
+	//		sname     = å‡ºåŠ›ã•ã‚Œã‚‹éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
+	//		option : 1   = #ã‚¿ã‚°ã«ã‚ˆã‚‹voiceè¨­å®šã‚’ç„¡è¦–
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	int res;
 	int sz;
@@ -1366,7 +1366,7 @@ int CMucom::CompileFile(const char *fname, const char *sname, int option)
 
 void CMucom::AddExtraInfo(char *mmlsource)
 {
-	//	infobuf‚É’Ç‰Áî•ñ‚ğ‘‚«‚Ş
+	//	infobufã«è¿½åŠ æƒ…å ±ã‚’æ›¸ãè¾¼ã‚€
 	//
 	char mml_md5[128];
 	if (infobuf == NULL) return;
@@ -1387,11 +1387,11 @@ void CMucom::AddExtraInfo(char *mmlsource)
 
 int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 {
-	//		‰¹Šyƒf[ƒ^ƒtƒ@ƒCƒ‹‚ğo—Í(ƒRƒ“ƒpƒCƒ‹‚ª•K—v)
-	//		filename     = o—Í‚³‚ê‚é‰¹Šyƒf[ƒ^ƒtƒ@ƒCƒ‹
-	//		option : 1   = #ƒ^ƒO‚É‚æ‚évoiceİ’è‚ğ–³‹
-	//		         2   = PCM–„‚ß‚İ‚ğƒXƒLƒbƒv
-	//		(–ß‚è’l‚ª0ˆÈŠO‚Ìê‡‚ÍƒGƒ‰[)
+	//		éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å‡ºåŠ›(ã‚³ãƒ³ãƒ‘ã‚¤ãƒ«ãŒå¿…è¦)
+	//		filename     = å‡ºåŠ›ã•ã‚Œã‚‹éŸ³æ¥½ãƒ‡ãƒ¼ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«
+	//		option : 1   = #ã‚¿ã‚°ã«ã‚ˆã‚‹voiceè¨­å®šã‚’ç„¡è¦–
+	//		         2   = PCMåŸ‹ã‚è¾¼ã¿ã‚’ã‚¹ã‚­ãƒƒãƒ—
+	//		(æˆ»ã‚Šå€¤ãŒ0ä»¥å¤–ã®å ´åˆã¯ã‚¨ãƒ©ãƒ¼)
 	//
 	int res;
 	MUBHED hed;
@@ -1575,9 +1575,9 @@ void CMucom::SetFastFW(int value)
 
 int CMucom::GetChannelData(int ch, PCHDATA *result)
 {
-	//		w’è‚³‚ê‚½ƒ`ƒƒƒ“ƒlƒ‹‚ÌƒŠƒAƒ‹ƒ^ƒCƒ€‰‰‘tî•ñ‚ğæ“¾‚·‚é
-	//			ch = ƒ`ƒƒƒ“ƒlƒ‹No (0`maxch)(A`Kƒ`ƒƒƒ“ƒlƒ‹‚Ì‡)
-	//			result = Œ‹‰Ê‚ğo—Í‚·‚éPCHDATAŒ`®‚Ìƒ|ƒCƒ“ƒ^(‚ ‚ç‚©‚¶‚ßŠm•Û‚ª•K—v)
+	//		æŒ‡å®šã•ã‚ŒãŸãƒãƒ£ãƒ³ãƒãƒ«ã®ãƒªã‚¢ãƒ«ã‚¿ã‚¤ãƒ æ¼”å¥æƒ…å ±ã‚’å–å¾—ã™ã‚‹
+	//			ch = ãƒãƒ£ãƒ³ãƒãƒ«No (0ã€œmaxch)(Aã€œKãƒãƒ£ãƒ³ãƒãƒ«ã®é †)
+	//			result = çµæœã‚’å‡ºåŠ›ã™ã‚‹PCHDATAå½¢å¼ã®ãƒã‚¤ãƒ³ã‚¿(ã‚ã‚‰ã‹ã˜ã‚ç¢ºä¿ãŒå¿…è¦)
 	//
 	int i;
 	int size;
@@ -1607,7 +1607,7 @@ int CMucom::GetChannelData(int ch, PCHDATA *result)
 	result->detune = srcp[9] + (srcp[10] << 8);
 	result->lfo_diff = srcp[23] + (srcp[24] << 8);
 
-	//	Check data (ƒ`ƒƒƒ“ƒlƒ‹‚²‚Æ‚É’l‚Ì‰ÁH‚ª•K—v)
+	//	Check data (ãƒãƒ£ãƒ³ãƒãƒ«ã”ã¨ã«å€¤ã®åŠ å·¥ãŒå¿…è¦)
 	int pan = 0;
 	int v_orig = 0;
 	int vol_org = 0;
@@ -1661,21 +1661,21 @@ plugin interface
 
 int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, void *prm4)
 {
-	//		VM—pƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh
+	//		VMç”¨ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰
 	Mucom88Plugin *plg = (Mucom88Plugin *)ifptr;
-	mucomvm *vm = plg->vm;				// vmƒCƒ“ƒXƒ^ƒ“ƒX‚ğ“¾‚é
-	CMucom *mucom = plg->mucom;			// mucomƒCƒ“ƒXƒ^ƒ“ƒX‚ğ“¾‚é
+	mucomvm *vm = plg->vm;				// vmã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å¾—ã‚‹
+	CMucom *mucom = plg->mucom;			// mucomã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å¾—ã‚‹
 	switch (cmd) {
 	case MUCOM88IF_MUCOMVM_CMD_FMWRITE:			// prm1=reg, prm2=data
 		vm->FMRegDataOut( prm1, prm2 );
 		return 0;
 	case MUCOM88IF_MUCOMVM_CMD_FMREAD:
 		break;
-	case MUCOM88IF_MUCOMVM_CMD_GETCHDATA:		// prm1=ch, prm3=PCHDATAo—Íæ
+	case MUCOM88IF_MUCOMVM_CMD_GETCHDATA:		// prm1=ch, prm3=PCHDATAå‡ºåŠ›å…ˆ
 		return mucom->GetChannelData(prm1, (PCHDATA *)prm3);
 	case MUCOM88IF_MUCOMVM_CMD_CHDATA:
 		break;
-	case MUCOM88IF_MUCOMVM_CMD_TAGDATA:			// prm3=ƒ^ƒO–¼, prm4=o—Íæ(max255chr)
+	case MUCOM88IF_MUCOMVM_CMD_TAGDATA:			// prm3=ã‚¿ã‚°å, prm4=å‡ºåŠ›å…ˆ(max255chr)
 		{
 		char *result= (char *)prm4;
 		const char *src = (const char *)prm3;
@@ -1684,25 +1684,25 @@ int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, v
 		strncpy(result,p,255 );
 		return 0;
 		}
-	case MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE:		// prm1=‰¹FNo. , prm3=MUCOM88_VOICEFORMATƒ|ƒCƒ“ƒ^
+	case MUCOM88IF_MUCOMVM_CMD_VOICEUPDATE:		// prm1=éŸ³è‰²No. , prm3=MUCOM88_VOICEFORMATãƒã‚¤ãƒ³ã‚¿
 		{
 		return mucom->UpdateFMVoice(prm1, (MUCOM88_VOICEFORMAT *)prm3);
 		}
-	case MUCOM88IF_MUCOMVM_CMD_VOICESAVE:		// ƒpƒ‰ƒ[ƒ^[‚È‚µ
+	case MUCOM88IF_MUCOMVM_CMD_VOICESAVE:		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ãªã—
 		{
 		return mucom->SaveFMVoice();
 		}
-	case MUCOM88IF_MUCOMVM_CMD_GETVOICENUM:		// (•Ô’l‚Íƒe[ƒuƒ‹‚Ì—v‘f”) , prm3=”Ô†o—Íæ(int*)
+	case MUCOM88IF_MUCOMVM_CMD_GETVOICENUM:		// (è¿”å€¤ã¯ãƒ†ãƒ¼ãƒ–ãƒ«ã®è¦ç´ æ•°) , prm3=ç•ªå·å‡ºåŠ›å…ˆ(int*)
 		{
 		int *pp = (int *)prm3;
 		int max = mucom->GetUseVoiceMax();
 		for (int i = 0; i < max; i++) {
-			// ƒxƒNƒ^[‚É’Ç‰Á‚·‚é
+			// ãƒ™ã‚¯ã‚¿ãƒ¼ã«è¿½åŠ ã™ã‚‹
 			pp[i] = mucom->GetUseVoiceNum(i);
 		}
 		return max;
 		}
-	case MUCOM88IF_MUCOMVM_CMD_GETVOICEDATA:	// prm3,prm4=MUCOM88_VOICEFORMATƒ|ƒCƒ“ƒ^o—Í—p‚Ìƒ|ƒCƒ“ƒ^ (prm3‚ÍƒIƒŠƒWƒiƒ‹Aprm4‚Í•ÒW’†‚Ì‰¹F)
+	case MUCOM88IF_MUCOMVM_CMD_GETVOICEDATA:	// prm3,prm4=MUCOM88_VOICEFORMATãƒã‚¤ãƒ³ã‚¿å‡ºåŠ›ç”¨ã®ãƒã‚¤ãƒ³ã‚¿ (prm3ã¯ã‚ªãƒªã‚¸ãƒŠãƒ«ã€prm4ã¯ç·¨é›†ä¸­ã®éŸ³è‰²)
 		{
 		MUCOM88_VOICEFORMAT **pp3 = (MUCOM88_VOICEFORMAT **)prm3;
 		MUCOM88_VOICEFORMAT **pp4 = (MUCOM88_VOICEFORMAT **)prm4;
@@ -1710,13 +1710,13 @@ int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, v
 		*pp4 = mucom->GetVoiceData();
 		return 0;
 		}
-	case MUCOM88IF_MUCOMVM_CMD_GETVOICENAME:	// ‰¹Fƒtƒ@ƒCƒ‹–¼‚ğæ“¾ prm3=char *ƒ|ƒCƒ“ƒ^o—Í—p‚Ìƒ|ƒCƒ“ƒ^
+	case MUCOM88IF_MUCOMVM_CMD_GETVOICENAME:	// éŸ³è‰²ãƒ•ã‚¡ã‚¤ãƒ«åã‚’å–å¾— prm3=char *ãƒã‚¤ãƒ³ã‚¿å‡ºåŠ›ç”¨ã®ãƒã‚¤ãƒ³ã‚¿
 		{
 		char **pp = (char **)prm3;
 		*pp = (char *)mucom->GetVoiceFileName();
 		return 0;
 		}
-	case MUCOM88IF_MUCOMVM_CMD_GETVMMEMMAP:		// VM‚Ì‚ÌZ80ƒƒ‚ƒŠƒ}ƒbƒv‚ğæ“¾ prm3=char *ƒ|ƒCƒ“ƒ^o—Í—p‚Ìƒ|ƒCƒ“ƒ^
+	case MUCOM88IF_MUCOMVM_CMD_GETVMMEMMAP:		// VMã®ã®Z80ãƒ¡ãƒ¢ãƒªãƒãƒƒãƒ—ã‚’å–å¾— prm3=char *ãƒã‚¤ãƒ³ã‚¿å‡ºåŠ›ç”¨ã®ãƒã‚¤ãƒ³ã‚¿
 		{
 		char **pp = (char **)prm3;
 		*pp = (char *)vm->GetMemoryMap();
@@ -1729,16 +1729,16 @@ int MUCOM88IF_VM_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, v
 
 int MUCOM88IF_EDITOR_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm3, void *prm4)
 {
-	//		ƒGƒfƒBƒ^—pƒvƒ‰ƒOƒCƒ“ƒRƒ}ƒ“ƒh
+	//		ã‚¨ãƒ‡ã‚£ã‚¿ç”¨ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒãƒ³ãƒ‰
 	Mucom88Plugin *plg = (Mucom88Plugin *)ifptr;
-	CMucom *mucom = plg->mucom;			// mucomƒCƒ“ƒXƒ^ƒ“ƒX‚ğ“¾‚é
+	CMucom *mucom = plg->mucom;			// mucomã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹ã‚’å¾—ã‚‹
 	switch (cmd) {
-	case MUCOM88IF_EDITOR_CMD_GETTEXTSIZE:	// ƒpƒ‰ƒ[ƒ^[‚È‚µ/ƒTƒCƒY‚ğ•Ô‚·
+	case MUCOM88IF_EDITOR_CMD_GETTEXTSIZE:	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿ãƒ¼ãªã—/ã‚µã‚¤ã‚ºã‚’è¿”ã™
 		return strlen(mucom->GetEditorMML());
-	case MUCOM88IF_EDITOR_CMD_GETTEXT:	// prm3=ƒeƒLƒXƒg‘‚«‚İæ
+	case MUCOM88IF_EDITOR_CMD_GETTEXT:	// prm3=ãƒ†ã‚­ã‚¹ãƒˆæ›¸ãè¾¼ã¿å…ˆ
 		strcpy( (char *)prm3, mucom->GetEditorMML());
 		return 0;
-	case MUCOM88IF_EDITOR_CMD_UPDATETEXT:	// prm3=‘‚«Š·‚¦ƒeƒLƒXƒgƒf[ƒ^
+	case MUCOM88IF_EDITOR_CMD_UPDATETEXT:	// prm3=æ›¸ãæ›ãˆãƒ†ã‚­ã‚¹ãƒˆãƒ‡ãƒ¼ã‚¿
 		return mucom->RequestEditorMML( (const char *)prm3 );
 	}
 	return -1;

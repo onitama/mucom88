@@ -1,7 +1,7 @@
 
 //
 //		PC-8801 virtual machine
-//		(PC-8801FA‘Š“–‚ÌCPU‚ÆOPNA‚Ì‚İ‚ğƒGƒ~ƒ…ƒŒ[ƒVƒ‡ƒ“‚µ‚Ü‚·)
+//		(PC-8801FAç›¸å½“ã®CPUã¨OPNAã®ã¿ã‚’ã‚¨ãƒŸãƒ¥ãƒ¬ãƒ¼ã‚·ãƒ§ãƒ³ã—ã¾ã™)
 //			onion software/onitama 2018/11
 //			Z80 emulation by Yasuo Kuwahara 2002-2018(C)
 //			FM Sound Generator by cisc 1998, 2003(C)
@@ -104,13 +104,13 @@ void mucomvm::SetFastFW(int value)
 static void RunAudioCallback(void *CallbackInstance, void *MethodInstance);
 static void RunTimerCallback(void *CallbackInstance, void *MethodInstance);
 
-// ƒI[ƒfƒBƒIƒR[ƒ‹ƒoƒbƒN
+// ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
 static void RunAudioCallback(void *CallbackInstance, void *MethodInstance) {
 	AudioCallback *acb = (AudioCallback *)CallbackInstance;
 	((mucomvm *)MethodInstance)->AudioCallback(acb->mix, acb->size);
 }
 
-// ƒ^ƒCƒ}[ƒR[ƒ‹ƒoƒbƒN
+// ã‚¿ã‚¤ãƒãƒ¼ã‚³ãƒ¼ãƒ«ãƒãƒƒã‚¯
 static void RunTimerCallback(void *CallbackInstance, void *MethodInstance) {
 	TimerCallback *tcb = (TimerCallback *)CallbackInstance;
 	((mucomvm *)MethodInstance)->UpdateCallback(tcb->tick);
@@ -119,7 +119,7 @@ static void RunTimerCallback(void *CallbackInstance, void *MethodInstance) {
 
 void mucomvm::ResetFM(void)
 {
-	//	VM‚ÌƒŠƒZƒbƒg(FM•”‚Ì‚İ)
+	//	VMã®ãƒªã‚»ãƒƒãƒˆ(FMéƒ¨ã®ã¿)
 	//
 	if (playflag) {
 		osd->WaitSendingAudio();
@@ -149,36 +149,36 @@ void mucomvm::ResetFM(void)
 
 void mucomvm::InitSoundSystem(int rate)
 {
-	// ƒŒ[ƒgİ’è
+	// ãƒ¬ãƒ¼ãƒˆè¨­å®š
 	Rate = rate;
 
-	//	ƒTƒEƒ“ƒh‚Ì‰Šú‰»(‰‰ñ‚Ì‚İ‚ÅOK)
+	//	ã‚µã‚¦ãƒ³ãƒ‰ã®åˆæœŸåŒ–(åˆå›ã®ã¿ã§OK)
 	//
 	playflag = false;
 	predelay = 0;
 
-	// OSˆË‘¶•”•ª
+	// OSä¾å­˜éƒ¨åˆ†
 	osd = new OSDEP_CLASS();
 	if (osd == NULL) return;
 
-	//		COM‰Šú‰»
+	//		COMåˆæœŸåŒ–
 	//
 	osd->CoInitialize();
 
-	//		SCCI‘Î‰
+	//		SCCIå¯¾å¿œ
 	//
 	if (m_option & VM_OPTION_SCCI) {
 		osd->InitRealChip();
 	}
 
-	//		ƒI[ƒfƒBƒI
+	//		ã‚ªãƒ¼ãƒ‡ã‚£ã‚ª
 	if (!(m_option & VM_OPTION_STEP)) {
 		osd->UserAudioCallback->Set(this, &RunAudioCallback);
 		osd->UserTimerCallback->Set(this, &RunTimerCallback);
 		osd->InitAudio(master_window, rate, BUFSIZE);
 	}
 
-	//		ƒ^ƒCƒ}[‰Šú‰»
+	//		ã‚¿ã‚¤ãƒãƒ¼åˆæœŸåŒ–
 	//
 	ResetTimer();
 
@@ -206,7 +206,7 @@ void mucomvm::InitSoundSystem(int rate)
 
 void mucomvm::Reset(void)
 {
-	//	VM‚ÌƒŠƒZƒbƒg(FMReset‚ğŠÜ‚Ş)
+	//	VMã®ãƒªã‚»ãƒƒãƒˆ(FMResetã‚’å«ã‚€)
 	//
 	uint8_t *p;
 
@@ -238,7 +238,7 @@ void mucomvm::Reset(void)
 
 int mucomvm::DeviceCheck(void)
 {
-	//	ƒfƒoƒCƒX‚Ì³í«‚ğƒ`ƒFƒbƒN
+	//	ãƒ‡ãƒã‚¤ã‚¹ã®æ­£å¸¸æ€§ã‚’ãƒã‚§ãƒƒã‚¯
 	//
 	if (m_option & VM_OPTION_SCCI) {
 		return osd->CheckRealChip();
@@ -331,7 +331,7 @@ void mucomvm::Halt(void)
 
 void mucomvm::SendMemoryToShadow(void)
 {
-	//	ƒƒ‚ƒŠ‚ÌƒVƒƒƒh[ƒRƒs[‚ğì¬‚·‚é
+	//	ãƒ¡ãƒ¢ãƒªã®ã‚·ãƒ£ãƒ‰ãƒ¼ã‚³ãƒ”ãƒ¼ã‚’ä½œæˆã™ã‚‹
 	//
 	memcpy(memprg, mem, 0x10000);
 }
@@ -360,10 +360,10 @@ void mucomvm::ChangeBank(int bank)
 {
 	uint8_t *p;
 	if (bankmode == bank) return;
-	//	Œ»İ‚Ìƒƒ‚ƒŠ“à—e‚ğ‘Ş”ğ
+	//	ç¾åœ¨ã®ãƒ¡ãƒ¢ãƒªå†…å®¹ã‚’é€€é¿
 	p = &vram[bankmode][0];
 	memcpy(p, mem+0xc000, VMBANK_SIZE);
-	//	‚ ‚½‚ç‚µ‚¢ƒoƒ“ƒNƒf[ƒ^‚ğƒRƒs[
+	//	ã‚ãŸã‚‰ã—ã„ãƒãƒ³ã‚¯ãƒ‡ãƒ¼ã‚¿ã‚’ã‚³ãƒ”ãƒ¼
 	p = &vram[bank][0];
 	memcpy(mem + 0xc000,p, VMBANK_SIZE);
 	bankmode = bank;
@@ -464,7 +464,7 @@ int mucomvm::ExecUntilHalt(int times)
 			}
 		}
 
-		if (pc==0xaf80) {				// expand“à‚ÌCULC: ‚ğ’u‚«Š·‚¦‚é
+		if (pc==0xaf80) {				// expandå†…ã®CULC: ã‚’ç½®ãæ›ãˆã‚‹
 			int amul = GetA();
 			int val = Peekw(0xAF93);
 			int frq = Peekw(0xAFFA);
@@ -484,20 +484,20 @@ int mucomvm::ExecUntilHalt(int times)
 			SetHL(ans);
 			//Msgf("#CULC A=%d : %d * %f =%d.\r\n", amul, frq, facc, ans);
 
-			pc = 0xafb3;				// ret‚ÌˆÊ’u‚Ü‚Å”ò‚Î‚·
+			pc = 0xafb3;				// retã®ä½ç½®ã¾ã§é£›ã°ã™
 		}
 
 #if 0
-		if (pc == 0x9000) {				// MWRITE(ƒRƒ}ƒ“ƒh‘‚«‚İƒƒCƒ“)
+		if (pc == 0x9000) {				// MWRITE(ã‚³ãƒãƒ³ãƒ‰æ›¸ãè¾¼ã¿ãƒ¡ã‚¤ãƒ³)
 			int mdata = Peekw(0x0f320);
 			printf("#MWRITE MDATA$%04x.\r\n", mdata);
 		}
 #endif
 
 #if 1
-		if (pc == 0xde06) {				// CONVERT(‰¹F’è‹`ƒRƒ“ƒo[ƒg)
-										//	o—Íƒf[ƒ^‚ª‘å‚«‚¢ê‡ADE06H`‚Æ‚©‚Ô‚é‚Ì‚Å‘ã‘ÖƒR[ƒh‚ÅÀs‚·‚é
-										// $6001` 38byte‚Ì‰¹Fƒf[ƒ^‚ğ25byte‚Éˆ³k‚·‚é->$6001‚©‚ç‘‚«‚Ş
+		if (pc == 0xde06) {				// CONVERT(éŸ³è‰²å®šç¾©ã‚³ãƒ³ãƒãƒ¼ãƒˆ)
+										//	å‡ºåŠ›ãƒ‡ãƒ¼ã‚¿ãŒå¤§ãã„å ´åˆã€DE06Hã€œã¨ã‹ã¶ã‚‹ã®ã§ä»£æ›¿ã‚³ãƒ¼ãƒ‰ã§å®Ÿè¡Œã™ã‚‹
+										// $6001ã€œ 38byteã®éŸ³è‰²ãƒ‡ãƒ¼ã‚¿ã‚’25byteã«åœ§ç¸®ã™ã‚‹->$6001ã‹ã‚‰æ›¸ãè¾¼ã‚€
 										//
 			MUCOM88_VOICEFORMAT *v = (MUCOM88_VOICEFORMAT *)(memprg + 0x6000);
 			unsigned char *src = mem + 0x6001;
@@ -509,21 +509,21 @@ int mucomvm::ExecUntilHalt(int times)
 			memcpy(mem + 0x6000, memprg + 0x6000, 26);
 
 			SetHL(0x6001);
-			pc = 0xafb3;				// ret‚ÌˆÊ’u‚Ü‚Å”ò‚Î‚·($c9‚ÌƒR[ƒh‚È‚ç‰½‚Å‚à‚¢‚¢)
+			pc = 0xafb3;				// retã®ä½ç½®ã¾ã§é£›ã°ã™($c9ã®ã‚³ãƒ¼ãƒ‰ãªã‚‰ä½•ã§ã‚‚ã„ã„)
 		}
 #endif
 #if 0
-		if (pc == 0xde06) {				// CONVERT(‰¹F’è‹`ƒRƒ“ƒo[ƒg)
-			//	o—Íƒf[ƒ^‚ª‘å‚«‚¢ê‡ADE06H`‚Æ‚©‚Ô‚é‚Ì‚Å•Êƒoƒ“ƒN‚ÅÀs‚·‚é
+		if (pc == 0xde06) {				// CONVERT(éŸ³è‰²å®šç¾©ã‚³ãƒ³ãƒãƒ¼ãƒˆ)
+			//	å‡ºåŠ›ãƒ‡ãƒ¼ã‚¿ãŒå¤§ãã„å ´åˆã€DE06Hã€œã¨ã‹ã¶ã‚‹ã®ã§åˆ¥ãƒãƒ³ã‚¯ã§å®Ÿè¡Œã™ã‚‹
 			bankprg = VMPRGBANK_SHADOW;
 		}
-		if (pc == 0xe132) {				// CONVERT(‰¹F’è‹`ƒRƒ“ƒo[ƒgI—¹)
+		if (pc == 0xe132) {				// CONVERT(éŸ³è‰²å®šç¾©ã‚³ãƒ³ãƒãƒ¼ãƒˆçµ‚äº†)
 			bankprg = VMPRGBANK_MAIN;
 		}
 #endif
 
 #if 0
-		if (pc==0x979c) {				// COMPST(ƒRƒ“ƒpƒCƒ‰ƒƒCƒ“)
+		if (pc==0x979c) {				// COMPST(ã‚³ãƒ³ãƒ‘ã‚¤ãƒ©ãƒ¡ã‚¤ãƒ³)
 			int ch = Peek(0x0f330);
 			int line = Peekw(0x0f32b);
 			int link = Peekw(0x0f354);
@@ -639,7 +639,7 @@ int mucomvm::CallAndHaltWithA(uint16_t adr, uint8_t areg)
 
 int mucomvm::LoadMem(const char *fname, int adr, int size)
 {
-	//	VMƒƒ‚ƒŠ‚Éƒtƒ@ƒCƒ‹‚ğƒ[ƒh
+	//	VMãƒ¡ãƒ¢ãƒªã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰
 	//
 	FILE *fp;
 	int flen,sz;
@@ -655,7 +655,7 @@ int mucomvm::LoadMem(const char *fname, int adr, int size)
 
 char *mucomvm::LoadAlloc(const char *fname, int *sizeout)
 {
-	//	ƒƒ‚ƒŠ‚Éƒtƒ@ƒCƒ‹‚ğƒ[ƒh
+	//	ãƒ¡ãƒ¢ãƒªã«ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ãƒ­ãƒ¼ãƒ‰
 	//
 	FILE *fp;
 	char *buf;
@@ -684,7 +684,7 @@ char *mucomvm::LoadAlloc(const char *fname, int *sizeout)
 
 void mucomvm::LoadAllocFree(char *ptr)
 {
-	//	LoadAlloc‚ğƒ[ƒh‚µ‚½ƒƒ‚ƒŠ‚ğ•Ô‹p‚·‚é
+	//	LoadAllocã‚’ãƒ­ãƒ¼ãƒ‰ã—ãŸãƒ¡ãƒ¢ãƒªã‚’è¿”å´ã™ã‚‹
 	//
 	free(ptr);
 }
@@ -692,7 +692,7 @@ void mucomvm::LoadAllocFree(char *ptr)
 
 int mucomvm::LoadPcmFromMem(const char *buf, int sz, int maxpcm)
 {
-	//	PCMƒf[ƒ^‚ğOPNA‚ÌRAM‚Éƒ[ƒh(ƒƒ‚ƒŠ‚©‚ç)
+	//	PCMãƒ‡ãƒ¼ã‚¿ã‚’OPNAã®RAMã«ãƒ­ãƒ¼ãƒ‰(ãƒ¡ãƒ¢ãƒªã‹ã‚‰)
 	//
 	char *pcmdat;
 	char *pcmmem;
@@ -737,8 +737,8 @@ int mucomvm::LoadPcmFromMem(const char *buf, int sz, int maxpcm)
 
 int mucomvm::LoadPcm(const char *fname,int maxpcm)
 {
-	//	PCMƒf[ƒ^‚ğOPNA‚ÌRAM‚Éƒ[ƒh
-	//	(•Ê“rAMUCOM88‚ÌPCMƒf[ƒ^‚ğƒpƒbƒLƒ“ƒO‚µ‚½ƒf[ƒ^‚ª•K—v)
+	//	PCMãƒ‡ãƒ¼ã‚¿ã‚’OPNAã®RAMã«ãƒ­ãƒ¼ãƒ‰
+	//	(åˆ¥é€”ã€MUCOM88ã®PCMãƒ‡ãƒ¼ã‚¿ã‚’ãƒ‘ãƒƒã‚­ãƒ³ã‚°ã—ãŸãƒ‡ãƒ¼ã‚¿ãŒå¿…è¦)
 	//
 	int sz;
 	char *buf;
@@ -753,7 +753,7 @@ int mucomvm::LoadPcm(const char *fname,int maxpcm)
 
 int mucomvm::SendMem(const unsigned char *src, int adr, int size)
 {
-	//	VMƒƒ‚ƒŠ‚Éƒf[ƒ^‚ğ“]‘—
+	//	VMãƒ¡ãƒ¢ãƒªã«ãƒ‡ãƒ¼ã‚¿ã‚’è»¢é€
 	//
 	memcpy(mem + adr, src, size);
 	return 0;
@@ -762,7 +762,7 @@ int mucomvm::SendMem(const unsigned char *src, int adr, int size)
 
 int mucomvm::SaveMem(const char *fname, int adr, int size)
 {
-	//	VMƒƒ‚ƒŠ‚Ì“à—e‚ğƒtƒ@ƒCƒ‹‚ÉƒZ[ƒu
+	//	VMãƒ¡ãƒ¢ãƒªã®å†…å®¹ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚»ãƒ¼ãƒ–
 	//
 	return SaveToFile( fname, mem+adr, size );
 }
@@ -770,7 +770,7 @@ int mucomvm::SaveMem(const char *fname, int adr, int size)
 
 int mucomvm::SaveToFile(const char *fname, const unsigned char *src, int size)
 {
-	//	ƒoƒCƒiƒŠƒtƒ@ƒCƒ‹‚ğ•Û‘¶
+	//	ãƒã‚¤ãƒŠãƒªãƒ•ã‚¡ã‚¤ãƒ«ã‚’ä¿å­˜
 	//
 	FILE *fp;
 	int flen;
@@ -784,7 +784,7 @@ int mucomvm::SaveToFile(const char *fname, const unsigned char *src, int size)
 
 int mucomvm::SaveMemExpand(const char *fname, int adr, int size, char *header, int hedsize, char *footer, int footsize, char *pcm, int pcmsize)
 {
-	//	VMƒƒ‚ƒŠ‚Ì“à—e‚ğƒtƒ@ƒCƒ‹‚ÉƒZ[ƒu(ƒwƒbƒ_‚Æƒtƒbƒ^•t‚«)
+	//	VMãƒ¡ãƒ¢ãƒªã®å†…å®¹ã‚’ãƒ•ã‚¡ã‚¤ãƒ«ã«ã‚»ãƒ¼ãƒ–(ãƒ˜ãƒƒãƒ€ã¨ãƒ•ãƒƒã‚¿ä»˜ã)
 	//
 	FILE *fp;
 	fp = fopen(fname, "wb");
@@ -800,7 +800,7 @@ int mucomvm::SaveMemExpand(const char *fname, int adr, int size, char *header, i
 
 int mucomvm::KillFile(const char *fname)
 {
-	//		ƒtƒ@ƒCƒ‹‚Ìíœ
+	//		ãƒ•ã‚¡ã‚¤ãƒ«ã®å‰Šé™¤
 	//
 	return osd->KillFile(fname);
 }
@@ -808,7 +808,7 @@ int mucomvm::KillFile(const char *fname)
 
 int mucomvm::GetDirectory(char *buf, int size)
 {
-	//		ƒtƒ@ƒCƒ‹‚Ìíœ
+	//		ãƒ•ã‚¡ã‚¤ãƒ«ã®å‰Šé™¤
 	//
 	return osd->GetDirectory(buf,size);
 }
@@ -816,7 +816,7 @@ int mucomvm::GetDirectory(char *buf, int size)
 
 int mucomvm::ChangeDirectory(const char *dir)
 {
-	//		ƒtƒ@ƒCƒ‹‚Ìíœ
+	//		ãƒ•ã‚¡ã‚¤ãƒ«ã®å‰Šé™¤
 	//
 	return osd->ChangeDirectory(dir);
 }
@@ -824,22 +824,22 @@ int mucomvm::ChangeDirectory(const char *dir)
 
 void mucomvm::SkipPlay(int count)
 {
-	//		Ä¶‚ÌƒXƒLƒbƒv
+	//		å†ç”Ÿã®ã‚¹ã‚­ãƒƒãƒ—
 	//
 	if (count <= 0) return;
 
 	int jcount = count;
-	int vec = Peekw(0xf308);		// INT3 vector‚ğæ“¾
+	int vec = Peekw(0xf308);		// INT3 vectorã‚’å–å¾—
 
 	SetChMuteAll(true);
-	busyflag = true;				// Z80VM‚Ì2d‹N“®‚ğ–h~‚·‚é
+	busyflag = true;				// Z80VMã®2é‡èµ·å‹•ã‚’é˜²æ­¢ã™ã‚‹
 	while (1) {
 		if (jcount <= 0) break;
 		CallAndHalt(vec);
 		jcount--;
 		time_intcount++;
 		if (m_option & VM_OPTION_SCCI) {
-			if ((jcount & 3) == 0) osd->Delay(1);	// ‚¿‚å‚Á‚Æ‘Ò‚¿‚Ü‚·
+			if ((jcount & 3) == 0) osd->Delay(1);	// ã¡ã‚‡ã£ã¨å¾…ã¡ã¾ã™
 		}
 	}
 	busyflag = false;
@@ -871,8 +871,8 @@ void mucomvm::ResetTimer(void)
 
 void mucomvm::UpdateTime(int base)
 {
-	//		1ms‚²‚Æ‚ÌŠ„‚è‚İ
-	//		base’l‚ÍA1024=1ms‚ÅŒo‰ßŠÔ‚ª“ü‚é
+	//		1msã”ã¨ã®å‰²ã‚Šè¾¼ã¿
+	//		baseå€¤ã¯ã€1024=1msã§çµŒéæ™‚é–“ãŒå…¥ã‚‹
 	//
 	if (playflag == false) {
 		return;
@@ -889,7 +889,7 @@ void mucomvm::UpdateTime(int base)
 	}
 	tmflag = true;
 
-	if (int3mask & 128) int3_mode = false;		// Š„‚è‚İƒ}ƒXƒN
+	if (int3mask & 128) int3_mode = false;		// å‰²ã‚Šè¾¼ã¿ãƒã‚¹ã‚¯
 
 	if (opn->Count(base)) {
 		if (int3_mode) {
@@ -897,17 +897,17 @@ void mucomvm::UpdateTime(int base)
 			if (predelay == 0) {
 				int times = 1;
 				if (m_option & VM_OPTION_FASTFW) times = m_fastfw;
-				busyflag = true;				// Z80VM‚Ì2d‹N“®‚ğ–h~‚·‚é
+				busyflag = true;				// Z80VMã®2é‡èµ·å‹•ã‚’é˜²æ­¢ã™ã‚‹
 				while (1) {
 					if (times <= 0) break;
-					int vec = Peekw(0xf308);	// INT3 vector‚ğŒÄ‚Ño‚·
+					int vec = Peekw(0xf308);	// INT3 vectorã‚’å‘¼ã³å‡ºã™
 					CallAndHalt(vec);
 					times--;
 					time_intcount++;
 				}
 				busyflag = false;
 				ProcessChData();
-				NoticePlugins(MUCOM88IF_NOTICE_INTDONE, NULL, NULL);		// ƒvƒ‰ƒOƒCƒ“‚É’Ê’m‚·‚é
+				NoticePlugins(MUCOM88IF_NOTICE_INTDONE, NULL, NULL);		// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã«é€šçŸ¥ã™ã‚‹
 			}
 			else {
 				predelay--;
@@ -916,7 +916,7 @@ void mucomvm::UpdateTime(int base)
 	}
 
 	if ((stream_event == false) && (int3_mode == false)) {
-		// INT3‚ª–³Œø‚Èê‡‚àƒXƒgƒŠ[ƒ€Ä¶‚Í‘±‚¯‚é
+		// INT3ãŒç„¡åŠ¹ãªå ´åˆã‚‚ã‚¹ãƒˆãƒªãƒ¼ãƒ å†ç”Ÿã¯ç¶šã‘ã‚‹
 		if (time_scount > (10<< TICK_SHIFT)) {
 			stream_event = true;
 		}
@@ -936,7 +936,7 @@ void mucomvm::UpdateTime(int base)
 
 void mucomvm::StartINT3(void)
 {
-	//		INT3Š„‚è‚İ‚ğŠJn
+	//		INT3å‰²ã‚Šè¾¼ã¿ã‚’é–‹å§‹
 	//
 	if (int3flag) {
 		osd->WaitSendingAudio();
@@ -952,7 +952,7 @@ void mucomvm::StartINT3(void)
 
 void mucomvm::RestartINT3(void)
 {
-	//		INT3Š„‚è‚İ‚ğÄŠJ
+	//		INT3å‰²ã‚Šè¾¼ã¿ã‚’å†é–‹
 	//
 	if (int3flag) {
 		return;
@@ -969,7 +969,7 @@ void mucomvm::RestartINT3(void)
 
 void mucomvm::StopINT3(void)
 {
-	//		INT3Š„‚è‚İ‚ğ’â~
+	//		INT3å‰²ã‚Šè¾¼ã¿ã‚’åœæ­¢
 	//
 	osd->WaitSendingAudio();
 	int3flag = false;
@@ -981,7 +981,7 @@ void mucomvm::StopINT3(void)
 
 void mucomvm::checkThreadBusy(void)
 {
-	//		ƒXƒŒƒbƒh‚ªVM‚ğg—p‚µ‚Ä‚¢‚é‚©ƒ`ƒFƒbƒN
+	//		ã‚¹ãƒ¬ãƒƒãƒ‰ãŒVMã‚’ä½¿ç”¨ã—ã¦ã„ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
 	//
 	for (int i = 0; i < 300 && busyflag; i++) osd->Delay(10);
 }
@@ -1015,19 +1015,19 @@ FM synth
 */
 /*------------------------------------------------------------*/
 
-//	ƒŒƒWƒXƒ^ƒf[ƒ^o—Í
+//	ãƒ¬ã‚¸ã‚¹ã‚¿ãƒ‡ãƒ¼ã‚¿å‡ºåŠ›
 void mucomvm::FMRegDataOut(int reg, int data)
 {
-	regmap[reg] = (uint8_t)data;			// “à•”ƒŒƒWƒXƒ^•Û—p
+	regmap[reg] = (uint8_t)data;			// å†…éƒ¨ãƒ¬ã‚¸ã‚¹ã‚¿ä¿æŒç”¨
 	opn->SetReg(reg, data);
 
 	if (m_option & VM_OPTION_SCCI) {
-		// ƒŠƒAƒ‹ƒ`ƒbƒvo—Í
+		// ãƒªã‚¢ãƒ«ãƒãƒƒãƒ—å‡ºåŠ›
 		osd->OutputRealChip(reg, data);
 	}
 }
 
-//	ƒŒƒWƒXƒ^ƒf[ƒ^æ“¾
+//	ãƒ¬ã‚¸ã‚¹ã‚¿ãƒ‡ãƒ¼ã‚¿å–å¾—
 int mucomvm::FMRegDataGet(int reg)
 {
 	return (int)regmap[reg];
@@ -1061,7 +1061,7 @@ void mucomvm::FMOutData(int data)
 	FMRegDataOut(sound_reg_select, data);
 }
 
-//	ƒf[ƒ^o—Í(OPNA‘¤)
+//	ãƒ‡ãƒ¼ã‚¿å‡ºåŠ›(OPNAå´)
 void mucomvm::FMOutData2(int data)
 {
 	//printf("FMReg2: %04x = %02x\n", sound_reg_select, data);
@@ -1074,14 +1074,14 @@ void mucomvm::FMOutData2(int data)
 	FMRegDataOut(sound_reg_select2 | 0x100, data);
 }
 
-//	ƒf[ƒ^“ü—Í
+//	ãƒ‡ãƒ¼ã‚¿å…¥åŠ›
 int mucomvm::FMInData(void)
 {
 	return (int)opn->GetReg(sound_reg_select);
 }
 
 
-//	ƒf[ƒ^“ü—Í(OPNA‘¤)
+//	ãƒ‡ãƒ¼ã‚¿å…¥åŠ›(OPNAå´)
 int mucomvm::FMInData2(void)
 {
 	return (int)opn->GetReg(sound_reg_select2|0x100);
@@ -1208,31 +1208,31 @@ void mucomvm::ProcessChData(void)
 	for (i = 0; i < channel_max; i++){
 		src = mem + pchadr[i];
 		dst = pchdata + (channel_size*i);
-		if (src[0] > dst[0]) {						// lebgth‚ªXV‚³‚ê‚½
+		if (src[0] > dst[0]) {						// lebgthãŒæ›´æ–°ã•ã‚ŒãŸ
 			keyon = 0;
 			code = src[32];
 			if (i == 10) {
-				keyon = src[1];						// PCMch‚Í‰¹FNo.‚ğ“ü‚ê‚é
+				keyon = src[1];						// PCMchã¯éŸ³è‰²No.ã‚’å…¥ã‚Œã‚‹
 			}
 			else if ( i == 6) {
-				keyon = mem[ pchadr[10] + 38 ];		// rhythm‚Ìƒ[ƒN’l‚ğ“ü‚ê‚é
+				keyon = mem[ pchadr[10] + 38 ];		// rhythmã®ãƒ¯ãƒ¼ã‚¯å€¤ã‚’å…¥ã‚Œã‚‹
 			}
 			else {
 				if (code != dst[32]) {
-					keyon = ((code >> 4) * 12) + (code & 15);	// ³‹K‰»‚µ‚½ƒL[No.
+					keyon = ((code >> 4) * 12) + (code & 15);	// æ­£è¦åŒ–ã—ãŸã‚­ãƒ¼No.
 				}
 
 			}
-			src[37] = keyon;						// keyonî•ñ‚ğ•t‰Á‚·‚é
+			src[37] = keyon;						// keyonæƒ…å ±ã‚’ä»˜åŠ ã™ã‚‹
 		}
 		else {
-			if (src[0] < src[18]) {				// quantizeØ‚ê
-				src[37] = 0;						// keyonî•ñ‚ğ•t‰Á‚·‚é
+			if (src[0] < src[18]) {				// quantizeåˆ‡ã‚Œ
+				src[37] = 0;						// keyonæƒ…å ±ã‚’ä»˜åŠ ã™ã‚‹
 			}
 		}
 		memcpy(dst, src , channel_size);
 	}
-	memcpy( pchwork, mem + pchadr[0] - 16, 16 );	// CHDATA‚Ì‘O‚Éƒ[ƒN‚ª‚ ‚é
+	memcpy( pchwork, mem + pchadr[0] - 16, 16 );	// CHDATAã®å‰ã«ãƒ¯ãƒ¼ã‚¯ãŒã‚ã‚‹
 }
 
 
@@ -1247,10 +1247,10 @@ int MUCOM88IF_EDITOR_COMMAND(void *ifptr, int cmd, int prm1, int prm2, void *prm
 
 int mucomvm::AddPlugins(const char *filename, int bootopt)
 {
-	//		ƒvƒ‰ƒOƒCƒ“‚ğ’Ç‰Á‚·‚é
-	//		filename = ƒvƒ‰ƒOƒCƒ“DLL–¼
-	//		bootopt = ‹N“®ƒIƒvƒVƒ‡ƒ“(–¢g—p)
-	//		I—¹ƒR[ƒh : 0=OK
+	//		ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’è¿½åŠ ã™ã‚‹
+	//		filename = ãƒ—ãƒ©ã‚°ã‚¤ãƒ³DLLå
+	//		bootopt = èµ·å‹•ã‚ªãƒ—ã‚·ãƒ§ãƒ³(æœªä½¿ç”¨)
+	//		çµ‚äº†ã‚³ãƒ¼ãƒ‰ : 0=OK
 	//
 #ifndef USE_SDL
 	int res;
@@ -1264,7 +1264,7 @@ int mucomvm::AddPlugins(const char *filename, int bootopt)
 	plugins.push_back(plg);
 	res = osd->InitPlugin(plg, filename, bootopt);
 	if (res) return res;
-	plg->if_notice(plg, MUCOM88IF_NOTICE_BOOT,NULL,NULL);				// ‰Šú‰»‚ğ’Ê’m‚·‚é
+	plg->if_notice(plg, MUCOM88IF_NOTICE_BOOT,NULL,NULL);				// åˆæœŸåŒ–ã‚’é€šçŸ¥ã™ã‚‹
 #endif
 	return 0;
 }
@@ -1272,17 +1272,17 @@ int mucomvm::AddPlugins(const char *filename, int bootopt)
 
 void mucomvm::FreePlugins(void)
 {
-	//		ƒvƒ‰ƒOƒCƒ“‚ğ‚·‚×‚Ä”jŠü‚·‚é
+	//		ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚’ã™ã¹ã¦ç ´æ£„ã™ã‚‹
 	//
-// C++11‚Å‚ÍOS X 10.6—pƒrƒ‹ƒh‚ª’Ê‚ç‚È‚¢‚Ì‚ÅcB
+// C++11ã§ã¯OS X 10.6ç”¨ãƒ“ãƒ«ãƒ‰ãŒé€šã‚‰ãªã„ã®ã§â€¦ã€‚
 #ifndef USE_SDL
 	Mucom88Plugin *plg;
 	for (auto it = begin(plugins); it != end(plugins); ++it) {
 		plg = *it;
-		plg->if_notice(plg, MUCOM88IF_NOTICE_TERMINATE, NULL, NULL);	// ”jŠü‚·‚é‘O‚É’Ê’m‚·‚é
+		plg->if_notice(plg, MUCOM88IF_NOTICE_TERMINATE, NULL, NULL);	// ç ´æ£„ã™ã‚‹å‰ã«é€šçŸ¥ã™ã‚‹
 		osd->FreePlugin(plg);
 	}
-	plugins.clear();			// ‚·‚×‚Äíœ
+	plugins.clear();			// ã™ã¹ã¦å‰Šé™¤
 #endif
 }
 

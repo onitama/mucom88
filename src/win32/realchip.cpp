@@ -1,54 +1,54 @@
 #include "realchip.h"
 
-// ƒRƒ“ƒXƒgƒ‰ƒNƒ^
+// ã‚³ãƒ³ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 realchip::realchip()
 {
-	// ƒtƒ‰ƒO‰Šú‰»
+	// ãƒ•ãƒ©ã‚°åˆæœŸåŒ–
 	m_IsRealChip = false;
-	// ADPCM—pƒoƒbƒtƒ@ƒNƒŠƒA
+	// ADPCMç”¨ãƒãƒƒãƒ•ã‚¡ã‚¯ãƒªã‚¢
 	memset(m_bADPCMBuff, 0x00, sizeof(m_bADPCMBuff));
 }
 
-// ƒfƒXƒgƒ‰ƒNƒ^
+// ãƒ‡ã‚¹ãƒˆãƒ©ã‚¯ã‚¿
 realchip::~realchip()
 {
 }
 
-// ‰Šú‰»
+// åˆæœŸåŒ–
 void realchip::Initialize()
 {
-	// SCCI‚ğ“Ç‚İ‚Ş
+	// SCCIã‚’èª­ã¿è¾¼ã‚€
 	m_hScci = ::LoadLibrary((LPCSTR)"scci.dll");
 	if (m_hScci == NULL) {
 		return;
 	}
-	// ƒTƒEƒ“ƒhƒCƒ“ƒ^[ƒtƒF[ƒXƒ}ƒl[ƒWƒƒ[æ“¾—pŠÖ”ƒAƒhƒŒƒXæ“¾
+	// ã‚µã‚¦ãƒ³ãƒ‰ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼å–å¾—ç”¨é–¢æ•°ã‚¢ãƒ‰ãƒ¬ã‚¹å–å¾—
 	SCCIFUNC getSoundInterfaceManager = (SCCIFUNC)(::GetProcAddress(m_hScci, "getSoundInterfaceManager"));
 	if (getSoundInterfaceManager == NULL) {
 		::FreeLibrary(m_hScci);
 		m_hScci = NULL;
 		return;
 	}
-	// ƒTƒEƒ“ƒhƒCƒ“ƒ^[ƒtƒF[ƒXƒ}ƒl[ƒWƒƒ[æ“¾
+	// ã‚µã‚¦ãƒ³ãƒ‰ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼å–å¾—
 	m_pManager = getSoundInterfaceManager();
 
-	// ‰Šú‰»
+	// åˆæœŸåŒ–
 	m_pManager->initializeInstance();
 
-	// ƒŠƒZƒbƒgˆ—
+	// ãƒªã‚»ãƒƒãƒˆå‡¦ç†
 	m_pManager->reset();
 
-	// ƒTƒEƒ“ƒhƒ`ƒbƒvæ“¾
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ—å–å¾—
 	m_chiptype = SC_TYPE_YM2608;
 	m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_7987200);
 
-	// ƒTƒEƒ“ƒhƒ`ƒbƒv‚Ìæ“¾‚ªo—ˆ‚È‚¢ê‡
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ—ã®å–å¾—ãŒå‡ºæ¥ãªã„å ´åˆ
 	if (m_pSoundChip == NULL)
 	{
 		m_chiptype = SC_TYPE_YM2608;
-		m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_7987200);	// 2203‚à’T‚·
+		m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_7987200);	// 2203ã‚‚æ¢ã™
 		if (m_pSoundChip == NULL) {
-			// ƒTƒEƒ“ƒhƒ}ƒl[ƒWƒƒ[‚ğ‰ğ•ú‚µ‚ÄI—¹
+			// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼ã‚’è§£æ”¾ã—ã¦çµ‚äº†
 			m_pManager->releaseInstance();
 			::FreeLibrary(m_hScci);
 			m_hScci = NULL;
@@ -56,46 +56,46 @@ void realchip::Initialize()
 			return;
 		}
 	}
-	// ƒ`ƒbƒv‚ªæ“¾‚Å‚«‚½‚Ì‚ÅƒŠƒAƒ‹ƒ`ƒbƒv‚Å“®ì‚³‚¹‚é
+	// ãƒãƒƒãƒ—ãŒå–å¾—ã§ããŸã®ã§ãƒªã‚¢ãƒ«ãƒãƒƒãƒ—ã§å‹•ä½œã•ã›ã‚‹
 	m_IsRealChip = true;
 }
 
-// ŠJ•ú
+// é–‹æ”¾
 void realchip::UnInitialize()
 {
-	// ƒŠƒAƒ‹ƒ`ƒbƒv–³‚µ‚È‚ç‘¦I—¹
+	// ãƒªã‚¢ãƒ«ãƒãƒƒãƒ—ç„¡ã—ãªã‚‰å³çµ‚äº†
 	if (m_IsRealChip == false) return;
-	// ƒTƒEƒ“ƒhƒ`ƒbƒv‚ğŠJ•ú‚·‚é
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ—ã‚’é–‹æ”¾ã™ã‚‹
 	m_pManager->releaseSoundChip(m_pSoundChip);
 	m_pSoundChip = NULL;
-	// ƒTƒEƒ“ƒhƒ}ƒl[ƒWƒƒ[ŠJ•ú
+	// ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒãƒ¼ã‚¸ãƒ£ãƒ¼é–‹æ”¾
 	m_pManager->releaseInstance();
 	m_pManager = NULL;
-	// DLLŠJ•ú
+	// DLLé–‹æ”¾
 	::FreeLibrary(m_hScci);
 	m_hScci = NULL;
 }
 
-// ƒŠƒZƒbƒgˆ—
+// ãƒªã‚»ãƒƒãƒˆå‡¦ç†
 void realchip::Reset()
 {
-	// Àƒ`ƒbƒv‚ª‘¶İ‚µ‚È‚¢ê‡
+	// å®Ÿãƒãƒƒãƒ—ãŒå­˜åœ¨ã—ãªã„å ´åˆ
 	if (m_IsRealChip == false) {
 		return;
 	}
-	// ƒŠƒZƒbƒg‚·‚é
+	// ãƒªã‚»ãƒƒãƒˆã™ã‚‹
 	if (m_pSoundChip) {
 		m_pSoundChip->init();
 	}
 }
 
-// ƒŠƒAƒ‹ƒ`ƒbƒvƒ`ƒFƒbƒN
+// ãƒªã‚¢ãƒ«ãƒãƒƒãƒ—ãƒã‚§ãƒƒã‚¯
 bool realchip::IsRealChip(){
-	// ƒŠƒAƒ‹ƒ`ƒbƒv‚Ì—L–³‚ğ•Ô‹p‚·‚é
+	// ãƒªã‚¢ãƒ«ãƒãƒƒãƒ—ã®æœ‰ç„¡ã‚’è¿”å´ã™ã‚‹
 	return m_IsRealChip;
 }
 
-// ƒŒƒWƒXƒ^İ’è
+// ãƒ¬ã‚¸ã‚¹ã‚¿è¨­å®š
 void realchip::SetRegister(DWORD reg, DWORD data) {
 	if (m_pSoundChip) {
 		if (reg & 0x100) {
@@ -105,21 +105,21 @@ void realchip::SetRegister(DWORD reg, DWORD data) {
 	}
 }
 
-// ADPCM‚Ì“]‘—
+// ADPCMã®è»¢é€
 void realchip::SendAdpcmData(void *pData, DWORD size) {
 
 	if (m_chiptype != SC_TYPE_YM2608) return;
 
-	// ·•ª‚ª‚ ‚é‚©ƒ`ƒFƒbƒN
+	// å·®åˆ†ãŒã‚ã‚‹ã‹ãƒã‚§ãƒƒã‚¯
 	if (memcmp(m_bADPCMBuff, pData, size) == 0) {
-		// ·•ª‚ª–³‚¢ê‡‚Í“]‘—‚µ‚È‚¢
+		// å·®åˆ†ãŒç„¡ã„å ´åˆã¯è»¢é€ã—ãªã„
 		return;
 	}
-	// ƒƒ‚ƒŠ‚©‚çƒRƒs[‚·‚é
+	// ãƒ¡ãƒ¢ãƒªã‹ã‚‰ã‚³ãƒ”ãƒ¼ã™ã‚‹
 	memcpy(m_bADPCMBuff, pData, size);
-	// ”¼’[•ªH‚Íƒ[ƒ¶‚ß‚·‚é
+	// åŠç«¯åˆ†ï¼Ÿã¯ã‚¼ãƒ­ç”Ÿã‚ã™ã‚‹
 	memset(&m_bADPCMBuff[size], 0x00, 0x40000 - size);
-	// “]‘—ƒTƒCƒY‚ğŒvZ‚·‚éiƒpƒfƒBƒ“ƒO‚ğl—¶j
+	// è»¢é€ã‚µã‚¤ã‚ºã‚’è¨ˆç®—ã™ã‚‹ï¼ˆãƒ‘ãƒ‡ã‚£ãƒ³ã‚°ã‚’è€ƒæ…®ï¼‰
 	DWORD transSize = size + ((0x20 - (size & 0x1f)) & 0x1f);
 
 	m_pSoundChip->setRegister(0x100, 0x20);
@@ -132,24 +132,24 @@ void realchip::SendAdpcmData(void *pData, DWORD size) {
 	m_pSoundChip->setRegister(0x100, 0x68);
 	m_pSoundChip->setRegister(0x101, 0x00);
 
-	// ƒAƒhƒŒƒX
+	// ã‚¢ãƒ‰ãƒ¬ã‚¹
 	m_pSoundChip->setRegister(0x102, 0x00);
 	m_pSoundChip->setRegister(0x103, 0x00);
 	m_pSoundChip->setRegister(0x104, 0xff);
 	m_pSoundChip->setRegister(0x105, 0xff);
 	m_pSoundChip->setRegister(0x10c, 0xff);
 	m_pSoundChip->setRegister(0x10d, 0xff);
-	// PCM“]‘—
+	// PCMè»¢é€
 	for (DWORD dCnt = 0; dCnt < transSize; dCnt++) {
 		m_pSoundChip->setRegister(0x108, m_bADPCMBuff[dCnt]);
 	}
-	// I—¹
+	// çµ‚äº†
 	m_pSoundChip->setRegister(0x100, 0x00);
 	m_pSoundChip->setRegister(SC_WAIT_REG, 16);
 	m_pSoundChip->setRegister(0x110, 0x80);
 	m_pSoundChip->setRegister(SC_WAIT_REG, 16);
 
-	// ƒoƒbƒtƒ@‚ª‹ó‚É‚È‚é‚Ü‚Å‘Ò‚½‚¹‚é
+	// ãƒãƒƒãƒ•ã‚¡ãŒç©ºã«ãªã‚‹ã¾ã§å¾…ãŸã›ã‚‹
 	while (!m_pSoundChip->isBufferEmpty()) {
 		Sleep(0);
 	}

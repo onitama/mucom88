@@ -13,7 +13,7 @@
 //	soundbuf.cpp functions
 //
 
-#define SNDBUF_LIMIT 0x8000			// 1度にバッファに書き込める最大サイズ
+#define SNDBUF_LIMIT 0x8000			// 1蠎ｦ縺ｫ繝舌ャ繝輔ぃ縺ｫ譖ｸ縺崎ｾｼ繧√ｋ譛螟ｧ繧ｵ繧､繧ｺ
 
 class SoundBuf {
 public:

@@ -1,7 +1,7 @@
 //
 //		Sound Buffer Class
-//		(“à•”MIX—p‚ÌƒTƒEƒ“ƒhƒoƒbƒtƒ@)
-//		(32bitPCMƒf[ƒ^‚ð‡¬ŒãA32/16bit‚Å“n‚µ‚Ü‚·)
+//		(å†…éƒ¨MIXç”¨ã®ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ•ã‚¡)
+//		(32bitPCMãƒ‡ãƒ¼ã‚¿ã‚’åˆæˆå¾Œã€32/16bitã§æ¸¡ã—ã¾ã™)
 //			onion software/onitama 2018/11
 //
 
@@ -116,7 +116,7 @@ int SoundBuf::GetBuffer32(void *dst, int size)
 
 int32 *SoundBuf::PrepareBuffer(int size)
 {
-	//		size•ª‚Ìint32ƒoƒbƒtƒ@‚ð€”õ
+	//		sizeåˆ†ã®int32ãƒãƒƒãƒ•ã‚¡ã‚’æº–å‚™
 	int sz;
 	int32 *p;
 	sz = size; if (sz > SNDBUF_LIMIT) sz = SNDBUF_LIMIT;
@@ -128,7 +128,7 @@ int32 *SoundBuf::PrepareBuffer(int size)
 
 void SoundBuf::UpdateBuffer(int size)
 {
-	//		size•ª‚Ìint32ƒoƒbƒtƒ@‚ðŠm’è‚³‚¹‚é
+	//		sizeåˆ†ã®int32ãƒãƒƒãƒ•ã‚¡ã‚’ç¢ºå®šã•ã›ã‚‹
 	int sz;
 	sz = size; if (sz > SNDBUF_LIMIT) sz = SNDBUF_LIMIT;
 	m_curptr += sz;

@@ -2,7 +2,7 @@
 //
 //		OsDependent win32
 //		BouKiCHi 2019
-//		(OSˆË‘¶‚Ìƒ‹[ƒ`ƒ“‚ğ‚Ü‚Æ‚ß‚Ü‚·)
+//		(OSä¾å­˜ã®ãƒ«ãƒ¼ãƒãƒ³ã‚’ã¾ã¨ã‚ã¾ã™)
 //		onion software/onitama 2019/1
 //
 
@@ -53,19 +53,19 @@ OsDependentWin32::~OsDependentWin32(void)
 	if (snddrv != NULL) delete snddrv;
 }
 
-// COM‚Ì‰Šú‰»
+// COMã®åˆæœŸåŒ–
 bool OsDependentWin32::CoInitialize() {
 	if (FAILED(CoInitializeEx(NULL, COINIT_APARTMENTTHREADED))) return false;
 	return true;
 }
 
 
-// Àƒ`ƒbƒv
+// å®Ÿãƒãƒƒãƒ—
 bool OsDependentWin32::InitRealChip() {
 	realchip *rc = new realchip();
 	rc->Initialize();
 	if (!rc->IsRealChip()) {
-		RealChipInstance = NULL;			// ‰Šú‰»‚É¸”s‚µ‚½‚çg—p‚µ‚È‚¢
+		RealChipInstance = NULL;			// åˆæœŸåŒ–ã«å¤±æ•—ã—ãŸã‚‰ä½¿ç”¨ã—ãªã„
 		return false;
 	}
 	RealChipInstance = rc;
@@ -110,14 +110,14 @@ void OsDependentWin32::OutputRealChipAdpcm(void *pData, int size)
 }
 
 
-// ƒ^ƒCƒ}[
+// ã‚¿ã‚¤ãƒãƒ¼
 bool OsDependentWin32::InitTimer() {
 
 	timerid = 0;
 
 	TIMECAPS caps;
 	if (timeGetDevCaps(&caps, sizeof(TIMECAPS)) == TIMERR_NOERROR) {
-		// ƒ}ƒ‹ƒ`ƒƒfƒBƒAƒ^ƒCƒ}[‚ÌƒT[ƒrƒX¸“x‚ğÅ‘å‚É
+		// ãƒãƒ«ãƒãƒ¡ãƒ‡ã‚£ã‚¢ã‚¿ã‚¤ãƒãƒ¼ã®ã‚µãƒ¼ãƒ“ã‚¹ç²¾åº¦ã‚’æœ€å¤§ã«
 		HANDLE myth = GetCurrentThread();
 		SetThreadPriority(myth, THREAD_PRIORITY_HIGHEST);
 
@@ -130,7 +130,7 @@ bool OsDependentWin32::InitTimer() {
 		}
 	}
 	else {
-		//	¸”s‚µ‚½
+		//	å¤±æ•—ã—ãŸæ™‚
 		timer_period = -1;
 		timerid = 0;
 		MessageBox(NULL, "Unable to start timer.", "Error", 0);
@@ -147,7 +147,7 @@ void OsDependentWin32::FreeTimer() {
 		timeEndPeriod(timer_period);
 		timerid = 0;
 	}
-	//	ƒXƒŒƒbƒh‚ğ’â~‚·‚é
+	//	ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’åœæ­¢ã™ã‚‹
 	StopThread();
 }
 
@@ -164,7 +164,7 @@ void OsDependentWin32::UpdateTimer()
 	UserTimerCallback->Run();
 }
 
-// ŠÔ
+// æ™‚é–“
 int OsDependentWin32::GetMilliseconds() {
 	return timeGetTime();
 }
@@ -175,16 +175,16 @@ void OsDependentWin32::Delay(int ms) {
 
 int OsDependentWin32::StartThread(void)
 {
-	// ƒXƒgƒŠ[ƒ€ƒXƒŒƒbƒh‚ğŠJn‚·‚é
+	// ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’é–‹å§‹ã™ã‚‹
 
-	// ƒCƒxƒ“ƒgƒIƒuƒWƒFƒNƒg‚ğì¬‚·‚é
+	// ã‚¤ãƒ™ãƒ³ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆã‚’ä½œæˆã™ã‚‹
 	hevent = CreateEvent(NULL, FALSE, FALSE, NULL);
-	// ƒXƒŒƒbƒh‚ğ¶¬‚·‚é
+	// ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’ç”Ÿæˆã™ã‚‹
 	hthread = CreateThread(NULL, 0x40000, (LPTHREAD_START_ROUTINE)OsDependentWin32::vThreadFunc, (LPVOID)this, 0, &threadid);
 	if (hthread == NULL) {
 		return -1;
 	}
-	// ƒXƒŒƒbƒh‚Ì—Dæ‡ˆÊ‚ğ•ÏX‚·‚é
+	// ã‚¹ãƒ¬ãƒƒãƒ‰ã®å„ªå…ˆé †ä½ã‚’å¤‰æ›´ã™ã‚‹
 	SetThreadPriority(hthread, THREAD_PRIORITY_TIME_CRITICAL);
 	return 0;
 }
@@ -198,21 +198,21 @@ DWORD WINAPI OsDependentWin32::vThreadFunc(LPVOID pParam) {
 
 int OsDependentWin32::StopThread(void)
 {
-	// ƒXƒgƒŠ[ƒ€ƒXƒŒƒbƒh‚ğ’â~‚·‚é
+	// ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚¹ãƒ¬ãƒƒãƒ‰ã‚’åœæ­¢ã™ã‚‹
 	if (threadflag == FALSE) return -1;
 
-	// ƒCƒxƒ“ƒgƒIƒuƒWƒFƒNƒg”jŠü
+	// ã‚¤ãƒ™ãƒ³ãƒˆã‚ªãƒ–ã‚¸ã‚§ã‚¯ãƒˆç ´æ£„
 	threadflag = FALSE;
 	SetEvent(hevent);
 	CloseHandle(hevent);
 	hevent = NULL;
-	// ƒXƒŒƒbƒh’â~‚ğ‘Ò‚Â
+	// ã‚¹ãƒ¬ãƒƒãƒ‰åœæ­¢ã‚’å¾…ã¤
 	DWORD	dActive = 0;
 	GetExitCodeThread(hthread, &dActive);
 	if (dActive == STILL_ACTIVE) {
 		WaitForSingleObject(hthread, INFINITE);
 	}
-	// ƒXƒŒƒbƒh”jŠü
+	// ã‚¹ãƒ¬ãƒƒãƒ‰ç ´æ£„
 	CloseHandle(hthread);
 
 	hthread = NULL;
@@ -236,14 +236,14 @@ int OsDependentWin32::GetElapsedTime()
 {
 #ifdef USE_HIGH_LEVEL_COUNTER
 
-	int64_t cur_ft;		// 100ƒiƒm•b’PˆÊ‚ÌŠÔ
+	int64_t cur_ft;		// 100ãƒŠãƒç§’å˜ä½ã®æ™‚é–“
 	int64_t pass_ft;
 	double ms;
 	GetSystemTimeAsFileTime((FILETIME *)&cur_ft);
 	pass_ft = cur_ft - last_ft;
 	last_ft = cur_ft;
 
-	ms = ((double)pass_ft) * (0.0001 * TICK_FACTOR);	// 1ƒ~ƒŠ•b=1024 ’PˆÊ‚É’¼‚·
+	ms = ((double)pass_ft) * (0.0001 * TICK_FACTOR);	// 1ãƒŸãƒªç§’=1024 å˜ä½ã«ç›´ã™
 	//printf( "(%f)\n",ms );
 
 	return (int)(ms);
@@ -259,7 +259,7 @@ int OsDependentWin32::GetElapsedTime()
 
 
 void OsDependentWin32::ThreadFunc() {
-	// ƒXƒgƒŠ[ƒ€ƒXƒŒƒbƒhƒ‹[ƒv
+	// ã‚¹ãƒˆãƒªãƒ¼ãƒ ã‚¹ãƒ¬ãƒƒãƒ‰ãƒ«ãƒ¼ãƒ—
 	threadflag = true;
 	while (threadflag) {
 		Sleep(20);
@@ -283,7 +283,7 @@ void CALLBACK OsDependentWin32::TimeProc(UINT uid, UINT, DWORD_PTR user, DWORD_P
 	}
 }
 
-// ƒI[ƒfƒBƒI
+// ã‚ªãƒ¼ãƒ‡ã‚£ã‚ª
 bool OsDependentWin32::InitAudio(void *hwnd, int Rate, int BufferSize) {
 
 	snddrv = new WinSoundDriver::DriverDS;
@@ -294,16 +294,16 @@ bool OsDependentWin32::InitAudio(void *hwnd, int Rate, int BufferSize) {
 	UpdateSamples = 0.0;
 	TotalTick = 0;
 
-	//		æs‚·‚éƒTƒEƒ“ƒhƒoƒbƒtƒ@‚ğì‚Á‚Ä‚¨‚­
+	//		å…ˆè¡Œã™ã‚‹ã‚µã‚¦ãƒ³ãƒ‰ãƒãƒƒãƒ•ã‚¡ã‚’ä½œã£ã¦ãŠã
 	//
 	presize = Rate * 40 / 1000;
 	snddrv->GetSoundBuffer()->PrepareBuffer(presize*2);
 	snddrv->GetSoundBuffer()->UpdateBuffer(presize*2);
 	//pooltime = snddrv->GetSoundBuffer()->GetPoolSize();
 
-	//		ƒ^ƒCƒ}[‰Šú‰»
+	//		ã‚¿ã‚¤ãƒãƒ¼åˆæœŸåŒ–
 	//
-	//	ƒXƒgƒŠ[ƒ€—pƒXƒŒƒbƒh
+	//	ã‚¹ãƒˆãƒªãƒ¼ãƒ ç”¨ã‚¹ãƒ¬ãƒƒãƒ‰
 	if (RealChipInstance == NULL) {
 		StartThread();
 	}
@@ -333,7 +333,7 @@ void OsDependentWin32::StreamSend(int ms)
 {
 	if (!snddrv) return;
 
-	// 0ˆÈŠO‚ÍƒXƒŒƒbƒh‚ªd•¡‚µ‚Ä‚¢‚é‚Ì‚Å‘±s‚µ‚È‚¢B
+	// 0ä»¥å¤–ã¯ã‚¹ãƒ¬ãƒƒãƒ‰ãŒé‡è¤‡ã—ã¦ã„ã‚‹ã®ã§ç¶šè¡Œã—ãªã„ã€‚
 	int ret = InterlockedExchange(&sending, 1);
 	if (ret != 0) {
 		return;
@@ -369,28 +369,28 @@ void OsDependentWin32::StreamSend(int ms)
 	//writelength = snddrv->PrepareSend();
 	//snddrv->Send();
 
-	// I—¹
+	// çµ‚äº†
 	InterlockedExchange(&sending, 0);
 	return;
 }
 
 
 
-//	MUCOM88Winƒvƒ‰ƒOƒCƒ“ˆ——p
+//	MUCOM88Winãƒ—ãƒ©ã‚°ã‚¤ãƒ³å‡¦ç†ç”¨
 //
 int OsDependentWin32::InitPlugin(Mucom88Plugin *plg, const char *filename, int bootopt)
 {
-	//		DLL‚ğƒŠƒ“ƒN‚µ‚Ä‰Šú‰»‚·‚é
+	//		DLLã‚’ãƒªãƒ³ã‚¯ã—ã¦åˆæœŸåŒ–ã™ã‚‹
 	//
 	HMODULE	hInst = NULL;
 	plg->instance = NULL;
 
-	//	DLL“Ç‚İ‚İ
+	//	DLLèª­ã¿è¾¼ã¿
 	hInst = ::LoadLibrary(filename);
 	if (hInst == NULL) {
 		return GetLastError();
 	}
-	//	‰Šú‰»ŠÖ”ƒAƒhƒŒƒXæ“¾
+	//	åˆæœŸåŒ–é–¢æ•°ã‚¢ãƒ‰ãƒ¬ã‚¹å–å¾—
 	MUCOM88IF_STARTUP initalize = (MUCOM88IF_STARTUP)(::GetProcAddress(hInst, "InitalizePlugin"));
 
 	if (initalize == NULL) {
@@ -398,14 +398,14 @@ int OsDependentWin32::InitPlugin(Mucom88Plugin *plg, const char *filename, int b
 		return GetLastError();
 	}
 
-	//	‰Šú‰»‚·‚é
+	//	åˆæœŸåŒ–ã™ã‚‹
 	return initalize(plg,bootopt);
 }
 
 
 void OsDependentWin32::FreePlugin(Mucom88Plugin *plg)
 {
-	//		DLL‚ğ‰ğ•ú‚·‚é
+	//		DLLã‚’è§£æ”¾ã™ã‚‹
 	//
 	HMODULE	hInst = (HMODULE)plg->instance;
 	if (hInst == NULL) return;
@@ -417,7 +417,7 @@ void OsDependentWin32::FreePlugin(Mucom88Plugin *plg)
 
 int OsDependentWin32::ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *)
 {
-	//		OSˆË‘¶‚Ìƒvƒ‰ƒOƒCƒ“VMƒRƒ}ƒ“ƒhˆ—
+	//		OSä¾å­˜ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³VMã‚³ãƒãƒ³ãƒ‰å‡¦ç†
 	//
 	return 0;
 }
@@ -425,7 +425,7 @@ int OsDependentWin32::ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, voi
 
 int OsDependentWin32::ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *)
 {
-	//		OSˆË‘¶‚Ìƒvƒ‰ƒOƒCƒ“ƒGƒfƒBƒ^ƒRƒ}ƒ“ƒhˆ—
+	//		OSä¾å­˜ã®ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚¨ãƒ‡ã‚£ã‚¿ã‚³ãƒãƒ³ãƒ‰å‡¦ç†
 	//
 	return 0;
 }
@@ -433,7 +433,7 @@ int OsDependentWin32::ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int,
 
 int OsDependentWin32::GetDirectory(char *buf, int size)
 {
-	//		OSˆË‘¶‚ÌƒtƒHƒ‹ƒ_–¼æ“¾
+	//		OSä¾å­˜ã®ãƒ•ã‚©ãƒ«ãƒ€åå–å¾—
 	//
 	if (GetCurrentDirectory(size, buf) == 0) return -1;
 	return 0;
@@ -442,7 +442,7 @@ int OsDependentWin32::GetDirectory(char *buf, int size)
 
 int OsDependentWin32::ChangeDirectory(const char *dir)
 {
-	//		OSˆË‘¶‚ÌƒtƒHƒ‹ƒ_ˆÚ“®
+	//		OSä¾å­˜ã®ãƒ•ã‚©ãƒ«ãƒ€ç§»å‹•
 	//
 	if (SetCurrentDirectory(dir) == 0) return -1;
 	return 0;
@@ -451,7 +451,7 @@ int OsDependentWin32::ChangeDirectory(const char *dir)
 
 int OsDependentWin32::KillFile(const char *filename)
 {
-	//		OSˆË‘¶‚Ìƒtƒ@ƒCƒ‹íœ
+	//		OSä¾å­˜ã®ãƒ•ã‚¡ã‚¤ãƒ«å‰Šé™¤
 	//
 	if (remove(filename)) return -1;
 	return 0;

@@ -42,7 +42,7 @@ public:
 	mucomvm();
 	~mucomvm();
 
-	//		Z80ƒRƒ“ƒgƒ[ƒ‹
+	//		Z80ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 	void InitSoundSystem(int Rate);
 	void SetOption(int option);
 	int GetOption(void) { return m_option; }
@@ -53,7 +53,7 @@ public:
 	int ExecUntilHalt(int times = 0x10000);
 	void SendMemoryToShadow(void);
 
-	//		‰¼‘zƒ}ƒVƒ“ƒRƒ“ƒgƒ[ƒ‹
+	//		ä»®æƒ³ãƒã‚·ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 	void Reset(void);
 	void ResetFM(void);
 	int LoadPcm(const char *fname, int maxpcm = 32);
@@ -70,12 +70,12 @@ public:
 	void SkipPlay(int count);
 	void PlayLoop(void);
 
-	//		ƒtƒ@ƒCƒ‹ƒRƒ“ƒgƒ[ƒ‹
+	//		ãƒ•ã‚¡ã‚¤ãƒ«ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 	int GetDirectory(char *buf, int size);
 	int ChangeDirectory(const char *dir);
 	int KillFile(const char *fname);
 
-	//		‰¼‘zƒ}ƒVƒ“ƒXƒe[ƒ^ƒX
+	//		ä»®æƒ³ãƒã‚·ãƒ³ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
 	uint8_t *GetMemoryMap(void) { return mem; }
 	int GetFlag(void) { return m_flag; }
 	int Peek(uint16_t adr);
@@ -96,7 +96,7 @@ public:
 	int GetMasterCount(void) { return time_master; }
 	int GetPassTick(void) { return pass_tick; }
 
-	//		YM2608ƒXƒe[ƒ^ƒX
+	//		YM2608ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹
 	void FMRegDataOut(int reg, int data);
 	int FMRegDataGet(int reg);
 	void SetChMuteAll(bool sw);
@@ -105,34 +105,34 @@ public:
 	int GetChStatus(int ch);
 	uint8_t *GetRegisterMap(void) { return regmap;  }
 
-	//		ƒfƒoƒbƒO—p
+	//		ãƒ‡ãƒãƒƒã‚°ç”¨
 	void Msgf(const char *format, ...);
 	char *GetMessageBuffer(void) { return membuf->GetBuffer(); }
 	void DumpBin(uint16_t adr, uint16_t length);
 	int DeviceCheck(void);
 	int GetMessageId() { return msgid; }
 
-	//		ADPCM—p
+	//		ADPCMç”¨
 	int ConvertWAVtoADPCMFile(const char *fname, const char *sname);
 
-	//		BANKØ‚è‘Ö‚¦
+	//		BANKåˆ‡ã‚Šæ›¿ãˆ
 	void ClearBank(void);
 	void ChangeBank(int bank);
 
-	//		CHDATA—p
+	//		CHDATAç”¨
 	void InitChData(int chmax, int chsize);
 	void SetChDataAddress(int ch, int adr);
 	uint8_t *GetChData(int ch);
 	uint8_t GetChWork(int index);
 	void ProcessChData(void);
 
-	//		ƒI[ƒfƒBƒI‘‚«‚İ
+	//		ã‚ªãƒ¼ãƒ‡ã‚£ã‚ªæ›¸ãè¾¼ã¿
 	void RenderAudio(void *mix, int size);
 	void AudioCallback(void *mix, int size);
 	void UpdateTime(int tick);
 	void UpdateCallback(int tick);
 
-	//		ƒvƒ‰ƒOƒCƒ“ƒRƒ“ƒgƒ[ƒ‹
+	//		ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã‚³ãƒ³ãƒˆãƒ­ãƒ¼ãƒ«
 	void SetMucomInstance(CMucom *mucom);
 	int AddPlugins(const char *filename, int bootopt);
 	void FreePlugins(void);
@@ -147,18 +147,18 @@ private:
 	void output(uint16_t adr, uint8_t data);
 	void Halt(void);
 
-	//		ƒƒ‚ƒŠ(64K)
+	//		ãƒ¡ãƒ¢ãƒª(64K)
 	int m_flag;
-	int m_option;						// “®ìƒIƒvƒVƒ‡ƒ“
-	int m_fastfw;						// ‘‘—‚èƒJƒEƒ“ƒg
-	int m_fmvol, m_ssgvol;				// ƒ{ƒŠƒ…[ƒ€
+	int m_option;						// å‹•ä½œã‚ªãƒ—ã‚·ãƒ§ãƒ³
+	int m_fastfw;						// æ—©é€ã‚Šã‚«ã‚¦ãƒ³ãƒˆ
+	int m_fmvol, m_ssgvol;				// ãƒœãƒªãƒ¥ãƒ¼ãƒ 
 	int bankmode;						// BANK(3=MAIN/012=BGR)
-	int bankprg;						// BANK(0=MAIN/1=ƒVƒƒƒh[ƒRƒs[‘¤)
-	uint8_t mem[0x10000];				// ƒƒCƒ“ƒƒ‚ƒŠ
-	uint8_t vram[VMBANK_MAX][0x4000];	// GVRAM(3:‘Ş”ğ/012=BRG)
-	uint8_t memprg[0x10000];			// ƒƒCƒ“ƒƒ‚ƒŠ(ƒvƒƒOƒ‰ƒ€Às—p‚ÌƒVƒƒƒh[ƒRƒs[)
+	int bankprg;						// BANK(0=MAIN/1=ã‚·ãƒ£ãƒ‰ãƒ¼ã‚³ãƒ”ãƒ¼å´)
+	uint8_t mem[0x10000];				// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ¢ãƒª
+	uint8_t vram[VMBANK_MAX][0x4000];	// GVRAM(3:é€€é¿/012=BRG)
+	uint8_t memprg[0x10000];			// ãƒ¡ã‚¤ãƒ³ãƒ¡ãƒ¢ãƒª(ãƒ—ãƒ­ã‚°ãƒ©ãƒ å®Ÿè¡Œç”¨ã®ã‚·ãƒ£ãƒ‰ãƒ¼ã‚³ãƒ”ãƒ¼)
 
-	//		‰¹Œ¹
+	//		éŸ³æº
 	FM::OPNA *opn;
 
 	int sound_reg_select;
@@ -168,19 +168,19 @@ private:
 	int FMInData();
 	int FMInData2();
 
-	//		OPNAî•ñƒXƒ^ƒbƒN
+	//		OPNAæƒ…å ±ã‚¹ã‚¿ãƒƒã‚¯
 	int Rate;
 	uint8_t chmute[OPNACH_MAX];
 	uint8_t chstat[OPNACH_MAX];
 	uint8_t regmap[OPNAREG_MAX];
 
-	//		CHî•ñƒXƒ^ƒbƒN
+	//		CHæƒ…å ±ã‚¹ã‚¿ãƒƒã‚¯
 	int channel_max, channel_size;
 	uint16_t pchadr[64];
 	uint8_t *pchdata;
 	uint8_t pchwork[16];
 
-	//		Š„‚è‚İƒ^ƒCƒ}[ŠÖ˜A
+	//		å‰²ã‚Šè¾¼ã¿ã‚¿ã‚¤ãƒãƒ¼é–¢é€£
 	int time_master;
 	int time_scount;
 	int time_intcount;
@@ -197,17 +197,17 @@ private:
 
 	void checkThreadBusy(void);
 
-	//		ƒƒbƒZ[ƒWƒoƒbƒtƒ@
+	//		ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ãƒãƒƒãƒ•ã‚¡
 	CMemBuf *membuf;
 
-	//		OSˆË‘¶•”•ª
+	//		OSä¾å­˜éƒ¨åˆ†
 	OsDependent *osd;
 	void *master_window;
 
-	// ƒvƒ‰ƒOƒCƒ“Šg’£(“à•”—p)
+	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³æ‹¡å¼µ(å†…éƒ¨ç”¨)
 	std::vector<Mucom88Plugin *> plugins;
 
-	//		e‚ÌƒCƒ“ƒXƒ^ƒ“ƒX(QÆ)
+	//		è¦ªã®ã‚¤ãƒ³ã‚¹ã‚¿ãƒ³ã‚¹(å‚ç…§)
 	CMucom *p_cmucom;
 
 };

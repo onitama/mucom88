@@ -12,7 +12,7 @@
 #define TICK_SHIFT 10
 #define TICK_FACTOR 1024.0
 
-//	Debug—p
+//	Debugç”¨
 void Alertf(const char *format, ...);
 
 class OsDependent  {
@@ -20,10 +20,10 @@ public:
 	OsDependent();
 	virtual ~OsDependent();
 
-	// COM‚Ì‰Šú‰»(Å‰‚Ì‚P‰ñ‚Ì‚İ)
+	// COMã®åˆæœŸåŒ–(æœ€åˆã®ï¼‘å›ã®ã¿)
 	virtual bool CoInitialize()=0;
 
-	// ƒTƒEƒ“ƒh
+	// ã‚µã‚¦ãƒ³ãƒ‰
 	AudioCallback *UserAudioCallback;
 	virtual bool InitAudio(void *hwnd, int Rate, int BufferSize) = 0;
 	virtual void FreeAudio() = 0;
@@ -31,7 +31,7 @@ public:
 	virtual void WaitSendingAudio() = 0;
 	bool MuteAudio;
 	
-	// Àƒ`ƒbƒv
+	// å®Ÿãƒãƒƒãƒ—
 	virtual bool InitRealChip() = 0;
 	virtual void FreeRealChip() = 0;
 	virtual void ResetRealChip() = 0;
@@ -39,7 +39,7 @@ public:
 	virtual void OutputRealChip(unsigned int Register, unsigned int Data) = 0;
 	virtual void OutputRealChipAdpcm(void *pData, int size) = 0;
 
-	// ƒ^ƒCƒ}[
+	// ã‚¿ã‚¤ãƒãƒ¼
 	TimerCallback *UserTimerCallback;
 	virtual bool InitTimer() = 0;
 	virtual void FreeTimer() = 0;
@@ -48,17 +48,17 @@ public:
 	virtual void ResetTime() = 0;
 	virtual int GetElapsedTime() = 0;
 
-	// ŠÔ
+	// æ™‚é–“
 	virtual int GetMilliseconds() = 0;
 	virtual void Delay(int ms)=0;
 
-	// ƒvƒ‰ƒOƒCƒ“Šg’£
+	// ãƒ—ãƒ©ã‚°ã‚¤ãƒ³æ‹¡å¼µ
 	virtual int InitPlugin(Mucom88Plugin *plg, const char *filename, int bootopt) = 0;
 	virtual void FreePlugin(Mucom88Plugin *plg) = 0;
 	virtual int ExecPluginVMCommand(Mucom88Plugin *plg, int, int, int, void *, void *) = 0;
 	virtual int ExecPluginEditorCommand(Mucom88Plugin *plg, int, int, int, void *, void *) = 0;
 
-	// ƒtƒ@ƒCƒ‹‘€ìŠÖ˜A
+	// ãƒ•ã‚¡ã‚¤ãƒ«æ“ä½œé–¢é€£
 	virtual int GetDirectory(char *buf, int size) = 0;
 	virtual int ChangeDirectory(const char *dir) = 0;
 	virtual int KillFile(const char *filename) = 0;
