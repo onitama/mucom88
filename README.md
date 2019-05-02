@@ -1,3 +1,5 @@
+This is the Japanese documentation. The English documentation can
+be found at README-en.md.
 
 # OPEN MUCOM88プロジェクトについて
 
@@ -118,5 +120,3 @@ fmgenソースコードに関する配布規定は、作者であるcisc氏の�
 
 各ライブラリについての詳細は、それぞれのソースコード及びドキュメントを参照ください。
 有償・商用での配布については、別途作者までお問い合わせください。
-
-
