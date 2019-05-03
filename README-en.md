@@ -1,4 +1,4 @@
-これは英語のドキュです.日本語のドキュはREADME.mdあります.
+これは英語のドキュメントです.日本語のドキュメントはREADME.mdあります.
 
 This document is a best-effort attempt at an English introduction by massaging
 an auto-translated version of README.md. It is accurate (to the extent
