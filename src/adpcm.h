@@ -1,7 +1,7 @@
 #pragma once
 
 #ifdef _WIN32
-#include <windows.h>
+#include	<windows.h>
 #else
 #include <stdio.h>
 #include <string.h>
@@ -48,18 +48,8 @@ private:
 	WAVE_CHUNK	*m_pWaveChunk;
 	DATA_CHUNK	*m_pDataChunk;
 
-	// ADPCM-A
-	// int acc;
-	// int decstep;
-	// int diff;
-	// int step;
-	// int predsample;
-	// int index;
-	// int prevsample;
-	// int previndex;
 	static short step_size[49];
 	static int step_adj[16];
-	// int jedi_table[16 * 49];
 public:
 	Adpcm();
 	~Adpcm();
