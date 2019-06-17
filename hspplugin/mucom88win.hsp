@@ -24,8 +24,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 47
-#define APP_VER "0.47"
+#const VER_NUMBER 49
+#define APP_VER "0.49"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -650,6 +650,7 @@
 	gosub *exec_tool
 	compflag=0
 	buf="#Tool executed.\n"
+	mucomedit_update mml
 	goto *to_editor
 
 *to_toolexec2
@@ -1008,8 +1009,17 @@
 
 *getmucomerr
 	buf=""
-	s2="#error"
+	s2="#Abort"
 	notesel result
+	errline=notefind(s2,1)
+	if errline>=0 {
+		noteget s1,errline
+		buf+=s1+"\n"
+		noteget s1,errline+1
+		buf+=s1+"\n\n"
+		goto *getmucomerr2
+	}
+	s2="#error"
 	errline=notefind(s2,1)
 	if errline>=0 {
 		errptr=-1
