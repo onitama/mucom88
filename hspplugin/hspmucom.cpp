@@ -80,7 +80,7 @@ int WINAPI DllMain (HINSTANCE hInstance, DWORD fdwReason, PVOID pvReserved)
 
 char *getvptr( HSPEXINFO *hei, PVal **pval, int *size )
 {
-	//		å¤‰æ•°ãƒã‚¤ãƒ³ã‚¿ã‚’å¾—ã‚‹
+	//		•Ï”ƒ|ƒCƒ“ƒ^‚ğ“¾‚é
 	//
 	APTR aptr;
 	PDAT *pdat;
@@ -230,12 +230,12 @@ EXPORT BOOL WINAPI mucomres(HSPEXINFO *hei, int p1, int p2, int p3)
 	PVal *pv;
 	APTR ap;
 	const char *res;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
 	res = "";
 	if (mucom) {
 		res = mucom->GetMessageBuffer();
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, res);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, res);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -248,13 +248,13 @@ EXPORT BOOL WINAPI mucomstat(HSPEXINFO *hei, int p1, int p2, int p3)
 	APTR ap;
 	int ep1;
 	int res;
-	ap = hei->HspFunc_prm_getva(&pv);	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ•°å€¤
+	ap = hei->HspFunc_prm_getva(&pv);	// ƒpƒ‰ƒ[ƒ^1:•Ï”
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^2:”’l
 	res = 0;
 	if (mucom) {
 		res = mucom->GetStatus(ep1);
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -268,14 +268,36 @@ EXPORT BOOL WINAPI mucomcomp(HSPEXINFO *hei, int p1, int p2, int p3)
 	char mmlfile[_MAX_PATH];
 	char outfile[_MAX_PATH];
 	char *p;
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
 	strncpy( mmlfile,p, _MAX_PATH );
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^2:•¶š—ñ
 	strncpy(outfile, p, _MAX_PATH);
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿3:æ•°å€¤
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^3:”’l
 	res = 0;
 	if (mucom) {
 		res = mucom->CompileFile(mmlfile, outfile, ep1);
+		if (res) return -1;
+	}
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucommml(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucommml mmldata_var,option (type$202)
+	//
+	PVal *pv;
+	APTR ap;
+	int ep1;
+	int res;
+	char *p;
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^2:”’l
+	res = 0;
+	p = (char *)pv->pt;
+
+	if (mucom) {
+		res = mucom->CompileMem(p, ep1);
 		if (res) return -1;
 	}
 	return 0;
@@ -290,8 +312,8 @@ EXPORT BOOL WINAPI mucomtag(HSPEXINFO *hei, int p1, int p2, int p3)
 	APTR ap;
 	const char *res;
 	char *p;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
-	p = hei->HspFunc_prm_getds("");			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ–‡å­—åˆ—
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
+	p = hei->HspFunc_prm_getds("");			// ƒpƒ‰ƒ[ƒ^2:•¶š—ñ
 	res = "";
 	if (mucom) {
 		if (*p == 0) {
@@ -301,7 +323,7 @@ EXPORT BOOL WINAPI mucomtag(HSPEXINFO *hei, int p1, int p2, int p3)
 			res = mucom->GetInfoBufferByName(p);
 		}
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, res);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, res);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -314,8 +336,8 @@ EXPORT BOOL WINAPI mucomloadtag(HSPEXINFO *hei, int p1, int p2, int p3)
 	const char *p;
 	PVal *pv;
 	APTR ap;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ–‡å­—åˆ—
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^2:•¶š—ñ
 	if (mucom) {
 		res = mucom->ProcessFile(p);
 		if (res == 0) {
@@ -325,7 +347,7 @@ EXPORT BOOL WINAPI mucomloadtag(HSPEXINFO *hei, int p1, int p2, int p3)
 			p = "";
 		}
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, p);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, p);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -338,9 +360,9 @@ EXPORT BOOL WINAPI mucomcnvpcm(HSPEXINFO *hei, int p1, int p2, int p3)
 	char wavfile[_MAX_PATH];
 	char outfile[_MAX_PATH];
 	char *p;
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
 	strncpy(wavfile, p, _MAX_PATH);
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^2:•¶š—ñ
 	strncpy(outfile, p, _MAX_PATH);
 	if (mucom) {
 		res = mucom->ConvertADPCM(wavfile, outfile);
@@ -357,9 +379,9 @@ EXPORT BOOL WINAPI getuuid(HSPEXINFO *hei, int p1, int p2, int p3)
 	PVal *pv;
 	APTR ap;
 	char uuid[64];
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
 	GetUUID(uuid);
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, uuid);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, uuid);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -369,7 +391,7 @@ EXPORT BOOL WINAPI mucomsetuuid(HSPEXINFO *hei, int p1, int p2, int p3)
 	//	DLL mucomsetuuid "UUID" (type$202)
 	//
 	char *p;
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
 	if (mucom) {
 		mucom->SetUUID(p);
 	}
@@ -383,8 +405,8 @@ EXPORT BOOL WINAPI mucomsetoption(HSPEXINFO *hei, int p1, int p2, int p3)
 	//		mode : 0=set/1=add/2=sub
 	//
 	int ep1, ep2;
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ•°å€¤
-	ep2 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ•°å€¤
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^1:”’l
+	ep2 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^1:”’l
 	if (mucom) {
 		mucom->SetVMOption(ep1, ep2);
 	}
@@ -397,7 +419,7 @@ EXPORT BOOL WINAPI mucomsetfastfw(HSPEXINFO *hei, int p1, int p2, int p3)
 	//	DLL mucomsetfastfw speed (type$202)
 	//
 	int ep1;
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ•°å€¤
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^1:”’l
 	if (mucom) {
 		mucom->SetFastFW(ep1);
 	}
@@ -410,8 +432,8 @@ EXPORT BOOL WINAPI mucomsetvolume(HSPEXINFO *hei, int p1, int p2, int p3)
 	//	DLL mucomsetvolume fmvol, ssgvol (type$202)
 	//
 	int ep1, ep2;
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ•°å€¤
-	ep2 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ•°å€¤
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^1:”’l
+	ep2 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^1:”’l
 	if (mucom) {
 		mucom->SetVolume(ep1, ep2);
 	}
@@ -427,8 +449,8 @@ EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, int p1, int p2, int p3)
 	PVal *pv;
 	APTR ap;
 	PCHDATA *pt;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ•°å€¤
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^2:”’l
 	if (pv->len[1] < 64) return -1;
 	if (mucom) {
 		pt = (PCHDATA *)pv->pt;
@@ -442,14 +464,14 @@ EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomrecord(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomrecord "filename",time (type$202)
-	//	(wavéŒ²éŸ³æ©Ÿèƒ½ã¯é€šå¸¸èµ·å‹•ã™ã‚‹ã¨ä»»æ„ã«å®Ÿè¡Œã§ããªã„ãŸã‚æ©Ÿèƒ½ä¿ç•™ä¸­)
+	//	(wav˜^‰¹‹@”\‚Í’Êí‹N“®‚·‚é‚Æ”CˆÓ‚ÉÀs‚Å‚«‚È‚¢‚½‚ß‹@”\•Û—¯’†)
 	//
 	int ep1;
 	char *p;
 	char outfile[_MAX_PATH];
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
 	strncpy(outfile, p, _MAX_PATH);
-	ep1 = hei->HspFunc_prm_getdi(90);	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ•°å€¤
+	ep1 = hei->HspFunc_prm_getdi(90);	// ƒpƒ‰ƒ[ƒ^1:”’l
 	if (mucom) {
 		RecordWave(mucom, outfile, MUCOM_AUDIO_RATE, ep1);
 	}
@@ -460,13 +482,13 @@ EXPORT BOOL WINAPI mucomrecord(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomplg_init(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomplg_init "filename" (type$202)
-	//	MUCOM88ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®è¿½åŠ ã¨åˆæœŸåŒ–
+	//	MUCOM88ƒvƒ‰ƒOƒCƒ“‚Ì’Ç‰Á‚Æ‰Šú‰»
 	//
 	int res;
 	int ep1;
 	char *p;
-	p = hei->HspFunc_prm_gets();		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
-	ep1 = hei->HspFunc_prm_getdi(0);	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ•°å€¤
+	p = hei->HspFunc_prm_gets();		// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
+	ep1 = hei->HspFunc_prm_getdi(0);	// ƒpƒ‰ƒ[ƒ^2:”’l
 
 	if (mucom) {
 		res = mucom->AddPlugins(p, ep1);
@@ -479,12 +501,12 @@ EXPORT BOOL WINAPI mucomplg_init(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomplg_notice(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomplg_notice p1,p2,p3 (type$202)
-	//	MUCOM88ãƒ—ãƒ©ã‚°ã‚¤ãƒ³ã®é€šçŸ¥
+	//	MUCOM88ƒvƒ‰ƒOƒCƒ“‚Ì’Ê’m
 	//
 	int ep1,ep2,ep3;
-	ep1 = hei->HspFunc_prm_getdi(0);	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ•°å€¤
-	ep2 = hei->HspFunc_prm_getdi(0);	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ•°å€¤
-	ep3 = hei->HspFunc_prm_getdi(0);	// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿3:æ•°å€¤
+	ep1 = hei->HspFunc_prm_getdi(0);	// ƒpƒ‰ƒ[ƒ^1:”’l
+	ep2 = hei->HspFunc_prm_getdi(0);	// ƒpƒ‰ƒ[ƒ^2:”’l
+	ep3 = hei->HspFunc_prm_getdi(0);	// ƒpƒ‰ƒ[ƒ^3:”’l
 
 	if (mucom) {
 		mucom->NoticePlugins(ep1, (void *)ep2,(void *)ep3);
@@ -498,12 +520,12 @@ EXPORT BOOL WINAPI mucomplg_notice(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_reset(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_reset "MML", option (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã‚µãƒ¼ãƒ“ã‚¹ã®ãƒªã‚»ãƒƒãƒˆ
+	//	MMLƒGƒfƒBƒ^ƒT[ƒrƒX‚ÌƒŠƒZƒbƒg
 	//
 	int ep1;
 	char *p;
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ•°å€¤
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^2:”’l
 	if (mucom) {
 		mucom->EditorReset( p, ep1 );
 	}
@@ -514,18 +536,18 @@ EXPORT BOOL WINAPI mucomedit_reset(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_setfile(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_setfile "filename", "pathname",session (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ãƒ•ã‚¡ã‚¤ãƒ«åã®è¨­å®š
-	//	(session=1ã®å ´åˆã¯éŸ³è‰²ãƒ•ã‚¡ã‚¤ãƒ«ã‚’å«ã‚ã¦åˆæœŸåŒ–ã™ã‚‹)
+	//	MMLƒGƒfƒBƒ^ƒtƒ@ƒCƒ‹–¼‚Ìİ’è
+	//	(session=1‚Ìê‡‚Í‰¹Fƒtƒ@ƒCƒ‹‚ğŠÜ‚ß‚Ä‰Šú‰»‚·‚é)
 	//
 	char *p;
 	char filename[_MAX_PATH];
 	char pathname[_MAX_PATH];
 	int ep1;
-	p = hei->HspFunc_prm_gets();			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_gets();			// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
 	strncpy(filename, p, _MAX_PATH);
-	p = hei->HspFunc_prm_getds("");			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_getds("");			// ƒpƒ‰ƒ[ƒ^2:•¶š—ñ
 	strncpy(pathname, p, _MAX_PATH);
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿3:æ•°å€¤
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^3:”’l
 	if (mucom) {
 		mucom->EditorSetFileName(filename, pathname,ep1!=0);
 	}
@@ -536,15 +558,15 @@ EXPORT BOOL WINAPI mucomedit_setfile(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_getstat(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_getstat var, prmid (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã®ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹å–å¾—
+	//	MMLƒGƒfƒBƒ^‚ÌƒXƒe[ƒ^ƒXæ“¾
 	//	(prmid:0=status/1=notice/2=option/3=update check)
 	//
 	PVal *pv;
 	APTR ap;
 	int ep1;
 	int res;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ•°å€¤
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^2:”’l
 	res = 0;
 	if (mucom) {
 		switch (ep1) {
@@ -562,7 +584,7 @@ EXPORT BOOL WINAPI mucomedit_getstat(HSPEXINFO *hei, int p1, int p2, int p3)
 			break;
 		}
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -570,11 +592,11 @@ EXPORT BOOL WINAPI mucomedit_getstat(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_update(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_update var (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã®ãƒ†ã‚­ã‚¹ãƒˆæ›´æ–°(varã¯é…åˆ—ã§ã¯ãªã„å˜ä¸€ã®å¤‰æ•°)
+	//	MMLƒGƒfƒBƒ^‚ÌƒeƒLƒXƒgXV(var‚Í”z—ñ‚Å‚Í‚È‚¢’Pˆê‚Ì•Ï”)
 	//
 	PVal *pv;
 	APTR ap;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
 	if (mucom) {
 		mucom->UpdateEditorMML( pv->pt );
 	}
@@ -585,19 +607,19 @@ EXPORT BOOL WINAPI mucomedit_update(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_getline(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_getline var, pos (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã®pos->lineå–å¾—
+	//	MMLƒGƒfƒBƒ^‚Ìpos->lineæ“¾
 	//
 	PVal *pv;
 	APTR ap;
 	int ep1;
 	int res;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
-	ep1 = hei->HspFunc_prm_getdi(0);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿2:æ•°å€¤
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
+	ep1 = hei->HspFunc_prm_getdi(0);		// ƒpƒ‰ƒ[ƒ^2:”’l
 	res = 0;
 	if (mucom) {
 		res = mucom->GetEditorPosToLine(ep1);
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -605,12 +627,12 @@ EXPORT BOOL WINAPI mucomedit_getline(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_save(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_save "filename" (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã®ä¿å­˜å®Ÿè¡Œ
-	//	(filenameãŒ""ã®å ´åˆã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆåã€æŒ‡å®šã•ã‚ŒãŸå ´åˆã¯ãã®åå‰ã§ä¿å­˜ã™ã‚‹)
+	//	MMLƒGƒfƒBƒ^‚Ì•Û‘¶Às
+	//	(filename‚ª""‚Ìê‡‚ÍƒfƒtƒHƒ‹ƒg–¼Aw’è‚³‚ê‚½ê‡‚Í‚»‚Ì–¼‘O‚Å•Û‘¶‚·‚é)
 	//
 	int res;
 	char *p;
-	p = hei->HspFunc_prm_getds("");			// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:æ–‡å­—åˆ—
+	p = hei->HspFunc_prm_getds("");			// ƒpƒ‰ƒ[ƒ^1:•¶š—ñ
 
 	if (mucom) {
 		res = mucom->SaveEditorMML(p);
@@ -623,17 +645,17 @@ EXPORT BOOL WINAPI mucomedit_save(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_getreq(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_getreq var (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã®ãƒªã‚¯ã‚¨ã‚¹ãƒˆMMLæ–‡å­—åˆ—ã‚’å–å¾—
+	//	MMLƒGƒfƒBƒ^‚ÌƒŠƒNƒGƒXƒgMML•¶š—ñ‚ğæ“¾
 	//
 	PVal *pv;
 	APTR ap;
 	const char *p;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
 	if (mucom) {
 		p = mucom->GetRequestMML();
 		if (p == NULL) return -1;
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, p);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, p);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -641,18 +663,18 @@ EXPORT BOOL WINAPI mucomedit_getreq(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_proc(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_proc var (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã®å®šæœŸå‡¦ç†(ã‚ªãƒ¼ãƒˆã‚»ãƒ¼ãƒ–ãªã©)
-	//	varã®å¤‰æ•°ã«noticeæƒ…å ±ã‚’ä»£å…¥ã™ã‚‹
+	//	MMLƒGƒfƒBƒ^‚Ì’èŠúˆ—(ƒI[ƒgƒZ[ƒu‚È‚Ç)
+	//	var‚Ì•Ï”‚Énoticeî•ñ‚ğ‘ã“ü‚·‚é
 	//
 	PVal *pv;
 	APTR ap;
 	int res;
-	ap = hei->HspFunc_prm_getva(&pv);		// ãƒ‘ãƒ©ãƒ¡ãƒ¼ã‚¿1:å¤‰æ•°
+	ap = hei->HspFunc_prm_getva(&pv);		// ƒpƒ‰ƒ[ƒ^1:•Ï”
 	res = 0;
 	if (mucom) {
 		res = mucom->UpdateEditor();
 	}
-	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// å¤‰æ•°ã«å€¤ã‚’ä»£å…¥
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// •Ï”‚É’l‚ğ‘ã“ü
 	return 0;
 }
 
@@ -660,7 +682,7 @@ EXPORT BOOL WINAPI mucomedit_proc(HSPEXINFO *hei, int p1, int p2, int p3)
 EXPORT BOOL WINAPI mucomedit_flush(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomedit_flush (type$202)
-	//	MMLã‚¨ãƒ‡ã‚£ã‚¿ã®ä¸€æ™‚ãƒ•ã‚¡ã‚¤ãƒ«ã‚’ã™ã¹ã¦ç ´æ£„ã™ã‚‹
+	//	MMLƒGƒfƒBƒ^‚Ìˆêƒtƒ@ƒCƒ‹‚ğ‚·‚×‚Ä”jŠü‚·‚é
 	//
 	int res;
 	if (mucom) {

@@ -1,0 +1,91 @@
+;
+;	MUCOM88 演奏ステータスを取得
+;
+#include "hspmucom.as"
+
+	mucominit hwnd
+	onexit *byebye
+
+	wx=ginfo_sx:wy=ginfo_sy
+
+	fname="sampl2.muc"	; コンパイルするMMLファイル
+	sname="mmlbin"		; 出力される音楽ファイル
+
+	;	コンパイルする
+	mucomreset MUCOM_RESET_COMPILE
+	mucomcomp fname,sname
+	res=stat
+	mucomres buf
+	if res=1 {
+		mes buf
+		stop
+	}
+
+	;	コンパイルされたデータを再生する
+	mucomreset MUCOM_RESET_PLAYER
+	mucomload sname
+
+	cls 4
+	syscolor 15:boxf
+
+	yy=wy-100
+	sx=120:sy=20:x=0:y=yy
+	objsize sx,20
+
+	dim chdata,64
+	note="C C+D D+E F F+G G+A A+B "
+
+	mucomplay 0
+	mucomstat maxcount, MUCOM_STATUS_MAXCOUNT
+
+*main_smon
+	mucomstat count, MUCOM_STATUS_COUNT
+
+	redraw 0
+	syscolor 15
+	boxf 0,0,640,280
+	color 0,0,0
+	pos 0,0
+	mes "INTCOUNT:"+count+"/"+maxcount
+	mes ""
+	mes "   Mut @   Vol Det   Adr  Key LFO Rev p qtz"
+	;s1 ="A   0  000 000 00000 0000 000  0   0  C 000"
+	panstr=' ','R','L','C'
+	chkey="   "
+
+	ch=0
+	repeat 11
+		mucomgetchdata chdata,ch
+		lfo_flag=0
+		mute_flag=0
+		rev_flag=0
+
+		flag=chdata(MUCOM_CHDATA_FLAG)
+		flag2=chdata(MUCOM_CHDATA_FLAG2)
+		wadr=chdata(MUCOM_CHDATA_WADR)
+		vnum=chdata(MUCOM_CHDATA_VNUMORIG)
+		code=chdata(MUCOM_CHDATA_CODE)
+		vol=chdata(MUCOM_CHDATA_VOLORIG)
+		detune=chdata(MUCOM_CHDATA_DETUNE)
+		qtz=chdata(MUCOM_CHDATA_QUANTIZE)
+		pan=chdata(MUCOM_CHDATA_PAN)
+		poke chkey,0,$31+(code>>4)
+		wpoke chkey,1,wpeek(note,2*(code&15))
+
+		if flag&8 : mute_flag=1
+		if flag&128 : lfo_flag=1
+		if flag2&32 : rev_flag=1
+
+		mes strf("%c   %d  %03d %03d %05d %04x %s  %d   %d  %c %03d",65+ch,mute_flag,vnum,vol,detune,wadr,chkey,lfo_flag,rev_flag,panstr(pan),qtz)
+	ch++
+	loop
+
+	redraw 1
+	await 1000/30
+	goto *main_smon
+
+
+*byebye
+	mucombye
+	end
+

@@ -20,6 +20,7 @@
 #func mucomloadvoice mucomloadvoice $16
 
 #func mucomcomp mucomcomp $202
+#func mucommml mucommml $202
 #func mucomres mucomres $202
 #func mucomstat mucomstat $202
 #func mucomtag mucomtag $202

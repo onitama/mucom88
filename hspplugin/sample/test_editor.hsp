@@ -1,0 +1,63 @@
+;
+;	MUCOM88 簡易MMLエディタ
+;
+#include "hspmucom.as"
+
+	mucominit hwnd
+	onexit *byebye
+
+	sdim buf,$10000
+	sdim cmdbuf,$10000
+
+	notesel buf
+	noteload "sampl2.muc"
+
+	mucomreset 0
+	mucomres cmdbuf
+
+	font msgothic,14
+	objmode objmode_usecolor+objmode_usefont
+	objcolor 240,240,240
+	color 20,20,20
+	mesbox buf,640,400,1+8:id_buf=stat
+	pos 0,420
+
+	objmode objmode_guifont
+	mesbox cmdbuf,640,60,0:id_cmd=stat
+	objsize 180,20
+	pos 0,400
+	button "PLAY",*m_play
+	pos 180,400
+	button "STOP",*m_stop
+
+	stop
+
+*m_play
+	fname="mmltmp"			; 編集中のテキストを一時ファイルに出力
+	notesel buf
+	notesave fname
+
+	mucomreset MUCOM_RESET_COMPILE
+	mucomcomp fname,"mmlbin"
+	res=stat
+	mucomres cmdbuf
+	objprm id_cmd,cmdbuf
+	if res=1 {
+		dialog "エラーです"
+		stop
+	}
+
+	mucomreset MUCOM_RESET_PLAYER
+	mucomload "mmlbin"
+	mucomplay 0
+
+	stop
+
+*m_stop
+	mucomstop 0
+	stop
+
+*byebye
+	mucombye
+	end
+

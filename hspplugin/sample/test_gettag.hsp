@@ -8,14 +8,21 @@
 	mucominit hwnd
 	onexit *byebye
 
-	fname="od3.mub"
+	fname="sampl1.mub"
 
 	mucomreset MUCOM_RESET_PLAYER
-	;mucomloadpcm "mucompcm.bin"
 	mucomload fname
-	mucomtag info
+	mucomtag t_title,"title"
+	if t_title="" : t_title="NO TITLE"
+	mucomtag t_author,"author"
+	mucomtag t_composer,"composer"
+	mucomtag t_voice,"voice"
+	mucomtag t_pcm,"pcm"
+	mucomtag t_date,"date"
+	mucomtag s1,"comment"
 
-	mes info
+	mes "title:"+t_title
+	mes "author:"+t_author
 
 	mucomplay 0
 	mucomres result

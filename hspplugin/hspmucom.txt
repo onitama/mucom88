@@ -1,5 +1,5 @@
 ------------------------------------------------------------------------------
-HSPMUCOM ver3.5 REFERENCE MANUAL                    HSP : Hot Soup Processor  
+HSPMUCOM REFERENCE MANUAL                           HSP : Hot Soup Processor  
 ‚g‚r‚oŠg’£Šg’£DLLƒŠƒtƒ@ƒŒƒ“ƒX         copyright 2007-2019 (c) onion software  
 ------------------------------------------------------------------------------
 

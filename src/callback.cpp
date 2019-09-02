@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "callback.h"
 
-// 繧ｳ繝ｼ繝ｫ繝舌ャ繧ｯ
+// コールバック
 Callback::Callback() {
     Instance = NULL;
     Method = NULL;

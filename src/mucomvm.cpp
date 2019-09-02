@@ -496,8 +496,8 @@ int mucomvm::ExecUntilHalt(int times)
 
 #if 1
 		if (pc == 0xde06) {				// CONVERT(音色定義コンバート)
-										//	出力データが大きい場合、DE06H〜とかぶるので代替コードで実行する
-										// $6001〜 38byteの音色データを25byteに圧縮する->$6001から書き込む
+										//	出力データが大きい場合、DE06H～とかぶるので代替コードで実行する
+										// $6001～ 38byteの音色データを25byteに圧縮する->$6001から書き込む
 										//
 			MUCOM88_VOICEFORMAT *v = (MUCOM88_VOICEFORMAT *)(memprg + 0x6000);
 			unsigned char *src = mem + 0x6001;
@@ -514,7 +514,7 @@ int mucomvm::ExecUntilHalt(int times)
 #endif
 #if 0
 		if (pc == 0xde06) {				// CONVERT(音色定義コンバート)
-			//	出力データが大きい場合、DE06H〜とかぶるので別バンクで実行する
+			//	出力データが大きい場合、DE06H～とかぶるので別バンクで実行する
 			bankprg = VMPRGBANK_SHADOW;
 		}
 		if (pc == 0xe132) {				// CONVERT(音色定義コンバート終了)
@@ -794,6 +794,19 @@ int mucomvm::SaveMemExpand(const char *fname, int adr, int size, char *header, i
 	if (footer) fwrite(footer, 1, footsize, fp);
 	if (pcm) fwrite(pcm, 1, pcmsize, fp);
 	fclose(fp);
+	return 0;
+}
+
+
+int mucomvm::StoreMemExpand(CMemBuf *buf, int adr, int size, char *header, int hedsize, char *footer, int footsize, char *pcm, int pcmsize)
+{
+	//	VMメモリの内容をmembufに保存(ヘッダとフッタ付き)
+	//
+	if ( buf==NULL ) return -1;
+	if (header) buf->PutData(header, hedsize);
+	buf->PutData(mem + adr, size);
+	if (footer) buf->PutData(footer, footsize);
+	if (pcm) buf->PutData(pcm, pcmsize);
 	return 0;
 }
 

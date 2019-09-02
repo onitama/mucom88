@@ -280,7 +280,7 @@ const char *CMucom::GetMessageBuffer(void)
 int CMucom::Play(int num)
 {
 	//		MUCOM88音楽再生
-	//		num : 0   = 音楽No. (0〜15)
+	//		num : 0   = 音楽No. (0～15)
 	//		(戻り値が0以外の場合はエラー)
 	//
 	char *data;
@@ -371,7 +371,7 @@ void CMucom::UpdateTime(int tick_ms) {
 int CMucom::LoadTagFromMusic(int num)
 {
 	//		MUCOM88音楽データからタグ一覧を取得する
-	//		num : 0   = 音楽No. (0〜15)
+	//		num : 0   = 音楽No. (0～15)
 	//		(戻り値が0以外の場合はエラー)
 	//
 	MUBHED *hed;
@@ -465,7 +465,7 @@ int CMucom::LoadMusic(const char * fname, int num)
 {
 	//		音楽データ読み込み
 	//		fname = 音楽データファイル
-	//		num : 0   = 音楽No. (0〜15)
+	//		num : 0   = 音楽No. (0～15)
 	//		(戻り値が0以外の場合はエラー)
 	//
 	if ((num < 0) || (num >= MUCOM_MUSICBUFFER_MAX)) return -1;
@@ -686,7 +686,7 @@ int CMucom::LoadFMVoice(const char *fname, bool sw)
 MUCOM88_VOICEFORMAT *CMucom::GetFMVoice(int no)
 {
 	//	内部保存された音色データを取得する
-	//	(no=音色番号0〜255)
+	//	(no=音色番号0～255)
 	//
 	if ((no < 0) || (no >= MUCOM_FMVOICE_MAXNO)) return NULL;
 	return &fmvoice_internal[no];
@@ -696,7 +696,7 @@ MUCOM88_VOICEFORMAT *CMucom::GetFMVoice(int no)
 int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
 {
 	//	音色データを更新する
-	//	(no=音色番号0〜255)
+	//	(no=音色番号0～255)
 	//
 	char curdir[MUCOM_FILE_MAXSTR];
 
@@ -725,7 +725,7 @@ int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
 void CMucom::DumpFMVoice(int no)
 {
 	//	音色データを表示する
-	//	(no=音色番号1〜255)
+	//	(no=音色番号1～255)
 	//
 	unsigned char name[8];
 	unsigned char *p;
@@ -1227,6 +1227,7 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	//		option : 1   = #タグによるvoice設定を無視
 	//		         2   = PCM埋め込みをスキップ
 	//		         4   = 音色の一時バッファ作成を許可する
+	//		         8   = 演奏バッファ#0に直接保存する
 	//		(戻り値が0以外の場合はエラー)
 	//
 	int i, res;
@@ -1293,6 +1294,18 @@ int CMucom::Compile(char *text, const char *filename, int option)
 	}
 
 	PRINTF("\r\n");
+
+	bool badvoice = false;
+	for (i = 0; i < fmvoice; i++) {
+		unsigned char voiceid = (unsigned char)vm->Peek(0x8c50 + i);
+		//PRINTF("#VOICE %d.\r\n", (int)voiceid);
+		if (voiceid <= 1) badvoice = true;
+	}
+	if (badvoice) {
+		PRINTF("#Abort: bad voice No. detected.\r\n-> 音色番号 @0 は使用できません。\r\n");
+		return -1;
+	}
+
 	PRINTF("[ Total count ]\r\n");
 
 	for (i = 0; i < maxch; i++){
@@ -1364,6 +1377,26 @@ int CMucom::CompileFile(const char *fname, const char *sname, int option)
 }
 
 
+int CMucom::CompileMem(char *mem, int option)
+{
+	//		MUCOM88コンパイル(Resetが必要)
+	//		fname     = MMLデータ
+	//		option : 1   = #タグによるvoice設定を無視
+	//		(戻り値が0以外の場合はエラー)
+	//
+	int res;
+	PRINTF("#Compile from mem.\r\n");
+	if (mem == NULL) {
+		PRINTF("#No data.\r\n");
+		return -1;
+	}
+	ProcessHeader(mem);
+	res = Compile(mem, "mem", option| MUCOM_COMPILE_TO_MUSBUFFER);
+	if (res) return res;
+	return 0;
+}
+
+
 void CMucom::AddExtraInfo(char *mmlsource)
 {
 	//	infobufに追加情報を書き込む
@@ -1391,6 +1424,7 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	//		filename     = 出力される音楽データファイル
 	//		option : 1   = #タグによるvoice設定を無視
 	//		         2   = PCM埋め込みをスキップ
+	//		         8   = メモリバッファに結果を出力
 	//		(戻り値が0以外の場合はエラー)
 	//
 	int res;
@@ -1458,11 +1492,28 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 		}
 	}
 
-	//res = vm->SaveMem(filename, start, length);
-	res = vm->SaveMemExpand(fname, start, length, header, hedsize, footer, footsize, pcmdata, pcmsize);
-	if (res){
-		PRINTF("#File write error [%s].\r\n", fname);
-		return -2;
+	if (option & MUCOM_COMPILE_TO_MUSBUFFER) {
+
+		int num = 0;
+		CMemBuf *buf = new CMemBuf();
+		res = vm->StoreMemExpand(buf, start, length, header, hedsize, footer, footsize, pcmdata, pcmsize);
+		if (res) {
+			PRINTF("#Memory write error.\r\n");
+			return -2;
+		}
+		if (musbuf[num] != NULL) {
+			delete musbuf[num];
+		}
+		musbuf[num] = buf;
+		NoticePlugins(MUCOM88IF_NOTICE_LOADMUB);
+	}
+	else {
+		//res = vm->SaveMem(filename, start, length);
+		res = vm->SaveMemExpand(fname, start, length, header, hedsize, footer, footsize, pcmdata, pcmsize);
+		if (res) {
+			PRINTF("#File write error [%s].\r\n", fname);
+			return -2;
+		}
 	}
 
 	if (pcmdata != NULL) vm->LoadAllocFree(pcmdata);
@@ -1470,6 +1521,7 @@ int CMucom::SaveMusic(const char *fname,int start, int length, int option)
 	PRINTF("#Saved [%s].\r\n", fname);
 	return 0;
 }
+
 
 
 int CMucom::MUBGetHeaderVersion(MUBHED *hed)
@@ -1576,7 +1628,7 @@ void CMucom::SetFastFW(int value)
 int CMucom::GetChannelData(int ch, PCHDATA *result)
 {
 	//		指定されたチャンネルのリアルタイム演奏情報を取得する
-	//			ch = チャンネルNo (0〜maxch)(A〜Kチャンネルの順)
+	//			ch = チャンネルNo (0～maxch)(A～Kチャンネルの順)
 	//			result = 結果を出力するPCHDATA形式のポインタ(あらかじめ確保が必要)
 	//
 	int i;

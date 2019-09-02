@@ -1,0 +1,30 @@
+;
+;	MUCOM88 test
+;
+#include "hspmucom.as"
+
+	mucominit hwnd
+	onexit *byebye
+
+	; MMLを登録する
+	mml="A C96 t190 @93o4l8v15 cdefgab>c1 "
+	mucomreset MUCOM_RESET_COMPILE
+	mucommml mml
+	if stat {
+		; エラーが出たら表示
+		mucomres buf
+		mesbox buf,640,200,0
+		stop
+	}
+
+	; エラーがなければ再生
+	mucomreset MUCOM_RESET_PLAYER
+	mucomplay 0
+
+	; MMLを表示
+	mes mml
+	stop
+
+*byebye
+	mucombye
+	end

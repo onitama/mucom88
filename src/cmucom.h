@@ -90,6 +90,7 @@
 
 #define MUCOM_COMPILE_IGNOREVOICE 1
 #define MUCOM_COMPILE_IGNOREPCM 2
+#define MUCOM_COMPILE_TO_MUSBUFFER 8
 
 #define MUCOM_FMVOICE_ADR 0x6000
 #define MUCOM_FMVOICE_SIZE 0x2000
@@ -240,6 +241,7 @@ public:
 	//	MUCOM88 MUC/MUB service
 	int LoadMusic(const char *fname, int num = 0);
 	int CompileFile(const char *fname, const char *sname, int option=0);
+	int CompileMem(char *mem, int option=0);
 	int Compile(char *text, const char *filename, int option=0);
 	int ProcessFile(const char *fname);
 	int ProcessHeader(char *text);

@@ -7,14 +7,13 @@
 	onexit *byebye
 
 	mucomreset 0
-	mucomloadpcm ""
-	mucomload "sampl1.mub"
-	mucomload "sampl2.mub",1
+	mucomload "sampl1.mub",0
+	mucomload "sampl3.mub",1
 
 	mucomres buf
-	mesbox buf,640,200,0
-	button "PLAY",*m_play
-	button "PLAY",*m_play2
+	mesbox buf,640,200,0:id_buf=stat
+	button "PLAY1",*m_play
+	button "PLAY2",*m_play2
 	button "STOP",*m_stop
 
 	stop

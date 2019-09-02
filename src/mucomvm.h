@@ -62,6 +62,7 @@ public:
 	int SendMem(const unsigned char *src, int adr, int size);
 	int SaveMem(const char *fname,int adr, int size);
 	int SaveMemExpand(const char *fname, int adr, int size, char *header, int hedsize, char *footer, int footsize, char *pcm, int pcmsize);
+	int StoreMemExpand(CMemBuf *buf, int adr, int size, char *header, int hedsize, char *footer, int footsize, char *pcm, int pcmsize);
 	char *LoadAlloc(const char *fname, int *sizeout);
 	void LoadAllocFree(char *ptr);
 	int SaveToFile(const char *fname, const unsigned char *src, int size);

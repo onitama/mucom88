@@ -1,0 +1,35 @@
+;
+;	MUCOM88 MMLコンパイル
+;
+#include "hspmucom.as"
+
+	mucominit hwnd
+	onexit *byebye
+
+	fname="sampl2.muc"	; コンパイルするMMLファイル
+	sname="sampl2.mub"	; 出力される音楽ファイル
+
+	;	コンパイルする
+	mucomreset MUCOM_RESET_COMPILE
+	mucomcomp fname,sname
+	res=stat
+	mucomres buf
+	mes buf
+	if res=1 {
+		mes "Error"
+		stop
+	}
+
+	;	コンパイルされたデータを再生する
+	mucomreset MUCOM_RESET_PLAYER
+	mucomload sname
+	mucomplay 0
+	mucomres buf
+	mes buf
+
+	stop
+
+*byebye
+	mucombye
+	end
+
