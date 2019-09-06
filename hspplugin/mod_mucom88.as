@@ -40,11 +40,14 @@ goto *_end_mod_mucom88
 
 	asave_sw=0
 	asave_time=180
+	asave_count=0
+	asave_max=0
 
 	wx=800:wy=600
 	app_winx=-1
 	app_winy=-1
 	initopt=0
+	langset=0
 
 	get_appdata_path app_dir
 	cfg_init app_dir+INIFILE
@@ -78,6 +81,11 @@ goto *_end_mod_mucom88
 		cfg_getvari aplayer_loop,"aplayer_loop"
 		cfg_getvari asave_sw,"asave_sw"
 		cfg_getvari asave_time,"asave_time"
+
+		cfg_getvari langset,"langset"
+		cfg_getvari asave_count,"asave_count"
+		cfg_getvari asave_max,"asave_max"
+
 	}
 
 	return
@@ -118,6 +126,10 @@ goto *_end_mod_mucom88
 
 	cfg_seti "asave_sw",asave_sw
 	cfg_seti "asave_time",asave_time
+
+	cfg_seti "langset",langset
+	cfg_seti "asave_count",asave_count
+	cfg_seti "asave_max",asave_max
 
 	cfg_save
 

@@ -21,6 +21,7 @@
 #packopt name "mucom88win"
 #packopt icon "mucom88win.ico"
 #pack "mucom88.png"
+#pack "en.strmap"
 
 ;#define EDITOR_DEBUG
 
@@ -31,6 +32,7 @@
 
 #define TEMPMML "mucommml"
 #define TEMPBIN "mucombin"
+#define STRMAP_EN "en.strmap"
 
 	randomize
 	goto *boot
@@ -44,6 +46,10 @@
 
 #define DIID_DWebBrowserEvents2     "{34A715A0-6587-11D0-924A-0020AFC7AC4D}"
 #define DISPID_NAVIGATECOMPLETE2    252
+
+#uselib "kernel32"
+#cfunc GetUserDefaultUILanguage "GetUserDefaultUILanguage"
+
 
 
 	;	起動
@@ -74,6 +80,11 @@
 	sdim s2,$200
 	sdim pcmdir,256
 	sdim mylist,$10000
+
+	langid = GetUserDefaultUILanguage()
+	if langid!=$411 : langset=1
+
+	if langset : strexchange STRMAP_EN
 
 	mucominit hwnd,initopt
 	mucomsetuuid uuid
@@ -165,6 +176,7 @@
 	main_ff = 0
 	main_enter=1
 	if asave_time<30 : asave_time=30
+	if asave_max<0 : asave_max=0
 
 	objsel obj_mml
 	mml_hw=objinfo(obj_mml,2)
@@ -188,7 +200,15 @@
 
 *to_saveauto
 	main_cnt = 0
-	if myfile!="" : mucomedit_update mml : mucomedit_save
+	if myfile="" : goto *main
+	;	世代管理する
+	if asave_max>0 {
+		if asave_count>=asave_max : asave_count=0
+		notesel mml:notesave myfile+"."+asave_count
+		asave_count++
+		goto *main
+	}
+	mucomedit_update mml : mucomedit_save
 	goto *main
 
 *to_save
@@ -309,6 +329,12 @@
 			gosub *list_change
 		}
 	}
+	if menu_mode=5 {
+		if def_langset!=langset {
+			if langset : strexchange STRMAP_EN : else : strexchange ""
+			goto *main_menu
+		}
+	}
 
 	if main_cmd = 1 : goto *to_editor
 	if main_cmd = 0 : goto *main2
@@ -328,6 +354,7 @@
 	if i=2 : goto *to_menusave
 	if i=3 : goto *to_menusave2
 	if i=4 : goto *to_menunew
+	if i=8 : exec weburl,16
 
 	menu_mode=i
 	goto *main_menu
@@ -771,9 +798,14 @@
 	mes "\nオートセーブ設定"
 	chkbox "一定時間ごとに保存する",asave_sw
 	objsize 60,24
+	tmpx=ginfo_cx:tmpy=ginfo_cy
 	mes "更新間隔(秒)"
 	input asave_time
+	pos tmpx+124,tmpy
+	mes "世代バックアップ"
+	input asave_max
 
+	pos tmpx,tmpy+40
 	mes "\nオートプレイヤー設定"
 	objsize 200,24
 	chkbox "条件を満たせばスキップする",aplayer_auto
@@ -785,8 +817,14 @@
 	mes "経過の割合(%)"
 	input aplayer_loop
 
+	def_langset=langset
+	pos myx+280,myy+146
+	mes "UI Language"
 	objsize 120,24
-	pos myx+280,myy+60
+	combox langset,100,"Japanese\nEnglish"
+
+	objsize 120,24
+	pos myx+280,myy+40
 	mes "\nフォント設定:"+fontname+":"+fontsize
 	objsize 120,24
 	button "変更...",*to_fontsel
@@ -837,11 +875,11 @@
 	goto *main_menu
 
 *menu_web
-	menu_str=""
-	pos sx,0
-	axobj ie, "Shell.Explorer.2",wx-sx,wy-80
-	comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",*webevent  ; DIID_DWebBrowserEvents2     
-	ie->"Navigate" weburl
+	menu_str="Web"
+	;pos sx,0
+	;axobj ie, "Shell.Explorer.2",wx-sx,wy-80
+	;comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",*webevent  ; DIID_DWebBrowserEvents2     
+	;ie->"Navigate" weburl
 	return
 *webevent
 	;	COMイベント処理
