@@ -1,0 +1,14 @@
+BODY {
+background-color :#fffbe6;
+background-image : url("img/spc_bg.jpg");
+background-repeat:no-repeat;
+background-position: right top;
+background-attachment:fixed;
+}
+H1{
+font-size:40pt;
+}
+H2{
+font-size:30pt;
+color:#00BFFF;
+}
