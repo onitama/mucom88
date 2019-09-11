@@ -778,7 +778,7 @@
 	color 0,0,0
 	objsize 80,24
 	pos myx+100,myy+60
-	mes "\nスロー再生速度"
+	mes "\nスロー再生速度 "
 	combox slowfw,200,"x2\nx4\nx6\nx8\nx10"
 
 	pos myx,myy+60
