@@ -25,7 +25,7 @@ goto *_end_mod_mucom88
 	url=""
 	recent=""
 	uuid=""
-	weburl="https://github.com/onitama/mucom88/wiki/MML%E3%83%AA%E3%83%95%E3%82%A1%E3%83%AC%E3%83%B3%E3%82%B9"
+	weburl="https://onitama.tv/mucom88/"
 	fastfw=0
 	fgcolor=$dcdcdc
 	bgcolor=0

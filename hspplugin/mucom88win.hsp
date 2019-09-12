@@ -354,7 +354,7 @@
 	if i=2 : goto *to_menusave
 	if i=3 : goto *to_menusave2
 	if i=4 : goto *to_menunew
-	if i=8 : exec weburl,16
+	;if i=8 : exec weburl,16
 
 	menu_mode=i
 	goto *main_menu
@@ -647,8 +647,7 @@
 	button "DATAファイルフォルダ指定",*to_pcmtool
 	button "ファイルリストを指定",*to_pcmtool2
 
-	y-=10
-	sysfont 0
+	font msgothic,16,0
 	pos x+320,y
 	mes "編集中のMMLをN88エクスポート\n"
 	n88_line=1000
@@ -661,7 +660,7 @@
 	objsize 120,24
 	button "実行",*to_toolexec2
 
-	sysfont 0
+	font msgothic,16,0
 	mes "\n\nWAVファイルとして保存\n"
 	wavout_time = 90
 	sysfont 17
@@ -778,7 +777,7 @@
 	color 0,0,0
 	objsize 80,24
 	pos myx+100,myy+60
-	mes "\nスロー再生速度 "
+	mes "\nスロー再生速度"
 	combox slowfw,200,"x2\nx4\nx6\nx8\nx10"
 
 	pos myx,myy+60
@@ -875,11 +874,11 @@
 	goto *main_menu
 
 *menu_web
-	menu_str="Web"
-	;pos sx,0
-	;axobj ie, "Shell.Explorer.2",wx-sx,wy-80
-	;comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",*webevent  ; DIID_DWebBrowserEvents2     
-	;ie->"Navigate" weburl
+	;menu_str="Web"
+	pos sx,0
+	axobj ie, "Shell.Explorer.2",wx-sx,wy-80
+	comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",*webevent  ; DIID_DWebBrowserEvents2     
+	ie->"Navigate" "file://"+dir_exe+"\\index.html"
 	return
 *webevent
 	;	COMイベント処理

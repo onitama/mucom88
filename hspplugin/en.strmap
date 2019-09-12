@@ -1,245 +1,245 @@
 ;	strmap v0.5 mucom88win.strmap
-&&&&dsmap:123,1613,10916
+&&&&dsmap:17,1678,10916
 Missing plugin [
-&&&&dsmap:124,1630,652
+&&&&dsmap:2,1695,652
 ]
-&&&&dsmap:125,1632,4553
+&&&&dsmap:10,1697,4553
 MENU [F1]
-&&&&dsmap:126,1642,7665
+&&&&dsmap:14,1707,7665
 SAVE [ctrl+S]
-&&&&dsmap:127,1656,4588
+&&&&dsmap:10,1721,4588
 PLAY [F5]
-&&&&dsmap:128,1666,5382
+&&&&dsmap:11,1731,5382
 STOP [ESC]
-&&&&dsmap:129,1677,3850
+&&&&dsmap:7,1742,3850
 Ready.
-&&&&dsmap:130,1684,2229
+&&&&dsmap:5,1749,2229
 SMON
-&&&&dsmap:131,1689,3003
+&&&&dsmap:7,1754,3003
 V.EDIT
-&&&&dsmap:132,1696,9324
+&&&&dsmap:15,1761,9324
 System Halted.
-&&&&dsmap:134,1712,843
+&&&&dsmap:3,1779,843
 <<
-&&&&dsmap:135,1715,2761
+&&&&dsmap:5,1782,2761
 Home
-&&&&dsmap:136,1720,2698
+&&&&dsmap:5,1787,2698
 Load
-&&&&dsmap:137,1725,2803
+&&&&dsmap:5,1792,2803
 Save
-&&&&dsmap:138,1730,5522
+&&&&dsmap:11,1797,5522
 Save as...
-&&&&dsmap:139,1741,2092
+&&&&dsmap:4,1808,2092
 New
-&&&&dsmap:140,1745,4452
+&&&&dsmap:7,1812,4452
 Option
-&&&&dsmap:141,1752,2908
+&&&&dsmap:5,1819,2908
 Tool
-&&&&dsmap:142,1757,3508
+&&&&dsmap:6,1824,3508
 Share
-&&&&dsmap:143,1763,2008
+&&&&dsmap:4,1830,2008
 Web
-&&&&dsmap:144,1767,3564
+&&&&dsmap:6,1834,3564
 About
-&&&&dsmap:146,1774,9772
+&&&&dsmap:14,1841,9772
 Arial
-&&&&dsmap:147,1788,56857
+&&&&dsmap:54,1856,56857
 Editing text will be lost.
 Do you want to read anyway?
-&&&&dsmap:148,1842,63531
+&&&&dsmap:60,1910,63531
 Editing FM Voice will be lost.
 Do you want to read anyway?
-&&&&dsmap:149,1902,9969
+&&&&dsmap:16,1974,9969
 MUCOM88 MML file
-&&&&dsmap:150,1918,638
+&&&&dsmap:2,1990,638
 [
-&&&&dsmap:151,1920,5337
+&&&&dsmap:10,1992,5337
 ] Loaded.
-&&&&dsmap:152,1930,5365
+&&&&dsmap:10,2002,5365
 No file [
-&&&&dsmap:153,1940,5145
+&&&&dsmap:7,2012,5145
 Home
-&&&&dsmap:154,1947,24580
+&&&&dsmap:26,2019,24580
 Let's start writing MML
 
-&&&&dsmap:155,1973,9283
+&&&&dsmap:13,2045,9283
 Edit MML [Enter]
-&&&&dsmap:156,1986,7059
+&&&&dsmap:10,2058,7059
 Play [F5]
-&&&&dsmap:157,1996,8877
+&&&&dsmap:13,2068,8877
 Make MUB [F2]
-&&&&dsmap:158,2009,14279
+&&&&dsmap:18,2081,14279
 Reference...
-&&&&dsmap:159,2027,9464
+&&&&dsmap:14,2099,9464
 Player...
-&&&&dsmap:168,2067,4061
+&&&&dsmap:9,2141,4061
 NO TITLE
-&&&&dsmap:172,2098,4823
+&&&&dsmap:8,2182,4823
 Author:
-&&&&dsmap:173,2106,6800
+&&&&dsmap:12,2190,6800
   Composer:
-&&&&dsmap:174,2118,3095
+&&&&dsmap:6,2202,3095
 Date:
-&&&&dsmap:175,2124,4404
+&&&&dsmap:9,2208,4404
   Voice:
-&&&&dsmap:176,2133,2443
+&&&&dsmap:7,2217,2443
   PCM:
-&&&&dsmap:177,2140,5503
+&&&&dsmap:9,2224,5503
 Comment:
-&&&&dsmap:178,2149,53238
+&&&&dsmap:52,2233,53238
 Editing FM Voice will be lost.
 Do you want to proceed anyway?
-&&&&dsmap:180,2210,20541
+&&&&dsmap:24,2294,20541
 Can't start playing due to error.
 
-&&&&dsmap:183,2240,21647
+&&&&dsmap:24,2324,21647
 Can't write file due to error.
 
-&&&&dsmap:184,2264,4906
+&&&&dsmap:11,2348,4906
 ] Saved.
 
-&&&&dsmap:185,2275,54484
+&&&&dsmap:52,2359,54484
 Editing text will be lost.
 Do you want to delete anyway?
-&&&&dsmap:188,2329,5181
+&&&&dsmap:9,2413,5181
 No Title
-&&&&dsmap:189,2338,5061
+&&&&dsmap:7,2422,5061
 Tool
-&&&&dsmap:190,2345,16850
+&&&&dsmap:20,2429,16850
 Format editing MML
 
-&&&&dsmap:191,2365,18434
+&&&&dsmap:17,2449,18434
 Delete line number
-&&&&dsmap:192,2382,18103
+&&&&dsmap:20,2466,18103
 q to @ of G channel
-&&&&dsmap:193,2402,15197
+&&&&dsmap:15,2486,15197
 Add TAGs
-&&&&dsmap:194,2417,4140
+&&&&dsmap:5,2501,4140
 Execute
-&&&&dsmap:195,2422,21043
+&&&&dsmap:30,2506,21043
 
 
 Make PCM Data File
 
-&&&&dsmap:198,2463,18490
+&&&&dsmap:19,2547,18490
 PCM File Name
-&&&&dsmap:199,2482,19739
+&&&&dsmap:25,2566,19739
 DATA file folder
-&&&&dsmap:200,2507,18697
+&&&&dsmap:21,2591,18697
 Select File List
-&&&&dsmap:201,2528,23950
+&&&&dsmap:31,2612,23950
 N88 Export current MML
 
-&&&&dsmap:202,2559,9540
+&&&&dsmap:11,2643,9540
 Start line
-&&&&dsmap:203,2570,10639
+&&&&dsmap:11,2654,10639
 Add line
-&&&&dsmap:204,2581,20517
+&&&&dsmap:28,2665,20517
 
 
 Save as WAV file
 
-&&&&dsmap:205,2609,15690
+&&&&dsmap:17,2693,15690
 Duration(second)
-&&&&dsmap:206,2626,13062
+&&&&dsmap:15,2710,13062
 Write File
-&&&&dsmap:207,2641,9988
+&&&&dsmap:18,2725,9988
 #Tool executed.
 
-&&&&dsmap:217,2696,12750
+&&&&dsmap:17,2780,12750
 Text File
-&&&&dsmap:219,2717,9002
+&&&&dsmap:15,2801,9002
 WAV sound file
-&&&&dsmap:225,2764,8553
+&&&&dsmap:11,2848,8553
 Option
-&&&&dsmap:226,2775,26410
+&&&&dsmap:25,2859,26410
 Tool settings
-&&&&dsmap:227,2800,46315
+&&&&dsmap:47,2884,46315
 (*) Some settings will be reflected after restarting the tool
 
-&&&&dsmap:228,2847,19720
+&&&&dsmap:23,2931,19720
 User Name(for TAG)
-&&&&dsmap:229,2870,14003
+&&&&dsmap:19,2954,14003
 
 Default Voice File
-&&&&dsmap:230,2889,12769
+&&&&dsmap:20,2973,12769
 
 Default ADPCM File
-&&&&dsmap:231,2909,12540
+&&&&dsmap:19,2993,12540
 
 Window Size
-&&&&dsmap:235,2954,4105
+&&&&dsmap:5,3038,4105
 Change
-&&&&dsmap:236,2959,14244
+&&&&dsmap:17,3043,14003
 
 Slow playback
-&&&&dsmap:238,2996,15550
+&&&&dsmap:17,3080,15550
 
 Fast playback
-&&&&dsmap:239,3013,19398
+&&&&dsmap:30,3097,19398
 
 SCCI Device (*)
-&&&&dsmap:240,3043,8231
+&&&&dsmap:11,3127,8231
 SCCI enable
-&&&&dsmap:241,3054,8263
+&&&&dsmap:12,3138,8263
 SCCI setup...
-&&&&dsmap:242,3066,22204
+&&&&dsmap:28,3150,22204
 Check update on startup (*)
-&&&&dsmap:243,3094,22267
+&&&&dsmap:28,3178,22267
 Link with FM tone editor (*)
-&&&&dsmap:244,3122,14962
+&&&&dsmap:19,3206,14962
 
 Auto Save
-&&&&dsmap:245,3141,26405
+&&&&dsmap:23,3225,26405
 Auto Save Enable
-&&&&dsmap:246,3164,9822
+&&&&dsmap:13,3248,9822
 Interval (seconds)
-&&&&dsmap:257,3259,14360
+&&&&dsmap:17,3261,14360
 Generation
-&&&&dsmap:247,3177,18628
+&&&&dsmap:23,3278,18628
 
 Auto Player settings
-&&&&dsmap:248,3200,27609
+&&&&dsmap:27,3301,27609
 Skip if conditions are met
-&&&&dsmap:249,3227,15711
+&&&&dsmap:17,3328,15711
 Time (seconds)
-&&&&dsmap:250,3244,11354
+&&&&dsmap:14,3345,11354
 Progress (%)
-&&&&dsmap:251,3258,12622
+&&&&dsmap:16,3389,12622
 
 Font settings:
-&&&&dsmap:253,3276,5089
+&&&&dsmap:8,3407,5089
 Change...
-&&&&dsmap:254,3284,13406
+&&&&dsmap:16,3415,13406
 Color...
-&&&&dsmap:255,3300,12601
+&&&&dsmap:16,3431,12601
 Background...
-&&&&dsmap:266,3427,4319
+&&&&dsmap:7,3492,4319
 Share
-&&&&dsmap:267,3434,34730
+&&&&dsmap:38,3499,34730
 Share MML on the network (in preparation)
-&&&&dsmap:276,3631,3619
+&&&&dsmap:7,3695,3619
 line: 
-&&&&dsmap:278,3647,11931
+&&&&dsmap:19,3711,11931
 Error file write [
-&&&&dsmap:306,3850,23976
+&&&&dsmap:27,3940,23976
 DATA file not found.
-&&&&dsmap:309,3939,4712
+&&&&dsmap:9,4029,4712
 Saved. [
-&&&&dsmap:310,3948,4410
+&&&&dsmap:8,4038,4410
 ] size:
-&&&&dsmap:312,3967,5643
+&&&&dsmap:9,4057,5643
 convert 
-&&&&dsmap:313,3976,1207
+&&&&dsmap:5,4066,1207
  -> 
-&&&&dsmap:315,3982,15011
+&&&&dsmap:24,4072,15011
 No data.Convert failed.
-&&&&dsmap:319,4036,5552
+&&&&dsmap:9,4126,5552
 Missing:
-&&&&dsmap:320,4045,3206
+&&&&dsmap:7,4135,3206
 EDITOR
-&&&&dsmap:322,4077,4847
+&&&&dsmap:10,4167,4847
 INTCOUNT:
-&&&&dsmap:332,4241,46430
+&&&&dsmap:46,4335,46430
 Editing text will be lost.
 Do you want to exit anyway?
