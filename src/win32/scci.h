@@ -141,3 +141,14 @@ public:
 //----------------------------------------
 typedef SoundInterfaceManager* (__stdcall *SCCIFUNC)(void);
 
+//----------------------------------------
+// pcm callback function
+// void callback(SCCIPCMDATA *pPcm,DWORD dSize)
+//----------------------------------------
+
+typedef struct {
+	int	iL;
+	int	iR;
+} SCCIPCMDATA;
+
+

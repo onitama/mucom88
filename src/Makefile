@@ -48,7 +48,7 @@ test: makedir $(TARGET_DEPTEST) $(TARGET_MODTEST)
 mini: makedir $(TARGET_MINIPLAY)
 
 
-DIRS = Z80 fmgen plugin module tests
+DIRS = z80 fmgen plugin module tests
 
 SRCS = membuf.cpp adpcm.cpp
 
@@ -59,7 +59,11 @@ SRCS += soundbuf.cpp
 SRCS += cmucom.cpp
 SRCS += mucomvm.cpp
 
+ifeq ($(WIN32),1)
 SRCS += mucomerror.cpp
+else
+SRCS += mucomerror_utf8.cpp
+endif
 
 SRCS += plugin/plugin.cpp
 

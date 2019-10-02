@@ -21,7 +21,7 @@ Windows version by ONION software/onitama 2018-2019(C)
 	MML(Music Macro Language)として記述された音楽を、
 	PC-8801の音源と同様に演奏させることができます。
 	また、SCCI(Sound Chip Common Interface)を経由することで
-	実際のFM音源チップ(YM2608)による演奏をサポートしています。
+	実際のFM音源チップ(YM2608/YM2203)による演奏をサポートしています。
 
 	MUCOM88 Windowsについての詳細な説明、及びMMLリファレンスは
 	Open MUCOM88 WiKiにて提供されています。
@@ -439,9 +439,9 @@ Windows version by ONION software/onitama 2018-2019(C)
 ・実チップの使用について
 
 	MUCOM88 Windowsでは、SCCI(Sound Chip Common Interface)を経由して
-	実際のFM音源チップ(YM2608)による演奏をサポートしています。
+	実際のFM音源チップ(YM2608/YM2203)による演奏をサポートしています。
 	同梱されているSCCIのシステムDLLは、以下のハードウェアに実チップ
-	(YM2608)を搭載したものに対応しています。
+	(YM2608またはYM2203)を搭載したものに対応しています。
 
 	・SPFM FMの塔
 	・SPFM Light

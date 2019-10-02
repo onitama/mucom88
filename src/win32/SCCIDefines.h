@@ -50,10 +50,12 @@ enum SC_CHIP_TYPE {
 	SC_TYPE_SPPCM,		// SPPCM
 	SC_TYPE_C140,		// NAMCO C140(SPPCMデバイス）
 	SC_TYPE_SEGAPCM,	// SEGAPCM(SPPCMデバイス）
-	SC_TYPE_OTHER,		// その他デバイス用、アドレスがA0-A3で動作する
-	SC_TYPE_UNKNOWN,	// 開発デバイス向け
-	SC_TYPE_YMF825,		// YMF825（暫定）
-	SC_TYPE_MAX
+	SC_TYPE_SPW,		// SPW
+	SC_TYPE_MAX,		// 使用可能デバイスMAX値
+
+	SC_TYPE_OTHER = 1000,	// その他デバイス用、アドレスがA0-A3で動作する
+	SC_TYPE_UNKNOWN,		// 開発デバイス向け
+	SC_TYPE_YMF825,			// YMF825（暫定）
 };
 
 // Sound chip clock list

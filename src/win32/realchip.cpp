@@ -45,8 +45,8 @@ void realchip::Initialize()
 	// サウンドチップの取得が出来ない場合
 	if (m_pSoundChip == NULL)
 	{
-		m_chiptype = SC_TYPE_YM2608;
-		m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_7987200);	// 2203も探す
+		m_chiptype = SC_TYPE_YM2203;
+		m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_3993600);	// 2203も探す
 		if (m_pSoundChip == NULL) {
 			// サウンドマネージャーを解放して終了
 			m_pManager->releaseInstance();

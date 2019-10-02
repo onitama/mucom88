@@ -180,13 +180,15 @@ int main( int argc, char *argv[] )
 		mucom.Init(NULL,cmpopt,RENDER_RATE);
 	}
 	else {
-		mucom.Init();
+		if (scci_opt) {
+			printf("Use SCCI.\n");
+			mucom.Init(NULL, MUCOM_OPTION_SCCI | MUCOM_OPTION_FMMUTE, RENDER_RATE);
+		}
+		else {
+			mucom.Init();
+		}
 	}
 
-	if (scci_opt) {
-		printf("Use SCCI.\n");
-		mucom.SetVMOption(MUCOM_OPTION_SCCI | MUCOM_OPTION_FMMUTE, 1);
-	}
 
 	if (pluginfile) {
 		printf("#Adding plugin %s.\n", pluginfile);
