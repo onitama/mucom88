@@ -19,6 +19,8 @@ public:
 	void Reset();
 	// リアルチップの使用チェック
 	bool IsRealChip();
+	// SB2(YM2608)の使用チェック
+	bool IsRealChipSB2();
 	// レジスタの設定
 	void SetRegister(DWORD reg, DWORD data);
 	// ADPCMの転送

@@ -105,6 +105,7 @@ public:
 	bool GetChMute(int ch);
 	int GetChStatus(int ch);
 	uint8_t *GetRegisterMap(void) { return regmap;  }
+	bool GetSB2Present(void);
 
 	//		デバッグ用
 	void Msgf(const char *format, ...);

@@ -329,14 +329,20 @@ int CMucom::Play(int num)
 	NoticePlugins(MUCOM88IF_NOTICE_PREPLAY);
 
 	PRINTF("#Play[%d]\r\n", num);
+
 	vm->CallAndHalt(0xb000);
 	//int vec = vm->Peekw(0xf308);
 	//PRINTF("#INT3 $%x.\r\n", vec);
+
+	if (vm->GetSB2Present() == false) {
+		vm->Poke(0xbe78, 1);				// SB1の場合はnotsb2フラグを入れる
+	}
 
 	NoticePlugins(MUCOM88IF_NOTICE_PLAY);
 
 	int jcount = hedmusic->jumpcount;
 	vm->SkipPlay(jcount);
+
 	vm->StartINT3();
 
 	playflag = true;

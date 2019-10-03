@@ -90,9 +90,15 @@ void realchip::Reset()
 }
 
 // リアルチップチェック
-bool realchip::IsRealChip(){
+bool realchip::IsRealChip() {
 	// リアルチップの有無を返却する
 	return m_IsRealChip;
+}
+
+// SB2チップチェック
+bool realchip::IsRealChipSB2() {
+	// SB2(YM2608)の有無を返却する
+	return (m_chiptype == SC_TYPE_YM2608);
 }
 
 // レジスタ設定

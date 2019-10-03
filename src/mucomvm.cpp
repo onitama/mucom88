@@ -247,6 +247,15 @@ int mucomvm::DeviceCheck(void)
 }
 
 
+bool mucomvm::GetSB2Present(void)
+{
+	if (m_option & VM_OPTION_SCCI) {
+		return ( osd->CheckRealChipSB2() != 0 );
+	}
+	return true;
+}
+
+
 int32_t mucomvm::loadpc(uint16_t adr)
 {
 	if (bankprg == VMPRGBANK_SHADOW) {

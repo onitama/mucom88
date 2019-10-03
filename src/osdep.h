@@ -36,6 +36,7 @@ public:
 	virtual void FreeRealChip() = 0;
 	virtual void ResetRealChip() = 0;
 	virtual int CheckRealChip() = 0;
+	virtual int CheckRealChipSB2() = 0;
 	virtual void OutputRealChip(unsigned int Register, unsigned int Data) = 0;
 	virtual void OutputRealChipAdpcm(void *pData, int size) = 0;
 

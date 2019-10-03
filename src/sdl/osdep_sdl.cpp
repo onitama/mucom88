@@ -162,6 +162,10 @@ int OsDependentSdl::CheckRealChip() {
 	return 0;
 }
 
+int OsDependentSdl::CheckRealChipSB2() {
+	return 1;
+}
+
 void OsDependentSdl::ResetRealChip() {
 }
 

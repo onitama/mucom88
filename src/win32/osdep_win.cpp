@@ -86,6 +86,13 @@ int OsDependentWin32::CheckRealChip() {
 	return 0;
 }
 
+int OsDependentWin32::CheckRealChipSB2() {
+	if (!RealChipInstance) return -1;
+	realchip *rc = (realchip *)RealChipInstance;
+	if (rc->IsRealChipSB2()) return 1;
+	return 0;
+}
+
 void OsDependentWin32::ResetRealChip() {
 	if (!RealChipInstance) return;
 	realchip *rc = (realchip *)RealChipInstance;
@@ -262,7 +269,7 @@ void OsDependentWin32::ThreadFunc() {
 	// ストリームスレッドループ
 	threadflag = true;
 	while (threadflag) {
-		Sleep(20);
+		Sleep(40);
 		//if (WaitForSingleObject(hevent, 20) == WAIT_TIMEOUT) {
 		//	continue;
 		//}
@@ -296,7 +303,7 @@ bool OsDependentWin32::InitAudio(void *hwnd, int Rate, int BufferSize) {
 
 	//		先行するサウンドバッファを作っておく
 	//
-	presize = Rate * 40 / 1000;
+	presize = Rate * 80 / 1000;
 	snddrv->GetSoundBuffer()->PrepareBuffer(presize*2);
 	snddrv->GetSoundBuffer()->UpdateBuffer(presize*2);
 	//pooltime = snddrv->GetSoundBuffer()->GetPoolSize();
@@ -332,6 +339,7 @@ bool OsDependentWin32::SendAudio(int ms)
 void OsDependentWin32::StreamSend(int ms)
 {
 	if (!snddrv) return;
+	if (ms <= 0) return;
 
 	// 0以外はスレッドが重複しているので続行しない。
 	int ret = InterlockedExchange(&sending, 1);
@@ -344,6 +352,7 @@ void OsDependentWin32::StreamSend(int ms)
 
 	UpdateSamples = (ms * SamplePerTick );
 	writelength = ((int)UpdateSamples);
+	if (writelength > presize) writelength = presize;
 	needlength =  (( snddrv->GetSoundBuffer()->GetReadSize() >>1 )+ writelength + presize) - (snddrv->GetSoundBuffer()->GetWriteSize() >> 1);
 	if (writelength < needlength) writelength = needlength;
 
@@ -456,3 +465,6 @@ int OsDependentWin32::KillFile(const char *filename)
 	if (remove(filename)) return -1;
 	return 0;
 }
+
+
+

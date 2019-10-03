@@ -30,6 +30,7 @@ public:
 	void FreeRealChip();
 	void ResetRealChip();
 	int CheckRealChip();
+	int CheckRealChipSB2();
 	void OutputRealChip(unsigned int Register, unsigned int Data);
 	void OutputRealChipAdpcm(void *pData, int size);
 

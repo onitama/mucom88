@@ -48,6 +48,10 @@ int OsDependentDummy::CheckRealChip() {
 	return 0;
 }
 
+int OsDependentDummy::CheckRealChipSB2() {
+	return 1;
+}
+
 void OsDependentDummy::ResetRealChip() {
 }
 
