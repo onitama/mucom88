@@ -1,10 +1,11 @@
 ;==========================================================================
-; MUSICLALF Ver.1.1 プログラムソース
+; MUSICLALF Ver.1.2 プログラムソース
 ; ファイル名 : muc88
 ; 機能 : コンパイラ(メイン)
 ; PROGRAMED BY YUZO KOSHIRO
 ;==========================================================================
 ; ヘッダ編集/ソース修正 : @mucom88
+; ※本ソースはMUSICLALF Ver.1.1のmuc88から差分修正にて作成した物です。
 ;==========================================================================
 	
 	
@@ -49,6 +50,8 @@ VOLUME:	EQU	OTONUM+1; NOW VOLUME
 LINKPT:	EQU	VOLUME+1; LINK POINTER
 ENDADR:	EQU	LINKPT+2
 OCTINT:	EQU	ENDADR+2
+SIFTDA2:EQU	OCTINT+1		;■追記
+KEYONR:	EQU	SIFTDA2+1		;■
 	
 MWRITE:	EQU	9000H
 MWRIT2:	EQU	MWRITE+3
@@ -610,6 +613,8 @@ CMPE2:
 	LD	(REPCOUNT),A
 	LD	(TV_OFS),A
 	LD	(SIFTDAT),A
+	LD	(SIFTDA2),A		;■追記
+	LD	(KEYONR),A		;■
 	LD	(BEFRST),A
 	LD	(TIEFG),A
 	JP	CSTART2
@@ -1005,6 +1010,7 @@ FCOMP13:
 	
 	LD	(FCP18+1),A	; STORE TONE
 	CALL	STLIZM
+	CALL	FCOMP1X			;■追記
 	CALL	TCLKSUB
 	LD	C,A
 	LD	A,(BEFCO)
@@ -1037,10 +1043,22 @@ FCOMP16:
 FC162:
 	LD	(FCP18+1),A	; STORE TONE
 	CALL	STLIZM	; LIZM SET
+	CALL	FCOMP1X			;■追記
 	CALL	TCLKSUB	; ﾄｰﾀﾙｸﾛｯｸ ｶｻﾝ
 	CALL	FCOMP17
 	RET
 ;
+FCOMP1X:				;■追記
+	LD	C,A			;■
+	LD	A,(KEYONR)		;■
+	PUSH	AF			;■
+	ADD	A,C			;■
+	LD	C,A			;■
+	POP	AF			;■
+	NEG				;■
+	LD	(KEYONR),A		;■
+	LD	A,C			;■
+	RET				;■
 	
 FCOMP17:
 	LD	(BEFCO+1),A
@@ -1140,13 +1158,16 @@ COMTBL:
 	JP	TIMERB
 	JP	SETCLK
 	JP	COMOVR
-	JP	SETKST
+;	JP	SETKST			;■修正前
+	JP	SETKS2			;■修正後
 	
 	JP	SETRJP
 	JP	TOTALV
 	JP	SETBEF
-	JP	SETHE
-	JP	SETHEP
+;	JP	SETHE			;■修正前
+	JP	SETKST			;■修正後
+;	JP	SETHEP			;■修正前
+	JP	SETKON			;■修正後
 	
 	JP	SETDCO
 	JP	SETLR
@@ -1525,26 +1546,26 @@ SETDCO:
 	JP	FCOMP12
 	
 ; *	SET HARD ENVE TYPE/FLAG	*
-	
-SETHE:
-	INC	HL
-	LD	A,0FFH
-	LD	E,0F1H	; 2nd COM
-	CALL	MWRITE
-	CALL	REDATA
-	LD	A,E
-	CALL	MWRIT2
-	JP	FCOMP1
-SETHEP:
-	INC	HL
-	LD	A,0FFH
-	LD	E,0F2H
-	CALL	MWRITE
-	CALL	REDATA
-	LD	A,E
-	LD	E,D
-	CALL	MWRITE	; 2ﾊﾞｲﾄﾃﾞｰﾀ ｶｸ
-	JP	FCOMP1
+;	
+;SETHE:					;■削除
+;	INC	HL			;■
+;	LD	A,0FFH			;■
+;	LD	E,0F1H	; 2nd COM	;■
+;	CALL	MWRITE			;■
+;	CALL	REDATA			;■
+;	LD	A,E			;■
+;	CALL	MWRIT2			;■
+;	JP	FCOMP1			;■
+;SETHEP:				;■
+;	INC	HL			;■
+;	LD	A,0FFH			;■
+;	LD	E,0F2H			;■
+;	CALL	MWRITE			;■
+;	CALL	REDATA			;■
+;	LD	A,E			;■
+;	LD	E,D			;■
+;	CALL	MWRITE	; 2ﾊﾞｲﾄﾃﾞｰﾀ ｶｸ	;■
+;	JP	FCOMP1			;■
 	
 ; *	BEFORE CODE	*
 	
@@ -1609,14 +1630,29 @@ TOTALV:
 TV_OFS:
 	DB	0		; TOTAL V. OFFSET
 	
-; *	KEY SHIFT	*
+; *	KEY ON REVISE	*		;■追記
+					;■
+SETKON:					;■
+	CALL	ERRT			;■
+	LD	A,E			;■
+	LD	(KEYONR),A		;■
+	JP	FCOMP1			;■
 	
+; *	KEY SHIFT	*
+
 SETKST:
 	CALL	ERRT
 	LD	A,E
 	LD	(SIFTDAT),A
-	
 	JP	FCOMP1
+	
+; *	KEY SHIFT (k)	*		;■追記
+					;■
+SETKS2:					;■
+	CALL	ERRT			;■
+	LD	A,E			;■
+	LD	(SIFTDA2),A		;■
+	JP	FCOMP1			;■
 	
 ; *	CLOCK SET	*
 	
@@ -3389,7 +3425,8 @@ LNKTXT:	DB	3AH,8FH,0E9H,20H,20H	; 5 ｺ
 ; **	SYSTEM WORK AREA	**
 	
 MACFG:	DB	0	;0>< AS MACRO PRC
-MESS:	DB	'[  MUSICLALF Ver:1.1 ] Address'
+;MESS:	DB	'[  MUSICLALF Ver:1.1 ] Address'	;■修正前
+MESS:	DB	'[  MUSICLALF Ver:1.2 ] Address'	;■修正後
 	DB	':    -    (    )         [ 00:00 ] MODE:'
 MESNML:	DB	'NORMAL  '
 	DB	'LINC    '

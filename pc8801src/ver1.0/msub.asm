@@ -1,10 +1,11 @@
 ;==========================================================================
-; MUSICLALF Ver.1.1 プログラムソース
+; MUSICLALF Ver.1.0 プログラムソース
 ; ファイル名 : msub
 ; 機能 : コンパイラ(サブ)
 ; PROGRAMED BY YUZO KOSHIRO
 ;==========================================================================
 ; ヘッダ編集/ソース修正 : @mucom88
+; ※本ソースはMUSICLALF Ver.1.1のmsubから差分修正にて作成した物です。
 ;==========================================================================
 	
 	
@@ -32,7 +33,8 @@ FD_FLG:		EQU	SE_SET+2
 FD_EFG:		EQU	FD_FLG+1
 ESCAPE:		EQU	FD_EFG+1
 MINUSF:		EQU	ESCAPE+1
-MEMEND:		EQU	0E3F0H	;0DDF0H
+;MEMEND:		EQU	0E3F0H	;0DDF0H		;■修正前
+MEMEND:		EQU	0DDF0H				;■修正後
 ERRORTBL:	EQU	08800H
 	
 	JP	MWRITE
@@ -127,7 +129,8 @@ MWRIT2:
 	INC	BC
 	LD	(MDATA),BC
 	PUSH	HL
-	LD	HL,MEMEND
+;	LD	HL,MEMEND				;■修正前
+	LD	HL,MEMEND+20CH				;■修正後
 	AND	A
 	SBC	HL,BC
 	POP	HL

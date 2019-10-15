@@ -1,10 +1,11 @@
 ;==========================================================================
-; MUSICLALF Ver.1.1 プログラムソース
+; MUSICLALF Ver.1.0 プログラムソース
 ; ファイル名 : muc88
 ; 機能 : コンパイラ(メイン)
 ; PROGRAMED BY YUZO KOSHIRO
 ;==========================================================================
 ; ヘッダ編集/ソース修正 : @mucom88
+; ※本ソースはMUSICLALF Ver.1.1のmuc88から差分修正にて作成した物です。
 ;==========================================================================
 	
 	
@@ -1788,19 +1789,20 @@ SETSEV:	CALL	CHCHK
 	
 SETRST:
 	INC	HL
-	LD	A,(HL)
-	CP	'%'
-	JR	NZ,SRS2
-	INC	HL
-	CALL	REDATA
-	JR	C,SETRS2
-	OR	A
-	JP	NZ,ERRIF
-	LD	A,E
-	JR	SETRS3
+;	LD	A,(HL)		;■削除
+;	CP	'%'		;■
+;	JR	NZ,SRS2		;■
+;	INC	HL		;■
+;	CALL	REDATA		;■
+;	JR	C,SETRS2	;■
+;	OR	A		;■
+;	JP	NZ,ERRIF	;■
+;	LD	A,E		;■
+;	JR	SETRS3		;■
 SRS2:
 	CALL	REDATA
-	JR	C,SETRS2	; NON DATA
+;	JR	C,SETRS2	; NON DATA	;■修正前
+	JP	C,SETRS2	; NON DATA	;■修正後
 	OR	A
 	JP	NZ,ERRIF
 	
@@ -2804,16 +2806,17 @@ STV1:	LD	A,E
 	JR	Z,STV2
 	SUB	3
 	CP	3
+	JR	C,STV12		;■追記
 	LD	A,(TV_OFS)
-	JR	C,STV12
+;	JR	C,STV12		;■削除
 	ADD	A,E
 	ADD	A,4
 	LD	E,A
-	JR	SETVOL2
+;	JR	SETVOL2		;■削除
 STV12:
-	ADD	A,E
-	LD	E,A
-SETVOL2:
+;	ADD	A,E		;■削除
+;	LD	E,A		;■
+;SETVOL2:			;■
 	LD	A,0F1H		; COM OF 'v'
 	CALL	MWRITE
 	JP	FCOMP1
@@ -3389,7 +3392,8 @@ LNKTXT:	DB	3AH,8FH,0E9H,20H,20H	; 5 ｺ
 ; **	SYSTEM WORK AREA	**
 	
 MACFG:	DB	0	;0>< AS MACRO PRC
-MESS:	DB	'[  MUSICLALF Ver:1.1 ] Address'
+;MESS:	DB	'[  MUSICLALF Ver:1.1 ] Address'		;■修正前
+MESS:	DB	'[  MUSICLALF Ver:1.0 ] Address'		;■修正後
 	DB	':    -    (    )         [ 00:00 ] MODE:'
 MESNML:	DB	'NORMAL  '
 	DB	'LINC    '

@@ -1,10 +1,11 @@
 ;==========================================================================
-; MUSICLALF Ver.1.1 プログラムソース
+; MUSICLALF Ver.1.2 プログラムソース
 ; ファイル名 : msub
 ; 機能 : コンパイラ(サブ)
 ; PROGRAMED BY YUZO KOSHIRO
 ;==========================================================================
 ; ヘッダ編集/ソース修正 : @mucom88
+; ※本ソースはMUSICLALF Ver.1.1のmsubから差分修正にて作成した物です。
 ;==========================================================================
 	
 	
@@ -32,6 +33,21 @@ FD_FLG:		EQU	SE_SET+2
 FD_EFG:		EQU	FD_FLG+1
 ESCAPE:		EQU	FD_EFG+1
 MINUSF:		EQU	ESCAPE+1
+BEFRST:		EQU	MINUSF+1		;■追記
+BEFCO:		EQU	BEFRST+1		;■
+BEFTONE:	EQU	BEFCO+2			;■
+TIEFG:		EQU	BEFTONE+9		;■
+COMNO:		EQU	TIEFG+1			;■
+ASEMFG:		EQU	COMNO+1			;■
+VDDAT:		EQU	ASEMFG+1		;■
+OTONUM:		EQU	VDDAT+1			;■
+VOLUME:		EQU	OTONUM+1		;■
+LINKPT:		EQU	VOLUME+1		;■
+ENDADR:		EQU	LINKPT+2		;■
+OCTINT:		EQU	ENDADR+2		;■
+SIFTDA2:	EQU	OCTINT+1		;■
+KEYONR:		EQU	SIFTDA2+1		;■
+
 MEMEND:		EQU	0E3F0H	;0DDF0H
 ERRORTBL:	EQU	08800H
 	
@@ -359,6 +375,9 @@ TONEX2:
 	
 KEYSIFT:
 	LD	A,(SIFTDAT)
+	LD	L,A		;■追加
+	LD	A,(SIFTDA2)	;■
+	ADD	A,L		;■
 	OR	A
 	RET	Z
 	
@@ -380,6 +399,9 @@ KEYSIFT:
 	LD	H,A	; HL=OCTAVE*12+KEYCODE
 	
 	LD	A,(SIFTDAT)
+	LD	E,A		;■追加
+	LD	A,(SIFTDA2)	;■
+	ADD	A,E		;■
 	CP	128
 	JR	C,KYS2
 	
@@ -1109,8 +1131,10 @@ FCOMS:			; COMMANDs
 	DB      '/'	; REPEAT JUMP
 	DB	'V'	; TOTAL VOLUME OFFSET
 	DB	'\'	; BEFORE CODE
-	DB	's'	; HARD ENVE SET
-	DB	'm'	; HARD ENVE PERIOD
+;	DB	's'	; HARD ENVE SET		;■変更前
+;	DB	'm'	; HARD ENVE PERIOD	;■
+	DB	'k'	; KEY SHIFT 2		;■変更後
+	DB	's'	; KEY ON REVISE		;■
 	
 	DB	'%'	; SET LIZM(DIRECT CLOCK)
 	DB	'p'	; STEREO PAN
