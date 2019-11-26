@@ -9,7 +9,8 @@ goto *_end_mod_mucom88
 
 //---------------------------------------------------------
 
-#define INIFILE "\\mucom88win.ini"
+#define INIFILE "mucom88win.ini"
+#define APPNAME "MUCOM88"
 
 #deffunc mucom88app_init
 
@@ -49,8 +50,7 @@ goto *_end_mod_mucom88
 	initopt=0
 	langset=0
 
-	get_appdata_path app_dir
-	cfg_init app_dir+INIFILE
+	cfg_init INIFILE,APPNAME
 	cfg_load:modcfg=stat
 	if modcfg {	; iniÉtÉ@ÉCÉãì«Ç›çûÇ›
 		wx=0+cfg_getvar("wx")
@@ -96,8 +96,7 @@ goto *_end_mod_mucom88
 	;
 	if wx<640 : wx=640
 	if wy<480 : wy=480
-	get_appdata_path app_dir
-	cfg_init app_dir+INIFILE
+	cfg_init INIFILE,APPNAME
 	cfg_seti "wx",wx
 	cfg_seti "wy",wy
 	cfg_seti "winx",ginfo_wx1

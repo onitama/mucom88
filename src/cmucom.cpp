@@ -2,7 +2,7 @@
 //
 //		MUCOM88 access class
 //		(PC-8801のVMを介してMUCOM88の機能を提供します)
-//			MUCOM88 by Yuzo Koshiro Copyright 1987-2019(C) 
+//			MUCOM88 by Yuzo Koshiro Copyright 1987-2020(C) 
 //			Windows version by onion software/onitama 2018/11
 //
 
@@ -17,16 +17,16 @@
 #include "mucomerror.h"
 #include "md5.h"
 
-#include "bin_music2.h"
+#include "bin_17/bin_music2.h"
 
-#include "bin_expand.h"
-#include "bin_errmsg.h"
-#include "bin_msub.h"
-#include "bin_muc88.h"
-#include "bin_ssgdat.h"
-#include "bin_time.h"
-#include "bin_voice.h"
-#include "bin_smon.h"
+#include "bin_17/bin_expand.h"
+#include "bin_17/bin_errmsg.h"
+#include "bin_17/bin_msub.h"
+#include "bin_17/bin_muc88.h"
+#include "bin_17/bin_ssgdat.h"
+#include "bin_17/bin_time.h"
+#include "bin_17/bin_voice.h"
+#include "bin_17/bin_smon.h"
 
 #define PRINTF vm->Msgf
 
@@ -102,6 +102,7 @@ CMucom::CMucom( void )
 	flag = 0;
 	vm = NULL;
 	infobuf = NULL;
+	edit_buffer = NULL;
 	edit_status = MUCOM_EDIT_STATUS_NONE;
 	user_uuid[0] = 0;
 }
@@ -186,7 +187,7 @@ void CMucom::Reset(int option)
 	//
 	int devres;
 	vm->Reset();
-	PRINTF("#OpenMucom88 Ver.%s Copyright 1987-2019(C) Yuzo Koshiro\r\n",VERSION);
+	PRINTF("#OpenMucom88 Ver.%s Copyright 1987-2020(C) Yuzo Koshiro\r\n",VERSION);
 	pcmfilename[0] = 0;
 
 	devres = vm->DeviceCheck();
@@ -1005,6 +1006,16 @@ const char *CMucom::GetTextLine(const char *text)
 	int mptr = 0;
 	int mulchr;
 
+	a1 = *p;
+	if ((a1 >= '0') && (a1 <= '9')) {	// 行番号付きの場合は'までスキップ
+		while (1) {
+			a1 = *p;
+			if (a1 == 0) break;
+			if (a1 == 0x27) { p++; break; }
+			p+= GetMultibyteCharacter(p);
+		}
+	}
+
 	while (1) {
 		a1 = *p;
 		if (a1 == 0) {
@@ -1098,7 +1109,12 @@ int CMucom::ProcessFile(const char *fname)
 	int sz;
 	char *mml;
 	DeleteInfoBuffer();
-	mml = vm->LoadAlloc(fname, &sz);
+	if (*fname == 0) {
+		mml = GetEditorMML();
+	}
+	else {
+		mml = vm->LoadAlloc(fname, &sz);
+	}
 	if (mml == NULL) {
 		PRINTF("#File not found [%s].\r\n", fname);
 		return -1;

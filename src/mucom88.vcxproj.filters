@@ -67,14 +67,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="bin_errmsg.h" />
-    <ClInclude Include="bin_expand.h" />
-    <ClInclude Include="bin_msub.h" />
-    <ClInclude Include="bin_muc88.h" />
-    <ClInclude Include="bin_music2.h" />
-    <ClInclude Include="bin_ssgdat.h" />
-    <ClInclude Include="bin_time.h" />
-    <ClInclude Include="bin_voice.h" />
     <ClInclude Include="fmgen\types.h" />
     <ClInclude Include="Z80\Z80.h">
       <Filter>Z80</Filter>

@@ -25,8 +25,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 50
-#define APP_VER "0.5"
+#const VER_NUMBER 51
+#define APP_VER "0.51"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -96,7 +96,7 @@
 	welcome_mes+="#Z80 emulation by Yasuo Kuwahara 2002-2018(C)\n"
 	welcome_mes+="#FM Sound Generator by cisc 1998, 2003(C)\n"
 	welcome_mes+="#SCCI system / adpcm converter by gasshi 2018(C)\n"
-	welcome_mes+="#Windows version by ONION software/onitama 2018-2019(C)\n"
+	welcome_mes+="#Windows version by ONION software/onitama 2018-2020(C)\n"
 
 	buf=welcome_mes
 	compflag=0
@@ -158,7 +158,6 @@
 
 	mesx=x+sx:mesy=y
 	clrmusicbar
-	msg "Ready."
 
 	objsize 80,20
 	pos wx-80,y:button "SMON",*to_smon
@@ -168,6 +167,8 @@
 
 	toolshow 1
 	gsel 0,1
+	main_enter=1
+	msg "Ready."
 
 	;---------------------------------------------------------------------------
 *to_main
@@ -180,6 +181,7 @@
 
 	objsel obj_mml
 	mml_hw=objinfo(obj_mml,2)
+	mml_notice=objinfo(obj_mml,16)
 	mml_sptr=0:mml_eptr=0
 
 *main
@@ -190,7 +192,13 @@
 	}
 	mucomedit_proc main_notice
 	await 1000/15
-	putmusicbar
+
+	if mml_notice!=objinfo(obj_mml,16) {
+		msgline
+		mml_notice=objinfo(obj_mml,16)
+	} else {
+		putmusicbar
+	}
 	if main_cmd = 0 : goto *main
 
 	on main_cmd goto *to_menu, *to_menu, *to_save, *to_mmlcomp, *to_keyff
@@ -308,10 +316,16 @@
 	main_cmd = 0
 	main_key = 0
 	prev_sel=sellist
+
 *main2
 	;	main2 loop
 	wait 4
 	if menu_mode=0 {
+		if flist_notice!=objinfo(obj_list,16) {
+			flist_notice=objinfo(obj_list,16)
+			main_key=13
+		}
+
 		if main_key=13 {
 			main_key = 0
 			goto *to_sellist
@@ -373,12 +387,12 @@
 	if stat=6 : goto *menuload
 	goto *main2
 *menuload
-	dialog "muc",16,"MUCOM88ファイル"
+	;dialog "muc",16,"MUCOM88ファイル"
+	dialogEx 0, "MUCOM88 MML(*.muc)|*.muc|N88 Basic Source(*.n88)|*.n88|All Files (*.*)|*.*|", "", "", filedir
 	if stat=0 : goto *dlcan2
 	fname=refstr
 *load_exec
 	myfile=fname
-
 	s1=getpath(fname,32)
 	s1=strtrim(s1,2,'\\')
 	if s1!=filedir {
@@ -396,6 +410,13 @@
 
 	mucomedit_flush			; 一時ファイルを破棄
 	noteload myfile			; テキストファイル読み込み
+
+	;s1=getpath(fname,2+16)
+	;if s1=".n88" {			; n88ファイルは行番号除去
+	;	myfile=getpath(myfile,1)+".muc"
+	;	gosub *exec_tool_direct
+	;}
+
 	objprm obj_mml,mml
 	mucomedit_reset mml,MUCOM_EDIT_OPTION_SJIS
 	mucomedit_setfile getpath(myfile,8), filedir+"\\",1
@@ -437,6 +458,8 @@
 	button "プレイヤー...",*to_vplayer
 
 	objsel obj_list
+
+	flist_notice=objinfo(obj_list,16)
 	return
 
 *build_mylist
@@ -452,6 +475,9 @@
 	loop
 	dirlist s1,"*.muc",1
 	s1=mydirs+s1
+	dirlist s2,"*.n88",1
+	s1+=s2
+	sortnote s1,0
 	return
 
 *update_folder
@@ -470,7 +496,6 @@
 	noteget s1,sellist
 	fname=dir_cur+"\\"+s1
 	mucomloadtag s2,fname
-
 	syscolor 15:boxf homex,homey+40,wx,wy
 	sysfont 0:color 0,0,0
 	pos homex,homey+40
@@ -657,17 +682,23 @@
 	input n88_line
 	mes "行番号増分"
 	input n88_linep
-	objsize 120,24
-	button "実行",*to_toolexec2
+	objsize 240,24
+	button "ファイルに出力",*to_toolexec2
+
+	;	timeタグを基準にする
+	mucomloadtag s2,""
+	mucomtag t_time,"time"
+	wavout_time = 0 +t_time
+	if wavout_time <= 0 : wavout_time = 90
 
 	font msgothic,16,0
 	mes "\n\nWAVファイルとして保存\n"
-	wavout_time = 90
 	sysfont 17
 	mes "録音する時間(秒)"
 	input wavout_time
 	objsize 240,24
 	button "ファイルに出力",*to_wavout
+	mes " (#time タグでデフォルト時間を設定できます)"
 
 	return
 
@@ -681,7 +712,8 @@
 
 *to_toolexec2
 	;	n88 Export
-	dialog "n88",17,"n88-BASIC file"
+	;dialog "n88",17,"n88-BASIC file"
+	dialogEx 1, "N88 Basic Source(*.n88)|*.n88", getpath(myfile,9), "", filedir
 	if stat=0 : goto *main2
 	fname = refstr
 	exname=getpath(fname,2)		; ファイル名の拡張子を取得
@@ -722,7 +754,8 @@
 
 *to_wavout
 	;	wav Export
-	dialog "wav",17,"WAV sound file"
+	;dialog "wav",17,"WAV sound file"
+	dialogEx 1, "WAV sound file (*.wav)|*.wav", getpath(myfile,9), "", filedir
 	if stat=0 : goto *main2
 	fname = refstr
 	exname=getpath(fname,2)		; ファイル名の拡張子を取得
@@ -935,11 +968,7 @@
 
 	if main_enter {
 		mucomedit_update mml
-		sendmsg mml_hw, EM_GETSEL,varptr(mml_sptr), varptr(mml_eptr)
-		mucomedit_getline i,mml_sptr
-		;sendmsg mml_hw, EM_LINEFROMCHAR, mml_sptr, 0
-		;i=stat+1
-		msg "line: "+i
+		msgline
 	}
 
 	if iparam=27 {
@@ -1139,12 +1168,22 @@
 	goto *file_savedone
 
 *file_save
-	dialog "muc",17,"MUCOM88ファイル"
+	s1=getpath(myfile,32)
+	s1=strtrim(s1,2,'\\')
+	dialogEx 1, "MUCOM88 MML (*.muc)|*.muc", getpath(myfile,8+1), "", s1
+	;dialog "muc",17,"MUCOM88ファイル"
 	if stat=0 : goto *dlcan
 	fname = refstr
 	editfile=getpath(fname,1+8)
 	exname=getpath(fname,2)		; ファイル名の拡張子を取得
 	if exname="" : fname+=".muc"	; 拡張子がなければ追加
+
+	exist fname
+	if strsize>0 {
+		dialog "同名のファイルがあります。\n上書きしていいですか?",2
+		if stat!=6 : goto *dlcan
+	}
+
 	myfile=fname
 	s1=getpath(fname,32)
 	s1=strtrim(s1,2,'\\')
@@ -1168,7 +1207,6 @@
 	title editfile+" - "+EDITOR_TITLE
 	return
 
-
 	;---------------------------------------------------------------------------
 
 *check_modify
@@ -1187,6 +1225,7 @@
 	file_result=0
 	if sw_toollnum=0 : goto *exec_tool2
 
+*exec_tool_sub
 	sdim tmp,$10000
 	file_result=1
 	notesel mml
@@ -1215,6 +1254,13 @@
 		gosub *exec_addtag
 	}
 	return
+
+*exec_tool_direct
+	;	行番号除去のみ
+	sw_toolrepl=1
+	sw_tooltag=0
+	goto *exec_tool_sub
+
 
 *exec_addtag
 	;	タグの追加
@@ -1497,6 +1543,15 @@
 	;}
 
 	redraw 1
+	return
+
+#deffunc msgline
+
+	if main_enter=0 :return
+
+	sendmsg mml_hw, EM_GETSEL,varptr(mml_sptr), varptr(mml_eptr)
+	mucomedit_getline i,mml_sptr
+	msg "line: "+i
 	return
 
 #deffunc clrmusicbar

@@ -5,7 +5,7 @@
 #ifndef __mucom88config_h
 #define __mucom88config_h
 
-#define VERSION "1.7b"
+#define VERSION "1.7c"
 #define MAJORVER 1
 #define MINORVER 7
 

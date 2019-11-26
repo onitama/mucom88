@@ -116,7 +116,7 @@ int main( int argc, char *argv[] )
 	pluginfile = NULL;
 	fname[0] = 0;
 
-	int song_length = RENDER_SECONDS;
+	int song_length = 0;
 
 	for (b=1;b<argc;b++) {
 		a1=*argv[b];a2=tolower(*(argv[b]+1));
@@ -248,6 +248,14 @@ int main( int argc, char *argv[] )
 
 	if (st == 0) {
 		if (cmpopt & MUCOM_CMPOPT_STEP) {
+			if (song_length <= 0) {
+				const char* timetag = mucom.GetInfoBufferByName("time");
+					song_length = atoi(timetag);
+					if (song_length <= 0) {
+						song_length = RENDER_SECONDS;
+					}
+			}
+			printf( "#Record to %s (%d sec).", wavfile, song_length );
 			RecordWave(&mucom, wavfile, RENDER_RATE, song_length);
 		}
 		else {
