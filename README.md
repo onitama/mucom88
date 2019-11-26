@@ -22,10 +22,10 @@ OPEN MUCOM88プロジェクトは、オリジナルのMUCOM88ソースコード�
 
 # ビルド方法
 
-	srcフォルダにVisual Studio 2017用のプロジェクトファイルが含まれています
+	srcフォルダにVisual Studio 2017,2019用のプロジェクトファイルが含まれています
 	xcodeフォルダにMacOSX版のXCode用プロジェクトファイルが含まれています
 	HSPプラグイン及び、HSPソースコードはhsppluginフォルダに含まれています
-	(Windows版のGUIアプリケーションはHSP3.5からコンパイルする必要があります)
+	(Windows版のGUIアプリケーションはHSP3.6β版からコンパイルする必要があります)
 	Makefileは、Linux及びWin32版に対応しています。
 
 	Makefileからコンパイルする場合は、sdl1.2-devパッケージを導入した上で、
