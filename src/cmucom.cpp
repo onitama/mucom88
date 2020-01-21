@@ -524,6 +524,10 @@ int CMucom::GetStatus(int option)
 	//		(戻り値は32bit整数)
 	//
 	int i;
+	if ( option & MUCOM_STATUS_SNDDRV ) {
+		return vm->GetDriverStatus(option & (MUCOM_STATUS_SNDDRV-1) );
+	}
+
 	switch (option) {
 	case MUCOM_STATUS_PLAYING:
 		if (playflag) return 1;

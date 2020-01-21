@@ -48,6 +48,7 @@ public:
 
 	virtual void ResetTime() = 0;
 	virtual int GetElapsedTime() = 0;
+	virtual int GetStatus(int option) = 0;
 
 	// 時間
 	virtual int GetMilliseconds() = 0;

@@ -366,6 +366,8 @@ void OsDependentWin32::StreamSend(int ms)
 	if (!snddrv) return;
 	if (ms <= 0) return;
 
+	if (RealChipInstance != NULL) return;
+
 	// 0以外はスレッドが重複しているので続行しない。
 	int ret = InterlockedExchange(&sending, 1);
 	if (ret != 0) {
@@ -408,6 +410,24 @@ void OsDependentWin32::StreamSend(int ms)
 	return;
 }
 
+int OsDependentWin32::GetStatus(int option)
+{
+	// OsDep内部パラメーター読み込みhub
+	//
+	switch (option) {
+	case 0:
+		return snddrv->GetSoundBuffer()->GetReadSize();
+	case 1:
+		return snddrv->GetSoundBuffer()->GetWriteSize();
+	case 2:
+		return snddrv->GetSoundBuffer()->GetPoolSize();
+	case 3:
+		return TotalTick;
+	default:
+		break;
+	}
+	return 0;
+}
 
 
 //	MUCOM88Winプラグイン処理用

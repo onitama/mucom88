@@ -266,3 +266,12 @@ bool OsDependentSdl::GetBreakStatus()
 {
 	return false;
 }
+
+int OsDependentSdl::GetStatus(int option)
+{
+	// OsDep内部パラメーター読み込みhub
+	//
+	return 0;
+}
+
+

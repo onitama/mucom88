@@ -117,3 +117,11 @@ int OsDependentDummy::KillFile(const char *filename)
 	return 0;
 }
 
+int OsDependentSdl::GetStatus(int option)
+{
+	// OsDep内部パラメーター読み込みhub
+	//
+	return 0;
+}
+
+
