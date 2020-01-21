@@ -380,7 +380,6 @@ int CMemBuf::SearchIndexValue( int val )
 	return j;
 }
 
-
 int CMemBuf::SaveFile(const char *fname )
 {
 	//		バッファをファイルにセーブ

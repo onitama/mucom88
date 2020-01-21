@@ -89,6 +89,9 @@ private:
 	//		実チップ対応
 	realchip *RealChipInstance;
 
+	bool SetBreakHook();
+	bool GetBreakStatus();
+
 };
 
 

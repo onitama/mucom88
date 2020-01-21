@@ -100,6 +100,23 @@ struct FlagDecision {
 	uint16_t pv, cy;
 };
 
+typedef struct {
+	uint16_t pc;
+	uint16_t sp;
+
+	uint16_t af;
+	uint16_t bc;
+	uint16_t de;
+	uint16_t hl;
+	uint16_t ix;
+	uint16_t iy;
+
+	uint16_t xaf;
+	uint16_t xbc;
+	uint16_t xde;
+	uint16_t xhl;
+} RegSet;
+
 class Z80 {
 public:
 	Z80();
@@ -114,6 +131,20 @@ public:
 	uint16_t GetHL(void);
 	uint8_t GetA(void);
 	uint16_t GetIX(void);
+
+	bool verbose;
+
+	void EnableBreakPoint(uint16_t adr);
+	void DisableBreakPoint();
+	void DebugRun();
+	void DebugInstExec();
+	void DebugPause();
+	void DebugDisable();
+	void DebugEnable();
+
+
+	void GetRegSet(RegSet *reg);
+	void SetRegSet(RegSet* reg);
 #if BUILTIN_MEMORY
 	void SetMemoryPtr(uint8_t *p) { m = p; }
 #endif
@@ -121,6 +152,12 @@ public:
 	void StopTrace();
 #endif
 protected:
+	bool DebugEnableFlag;
+	bool DebugWaitFlag;
+	bool DebugInstExecFlag;
+	bool EnableBreakPointFlag;
+	uint16_t BreakPointAddress;
+
 	uint16_t pc;
 #if BUILTIN_MEMORY
 	uint8_t *m;

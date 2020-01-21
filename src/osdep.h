@@ -64,6 +64,9 @@ public:
 	virtual int ChangeDirectory(const char *dir) = 0;
 	virtual int KillFile(const char *filename) = 0;
 
+	// 割り込み
+	virtual bool SetBreakHook() = 0;
+	virtual bool GetBreakStatus() = 0;
 
 protected:
 

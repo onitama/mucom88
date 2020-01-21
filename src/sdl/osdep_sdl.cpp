@@ -256,3 +256,13 @@ int OsDependentSdl::KillFile(const char *filename)
 	return 0;
 }
 
+
+bool OsDependentSdl::SetBreakHook()
+{
+	return true;
+}
+
+bool OsDependentSdl::GetBreakStatus()
+{
+	return false;
+}

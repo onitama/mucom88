@@ -57,6 +57,10 @@ public:
 	int ChangeDirectory(const char *dir);
 	int KillFile(const char *filename);
 
+	// その他
+	bool SetBreakHook();
+	bool GetBreakStatus();
+
     AudioBuffer *Buffer;
     AudioTimeInfo *Time;
     AudioTimeInfo *TimeRender;
