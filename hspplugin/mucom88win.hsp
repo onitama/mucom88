@@ -25,8 +25,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 51
-#define APP_VER "0.51"
+#const VER_NUMBER 52
+#define APP_VER "0.52"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -186,6 +186,12 @@
 
 *main
 	;	main loop
+
+	;mucomstat a_drv0,$100
+	;mucomstat a_drv1,$101
+	;mucomstat a_drv2,$102
+	;title ""+a_drv0+":"+a_drv1+":"+a_drv2
+
 	if asave_sw {
 		main_cnt++
 		if (main_cnt/15)>=asave_time : goto *to_saveauto
