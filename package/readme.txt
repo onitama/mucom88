@@ -482,6 +482,7 @@ Windows version by ONION software/onitama 2018-2019(C)
 	       -w [filename]	出力されるWAVファイル名を指定する
 	       -c [filename]	MMLファイルをバイナリファイルに変換する
 	       -i [filename]	MMLファイルの概要を出力する
+	       -r [pathname]	リズム音源のWAVファイルがあるパスを指定する
 	       -a [filename]	指定されたDLLをプラグインとして読み込む(Windows版のみ)
 	       -e           	MUCOM88システムファイルを外部から読み込む
 	       -s           	SCCIを経由して実チップでの演奏を行う
