@@ -41,6 +41,7 @@ public:
 	void UpdateTimer();
 	void ResetTime();
 	int GetElapsedTime();
+	int GetStatus(int option);
 
 	// 時間
 	int GetMilliseconds();
@@ -56,6 +57,10 @@ public:
 	int GetDirectory(char *buf, int size);
 	int ChangeDirectory(const char *dir);
 	int KillFile(const char *filename);
+
+	// その他
+	bool SetBreakHook();
+	bool GetBreakStatus();
 
     AudioBuffer *Buffer;
     AudioTimeInfo *Time;

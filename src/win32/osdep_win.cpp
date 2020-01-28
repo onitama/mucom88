@@ -279,6 +279,31 @@ void OsDependentWin32::ThreadFunc() {
 	}
 }
 
+static bool BreakStatus = false;
+
+BOOL WINAPI ControlHook(DWORD signal) {
+
+	if (signal == CTRL_C_EVENT || signal == CTRL_CLOSE_EVENT) {
+		BreakStatus = true;
+	}
+
+	return true;
+}
+
+bool OsDependentWin32::SetBreakHook()
+{
+	if (!SetConsoleCtrlHandler(ControlHook, TRUE)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool OsDependentWin32::GetBreakStatus()
+{
+	return BreakStatus;
+}
+
 //  TimeProc
 //
 void CALLBACK OsDependentWin32::TimeProc(UINT uid, UINT, DWORD_PTR user, DWORD_PTR, DWORD_PTR)
@@ -341,6 +366,8 @@ void OsDependentWin32::StreamSend(int ms)
 	if (!snddrv) return;
 	if (ms <= 0) return;
 
+	if (RealChipInstance != NULL) return;
+
 	// 0以外はスレッドが重複しているので続行しない。
 	int ret = InterlockedExchange(&sending, 1);
 	if (ret != 0) {
@@ -383,6 +410,24 @@ void OsDependentWin32::StreamSend(int ms)
 	return;
 }
 
+int OsDependentWin32::GetStatus(int option)
+{
+	// OsDep内部パラメーター読み込みhub
+	//
+	switch (option) {
+	case 0:
+		return snddrv->GetSoundBuffer()->GetReadSize();
+	case 1:
+		return snddrv->GetSoundBuffer()->GetWriteSize();
+	case 2:
+		return snddrv->GetSoundBuffer()->GetPoolSize();
+	case 3:
+		return TotalTick;
+	default:
+		break;
+	}
+	return 0;
+}
 
 
 //	MUCOM88Winプラグイン処理用

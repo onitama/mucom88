@@ -102,7 +102,7 @@ void MucomModule::FreeMucom() {
 
 void MucomModule::FreeResultBuffer() {
   if (!resultText) return;
-  delete resultText;
+  delete[] resultText;
   resultText = NULL;
 }
 

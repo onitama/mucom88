@@ -114,7 +114,7 @@ void OPNBase::SetPrescaler(uint p)
 	if (prescale != p)
 	{
 		prescale = p;
-		assert(0 <= prescale && prescale < 3);
+		assert(prescale < 3);
 		
 		uint fmclock = clock / table[p][0] / 12;
 		
@@ -1319,7 +1319,7 @@ bool OPNA::LoadRhythmSample(const char* path)
 			break;
 		fsize = Max(fsize, (1<<31)/1024);
 		
-		delete rhythm[i].sample;
+		delete[] rhythm[i].sample;
 		rhythm[i].sample = new int16[fsize];
 		if (!rhythm[i].sample)
 			break;

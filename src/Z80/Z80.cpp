@@ -1,8 +1,11 @@
-// Portable Z80 emulation class
+﻿// Portable Z80 emulation class
 // Copyright (C) Yasuo Kuwahara 2002-2018
 // version 2.10
 
 #include "Z80.h"
+
+#include <stdio.h>
+
 
 #ifdef Z80_DEBUG
 #include <stdio.h>
@@ -259,6 +262,12 @@ Z80::Z80() {
 	tracep = tracebuf;
 	trace_enable = true;
 #endif
+
+	DebugEnableFlag = true;
+	DebugWaitFlag = false;
+	DebugInstExecFlag = false;
+	EnableBreakPointFlag = false;
+	BreakPointAddress = 0x0000;
 }
 
 void Z80::Reset() {
@@ -275,6 +284,7 @@ void Z80::Reset() {
 	SetupFlags(0xff);
 	sp = 0xffff;
 	nmireq = intreq = Iff_set = false;
+	verbose = false;
 }
 
 uint16_t Z80::GetHL(void)
@@ -300,6 +310,74 @@ uint16_t Z80::GetIX(void)
 	return (*(uint16_t *)&r[4 + OFS_IX]);
 }
 
+void Z80::EnableBreakPoint(uint16_t adr)
+{
+	EnableBreakPointFlag = true;
+	BreakPointAddress = adr;
+}
+
+void Z80::DisableBreakPoint()
+{
+	EnableBreakPointFlag = false;
+	DebugWaitFlag = false;
+}
+
+void Z80::DebugRun()
+{
+	// 一つ実行して再度ブレイクポイントまで実行
+	DebugInstExecFlag = true;
+	DebugWaitFlag = false;
+}
+
+void Z80::DebugInstExec()
+{
+	DebugInstExecFlag = true;
+}
+
+void Z80::DebugPause()
+{
+	DebugWaitFlag = true;
+}
+
+void Z80::DebugDisable()
+{
+	DebugEnableFlag = false;
+}
+
+void Z80::DebugEnable()
+{
+	DebugEnableFlag = true;
+}
+
+void Z80::GetRegSet(RegSet* reg)
+{
+	reg->pc = pc;
+	reg->sp = sp;
+
+	reg->af = (A << 8 | ResolvFlags());
+	reg->bc = BC;
+	reg->de = DE;
+	reg->hl = HL;
+	reg->ix = GetIX();
+	reg->iy = *(uint16_t*)&r[4 + OFS_IY];
+
+	reg->xaf = (a_ << 8 | f_ << 8);
+	reg->xbc = (*(uint16_t*)&bcde);
+	reg->xde = (*((uint16_t*)&bcde)+1);
+	reg->xhl = (HLfix);
+}
+
+void Z80::SetRegSet(RegSet* reg)
+{
+	pc = reg->pc;
+	sp = reg->sp;
+
+	A = (reg->af >> 8);
+	BC = reg->bc;
+	DE = reg->de;
+	HL = reg->hl;
+}
+
 int32_t Z80::Execute(int32_t n) {
 	int32_t tmp, tmp2, cy;
 	bool halt = false;
@@ -310,10 +388,21 @@ int32_t Z80::Execute(int32_t n) {
 	clock = 0;
 #endif
 	do {
+		if (DebugEnableFlag) {
+			// ブレイクポイントであれば待機する
+			if (EnableBreakPointFlag && !DebugInstExecFlag && BreakPointAddress == pc) {
+				DebugWaitFlag = true;
+			}
+			// 待機状態であれば実行しない
+			if (DebugWaitFlag && !DebugInstExecFlag) continue;
+			DebugInstExecFlag = false;
+		}
+		
 #ifdef Z80_TRACE
 		if (!rofs) tracep->pc = pc;
 		tracep->acs1 = tracep->acs2 = 0;
 #endif
+
 		RefReg++;
 		switch (M1) {
 #define RST(i) case 0xc7 + 8 * (i): if (Extender(8 * i)) break; st16(sp -= 2, pc); pc = 8 * i; CLOCK(1); break;
@@ -582,6 +671,9 @@ int32_t Z80::Execute(int32_t n) {
 			case 0xcd: // call nn
 			st16(sp -= 2, pc + 2);
 			tmp2 = IMM16;
+			if (tmp2 < 0x8000) {
+				printf("cd pc:%04x -> %04x\n", tmp2, pc);
+			}
 			pc = tmp2;
 			CLOCK(1);
 			break;
@@ -722,6 +814,7 @@ int32_t Z80::Execute(int32_t n) {
 			case 0xc3: // jp nn
 			tmp2 = IMM16;
 			pc = tmp2;
+			if (verbose) printf("c3 pc:%04x\n", pc);
 			break;
 			// conditional jump
 #define JP_COND(i, cond) case 0xc2 + 8 * (i): tmp2 = IMM16; if (cond) pc = tmp2; break;

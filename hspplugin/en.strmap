@@ -1,4 +1,4 @@
-;	strmap v0.5 mucom88win.strmap
+;	strmap v0.6 mucom88win.strmap
 &&&&dsmap:17,1678,10916
 Missing plugin [
 &&&&dsmap:2,1695,652
@@ -95,6 +95,10 @@ Can't start playing due to error.
 &&&&dsmap:24,2324,21647
 Can't write file due to error.
 
+&&&&dsmap:50,4016,49658
+Same file name exists.
+Overwrite anyway?
+
 &&&&dsmap:11,2348,4906
 ] Saved.
 
@@ -141,6 +145,8 @@ Save as WAV file
 
 &&&&dsmap:17,2693,15690
 Duration(second)
+&&&&dsmap:44,2796,40244
+ ( Use #time tag to make default )
 &&&&dsmap:15,2710,13062
 Write File
 &&&&dsmap:18,2725,9988

@@ -36,6 +36,7 @@ public:
 	void UpdateTimer();
 	void ResetTime();
 	int GetElapsedTime();
+	int GetStatus(int option);
 
 	// 時間
 	int GetMilliseconds();

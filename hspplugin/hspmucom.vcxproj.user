@@ -6,7 +6,7 @@
     <LocalDebuggerWorkingDirectory>$(ProjectDir)/release</LocalDebuggerWorkingDirectory>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <LocalDebuggerCommand>debug/hsp3.exe</LocalDebuggerCommand>
+    <LocalDebuggerCommand>Debug/mucom88win</LocalDebuggerCommand>
     <LocalDebuggerWorkingDirectory>$(ProjectDir)/debug</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
   </PropertyGroup>

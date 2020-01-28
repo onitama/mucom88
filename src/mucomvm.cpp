@@ -956,6 +956,14 @@ void mucomvm::UpdateTime(int base)
 }
 
 
+int mucomvm::GetDriverStatus(int option)
+{
+	//		ドライバー固有の値を取得
+	//
+	return osd->GetStatus(option);
+}
+
+
 void mucomvm::StartINT3(void)
 {
 	//		INT3割り込みを開始

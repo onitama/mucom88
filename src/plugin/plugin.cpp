@@ -13,7 +13,8 @@
 
 int dummyCallback(void *instance, int cmd, void *p1, void *p2)
 {
-	Mucom88Plugin *plg = (Mucom88Plugin *)instance;
+    // 未使用？
+	// Mucom88Plugin *plg = (Mucom88Plugin *)instance;
 	return 0;
 }
 

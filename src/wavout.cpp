@@ -62,8 +62,12 @@ void RecordWave(CMucom *m, const char *fname, int rate, int seconds) {
 	m->SetVMOption(VM_OPTION_STEP, 1);		// オプションを設定
 	m->SetAudioRate(rate);
 
-	FILE *fp = fopen(fname, "wb");
-	if (fp == NULL) return;
+	FILE* fp = NULL;
+
+	if (fname != NULL) {
+		fp = fopen(fname, "wb");
+		if (fp == NULL) return;
+	}
 
 	WriteWavHeader(fp, rate, bits, channels, total_samples);
 
@@ -75,7 +79,8 @@ void RecordWave(CMucom *m, const char *fname, int rate, int seconds) {
 			int v=buf[i];
 			out[i] = v > 32767 ? 32767 : (v < -32768 ? -32768 : v);
 		}
-		fwrite(out, samples*4, 1, fp);
+
+		if (fp != NULL) fwrite(out, samples*4, 1, fp);
 		total_samples += samples;
 	}
 

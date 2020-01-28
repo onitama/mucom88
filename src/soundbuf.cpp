@@ -35,7 +35,7 @@ SoundBuf::SoundBuf( void )
 SoundBuf::~SoundBuf( void )
 {
 	if ( m_buffer ) {
-		delete m_buffer;
+		delete[] m_buffer;
 	}
 }
 

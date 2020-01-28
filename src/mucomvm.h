@@ -96,6 +96,7 @@ public:
 	int GetIntCount(void) { return time_intcount; }
 	int GetMasterCount(void) { return time_master; }
 	int GetPassTick(void) { return pass_tick; }
+	int GetDriverStatus(int option);
 
 	//		YM2608ステータス
 	void FMRegDataOut(int reg, int data);
