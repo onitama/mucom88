@@ -7,8 +7,14 @@
 
 #include <vector>
 #include <string>
+
+#include "Z80/Z80.h"
+
 #include "membuf.h"
 #include "voiceformat.h"
+
+#include "utils/logwrite.h"
+#include "utils/wavwrite.h"
 
 /*------------------------------------------------------------*/
 
@@ -53,6 +59,7 @@
 #define MUCOM_STATUS_MUBRATE 8
 #define MUCOM_STATUS_BASICSIZE 9
 #define MUCOM_STATUS_BASICRATE 10
+#define MUCOM_STATUS_AUDIOMS 11
 
 #define MUCOM_STATUS_SNDDRV 0x100
 
@@ -60,6 +67,10 @@
 #define MUCOM_OPTION_SCCI 2
 #define MUCOM_OPTION_FASTFW 4
 #define MUCOM_OPTION_STEP 8
+
+#define MUCOM_EM_MUBSIZE_MAX (0x8000-0x0000)
+#define MUCOM_EM_BASICSIZE_MAX 0x8000
+
 
 #define MUCOM_MUBSIZE_MAX (0xE300-0xC200)
 #define MUCOM_BASICSIZE_MAX 0x6000
@@ -94,6 +105,8 @@
 #define MUCOM_COMPILE_IGNOREPCM 2
 #define MUCOM_COMPILE_TO_MUSBUFFER 8
 
+#define MUCOM_EM_FMVOICE_ROOM_ADR 0xC200 // コンパイル初期化前アドレス(em版)
+
 #define MUCOM_FMVOICE_ADR 0x6000
 #define MUCOM_FMVOICE_SIZE 0x2000
 #define MUCOM_FMVOICE_MAXNO 256
@@ -115,6 +128,76 @@
 
 #define MUCOM_EDIT_OPTION_SJIS 0	// 編集中MMLの文字コードはSJIS
 #define MUCOM_EDIT_OPTION_UTF8 1	// 編集中MMLの文字コードはUTF-8
+
+#define MUCOM_DRIVER_UNKNOWN -1 	// 不明
+#define MUCOM_DRIVER_NONE 0 		// 未定義
+#define MUCOM_DRIVER_MUCOM88 1		// オリジナルのドライバ(1.7)
+#define MUCOM_DRIVER_MUCOM88E 2		// オリジナルのドライバ(1.5)
+#define MUCOM_DRIVER_MUCOM88EM 4	// 拡張メモリ版ドライバ(1.7)
+#define MUCOM_DRIVER_MUCOMDOTNET 8	// MucomDotNET
+
+#define MUCOM_ORIGINAL_VER_17 0		// Mucom88オリジナルのドライバ(1.7)
+#define MUCOM_ORIGINAL_VER_15 1		// Mucom88オリジナルのドライバ(1.5)
+
+
+// 共通
+#define MUCOM_ADDRESS_BASIC 0x1000
+#define MUCOM_ADDRESS_POLL_VECTOR 0x0eea8
+
+
+// em 開始アドレス
+#define MUCOM_ADDRESS_EM_EXPAND 0xB800
+#define MUCOM_ADDRESS_EM_ERRMSG 0x8800
+#define MUCOM_ADDRESS_EM_MSUB 0x9000
+#define MUCOM_ADDRESS_EM_MUC88 0x9600
+#define MUCOM_ADDRESS_EM_SSGDAT 0xBE00
+#define MUCOM_ADDRESS_EM_TIME 0xE400
+#define MUCOM_ADDRESS_EM_SMON 0xDE00
+
+#define MUCOM_ADDRESS_EM_MUSIC 0xC000
+
+#define MUCOM_ADDRESS_EM_SSGDAT_AFTER 0xc200
+
+
+// ルーチン
+#define MUCOM_ADDRESS_EM_ERAM_TABLE 0x95A0 // 拡張RAM切り替えルーチン テーブル
+#define MUCOM_ADDRESS_EM_CINT 0x9600 // コンパイラ初期化
+
+#define MUCOM_ADDRESS_EM_WKGET 0xC02A
+
+
+
+// オリジナル 開始アドレス
+#define MUCOM_ADDRESS_EXPAND 0xab00
+#define MUCOM_ADDRESS_ERRMSG 0x8800
+#define MUCOM_ADDRESS_MSUB 0x9000
+#define MUCOM_ADDRESS_MUC88 0x9600
+#define MUCOM_ADDRESS_SSGDAT 0x5e00
+#define MUCOM_ADDRESS_TIME 0xe400
+#define MUCOM_ADDRESS_SMON 0xde00
+
+#define MUCOM_ADDRESS_MUSIC 0xb000
+
+// ルーチン
+#define MUCOM_ADDRESS_CINT 0x9600 // コンパイラ初期化
+#define MUCOM_ADDRESS_RETW 0xb00c // music2:RETW
+
+// 曲データアドレス
+#define MUCOM_ADDRESS_SONG 0xc200
+#define MUCOM_ADDRESS_EM_SONG 0x0000
+
+// ワークアドレス
+#define MUCOM_ADDRESS_JCLOCK 0x8c90
+#define MUCOM_ADDRESS_JPLINE 0x8c92
+#define MUCOM_ADDRESS_DEFVOICE 0x8c50
+
+
+// 曲再生ルーチン オフセット
+#define MUCOM_MUSIC_OFFSET_MSTART 0x0000
+#define MUCOM_MUSIC_OFFSET_MSTOP 0x0003
+#define MUCOM_MUSIC_OFFSET_MFADE 0x0006
+
+
 
 
 
@@ -225,6 +308,9 @@ public:
 	//	MUCOM88 main service
 	void Init(void *window = NULL, int option = 0, int Rate = 0);
 	void Reset(int option=0);
+	void LoadOriginal(int option);
+	void LoadPlayer(int option);
+	void SetChannelWork();
 	int Play(int num=0);
 	int Stop(int option=0);
 	int Restart(void);
@@ -232,8 +318,12 @@ public:
 	int Update(void);
 	int PlayEffect(int num=0);
 
+	void PlayMemory();
+
 	//	Service for command line
 	void PlayLoop();
+	void SetWavFilename(const char *wavFilename);
+	void Record(int seconds);
 	void RenderAudio(void *mix, int size);
 	void UpdateTime(int tick_ms);
 
@@ -243,8 +333,11 @@ public:
 	//	MUCOM88 MUC/MUB service
 	int LoadMusic(const char *fname, int num = 0);
 	int CompileFile(const char *fname, const char *sname, int option=0);
+	int CompileMemory(const char* fname, int option = 0);
 	int CompileMem(char *mem, int option=0);
 	int Compile(char *text, const char *filename, int option=0);
+	int Compile(char* text, int option = 0, bool writeMub=false, const char *filenamw = NULL);
+	void PutMucomHeader(const char *stmp);
 	int ProcessFile(const char *fname);
 	int ProcessHeader(char *text);
 	int SaveMusic(const char *fname, int start, int length, int option = 0);
@@ -253,6 +346,7 @@ public:
 
 	//	VM log service
 	const char *GetMessageBuffer(void);
+	int GetMessageBufferSize(void);
 	int GetStatus(int option);
 	void SetVMOption(int option, int mode);
 	void SetAudioRate(int rate);
@@ -311,12 +405,60 @@ public:
 	MUCOM88_VOICEFORMAT *GetFMVoice(int no);
 	int UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice);
 	int StoreFMVoiceFromEmbed(void);
+	int SendFMVoiceMemory(const unsigned char* src, int offset, int size);
 	const char *GetVoiceFileName(void) { return voicefilename.c_str(); }
 	const char *GetVoicePathName(void) { return voice_pathname.c_str(); }
 	MUCOM88_VOICEFORMAT *GetVoiceData(void) { return fmvoice_internal; }
 	MUCOM88_VOICEFORMAT *GetVoiceDataOrg(void) { return fmvoice_original; }
 	int GetUseVoiceNum(int num) { return (int)fmvoice_use[num]; }
 	int GetUseVoiceMax(void) { return fmvoice_usemax; }
+
+	// FM Log Service
+	void SetLogFilename(const char *name);
+
+	// Other Service
+	void GetFMRegMemory(unsigned char* data, int address, int length);
+	void GetMemory(unsigned char *data, int address, int length);
+
+	void GetMainMemory(unsigned char* data, int address, int length);
+	void SetMainMemory(unsigned char* data, int address, int length);
+
+	void GetExtMemory(unsigned char* data, int bank, int address, int length);
+	void SetExtMemory(unsigned char* data, int bank, int address, int length);
+
+	void SetChMute(int ch, bool sw);
+	bool GetChMute(int ch);
+	void FMRegDataOut(int reg, int data);
+	int FMRegDataGet(int reg);
+
+	int Peek(uint16_t adr);
+	int Peekw(uint16_t adr);
+	void Poke(uint16_t adr, uint8_t data);
+	void Pokew(uint16_t adr, uint16_t data);
+
+	//	driver selector
+	int GetDriverMode(char* fname);
+	int GetDriverModeMUB(char* fname);
+	int GetDriverModeMem(char* mem);
+	int GetDriverModeString(const char* name);
+	void SetDriverMode(int driver);
+
+	// ExtRam
+	void GetExtramVector();
+
+	void ChangeMemoryToSong();
+	void RestoreMemory();
+
+	int GetSongAddress();
+
+	// Debug
+	void EnableBreakPoint(uint16_t adr);
+	void DisableBreakPoint();
+	void DebugRun();
+	void DebugInstExec();
+	void DebugPause();
+	void GetRegSet(RegSet *reg);
+
 
 private:
 	//		Settings
@@ -326,6 +468,21 @@ private:
 	char pcmfilename[MUCOM_FILE_MAXSTR];	// loaded PCM file
 	int mubver;			// playing MUB version
 	MUBHED *hedmusic;	// playing Music data header
+
+	ILogWrite *p_log;
+	WavWriter *p_wav;
+
+	bool original_mode; // original mode
+	bool compiler_initialized; // 初期化後
+	bool use_extram;
+	int  original_ver;	// original mode version (MUCOM_ORIGINAL_VER_*)
+	int extram_disable_vec;
+	int extram_enable_vec;
+
+	int extram_last_bank;
+	int extram_last_mode;
+
+	int music_start_address;
 
 	//		FM voice status
 	//
@@ -379,6 +536,12 @@ private:
 	int StoreBasicSource(char *text, int line, int add);
 	bool hasMacro(char *text);
 
+	void InitCompiler();
+	void LoadModBinary(int option);
+	void LoadExternalCompiler();
+	void LoadInternalCompiler();
+
+
 	//		Virtual Machine
 	//
 	mucomvm *vm;
@@ -389,6 +552,7 @@ private:
 	CMemBuf *musbuf[MUCOM_MUSICBUFFER_MAX];
 
 	//		Audio
+	int AudioCurrentRate;
 	double AudioStep;
 	double AudioLeftMs;
 

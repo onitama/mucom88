@@ -3,14 +3,15 @@
 #
 # make test ... test生成
 # make mini ... miniplay生成
-#
+# make tool ... pcmtool作成
+
 
 CXX = g++
 CC = gcc
 CFLAGS = 
 CXXFLAGS = 
 # CXXFLAGS += -Wno-write-strings
-COMMON_FLAGS = # -Wall -Werror
+COMMON_FLAGS = 
 # COMMON_FLAGS += -Wall -Werror
 LDFLAGS = 
 DEFINES = 
@@ -32,6 +33,7 @@ TARGET = $(TARGET_NAME)$(EXE_SUFFIX)
 TARGET_MODTEST = mod_test$(EXE_SUFFIX)
 TARGET_DEPTEST = dep_test$(EXE_SUFFIX)
 TARGET_MINIPLAY = miniplay$(EXE_SUFFIX)
+TARGET_PCMTOOL = pcmtool$(EXE_SUFFIX)
 
 
 ifeq ($(DEBUG),1)
@@ -46,6 +48,7 @@ endif
 all: makedir $(TARGET)
 test: makedir $(TARGET_DEPTEST) $(TARGET_MODTEST)
 mini: makedir $(TARGET_MINIPLAY)
+tool: makedir $(TARGET_PCMTOOL)
 
 
 DIRS = z80 fmgen plugin module tests
@@ -76,6 +79,9 @@ SRCS += callback.cpp
 SRCS += wavout.cpp
 SRCS += osdep.cpp
 
+SRCS += utils/logwrite.cpp
+
+
 MAIN_SRCS = main.cpp
 
 MOD_SRCS = module/mucom_module.cpp
@@ -84,6 +90,11 @@ DEPTEST_SRCS = tests/depent_test.cpp
 
 # miniplayはSDLに依存します
 MINIPLAY_SRCS = sdl/miniplay.cpp sdl/audiosdl.cpp
+
+# pcmtool
+PCMTOOL_SRCS = utils/pcmtool.cpp utils/pcmentry.cpp utils/pcmtool_main.cpp
+
+DIRS += utils
 
 # OS依存
 ifeq ($(OS_WIN32),1)
@@ -116,8 +127,8 @@ SDL_LIBS =  $(shell sdl-config --libs)
 endif
 
 ifeq ($(SDL_WIN32),1)
-LIB_STATIC =  -Wl,-Bstatic -lstdc++ -lgcc -lpthread -Wl,-Bdynamic
-LIBS += $(SDL_LIBS) -static-libgcc -static-libstdc++   $(LIB_STATIC) -mconsole
+# dllをすべて静的リンクします。 （Win32かつSDLはテスト用途のため)
+LIBS += -static $(SDL_LIBS) -mconsole
 else
 LIBS += $(SDL_LIBS)
 endif
@@ -161,6 +172,10 @@ DEPTEST_OBJS = $(addprefix $(OBJS_DIR)/,$(addsuffix .o,$(DEPTEST_SRCS_BASE)))
 MINIPLAY_SRCS_BASE = $(basename $(MINIPLAY_SRCS))
 MINIPLAY_OBJS = $(addprefix $(OBJS_DIR)/,$(addsuffix .o,$(MINIPLAY_SRCS_BASE)))
 
+# PCMツール
+PCMTOOL_SRCS_BASE = $(basename $(PCMTOOL_SRCS))
+PCMTOOL_OBJS = $(addprefix $(OBJS_DIR)/,$(addsuffix .o,$(PCMTOOL_SRCS_BASE)))
+
 INCLUDES += -I. $(addprefix -I,$(DIRS) )
 
 
@@ -181,6 +196,11 @@ $(TARGET_MODTEST) : $(OBJS) $(MOD_OBJS) $(MODTEST_OBJS)
 $(TARGET_MINIPLAY) : $(OBJS) $(MOD_OBJS) $(MINIPLAY_OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
 
+# モジュールテスト
+$(TARGET_PCMTOOL) : $(OBJS) $(MOD_OBJS) $(PCMTOOL_OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
+
+
 # 実行ファイル
 $(TARGET) : $(MAIN_OBJS) $(OBJS)
 	$(CXX) $(LDFLAGS) -o $@ $^ $(LIBS)
@@ -198,6 +218,7 @@ $(OBJS_DIR)/%.o : %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean :
+	rm -f $(TARGET_PCMTOOL)
 	rm -f $(TARGET_MINIPLAY) $(TARGET_DEPTEST) $(TARGET_MODTEST) $(TARGET)
 	rm -rf $(OBJS_DIR)
 

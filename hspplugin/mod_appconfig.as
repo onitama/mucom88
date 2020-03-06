@@ -9,6 +9,7 @@
 
 #module
 
+#ifndef _HSP3DISH
 
 ; winapi
 #uselib "kernel32"
@@ -32,14 +33,20 @@
 	if "" = v1 : v1 = org_dir
 	return
 
+#endif
+
 
 ;
 ;	easy config data support module
 ;
 #deffunc cfg_init str fname, str appname
 
+#ifndef _HSP3DISH
 	get_appdata_path app_dir, appname
-	cfg_name = app_dir+fname
+#else
+	app_dir = dir_exe
+#endif
+	cfg_name = app_dir+"\\"+fname
 	sdim sbuf,$1000
 	sdim s1,$100
 	sdim s2,$100

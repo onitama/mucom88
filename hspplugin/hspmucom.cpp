@@ -696,3 +696,45 @@ EXPORT BOOL WINAPI mucomedit_flush(HSPEXINFO *hei, int p1, int p2, int p3)
 //--------------------------------------------------------------------------------------
 
 
+EXPORT BOOL WINAPI mucomgetdriver(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomgetdriver var,"filename",option (type$202)
+	//		"filename"の#driverオプションを得る
+	//		varに結果が入る(MUCOM_DRIVER_*)
+	//		optionが0の時は.muc、1の時は.mubを読み込む
+	//
+	PVal *pv;
+	APTR ap;
+	int res;
+	int ep1;
+	char *p;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	p = hei->HspFunc_prm_gets();			// パラメータ2:文字列
+	ep1 = hei->HspFunc_prm_getdi(0);		// パラメータ3:数値
+	res = 0;
+	if (mucom) {
+		if (ep1 == 0) {
+			res = mucom->GetDriverMode(p);
+		}
+		else {
+			res = mucom->GetDriverModeMUB(p);
+		}
+	}
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_INT, &res);	// 変数に値を代入
+	return 0;
+}
+
+
+EXPORT BOOL WINAPI mucomsetdriver(int p1, int p2, int p3, int p4)
+{
+	//	DLL mucomsetdriver option (type$00)
+	//		mucomのドライバ動作モードを指定する、optionに MUCOM_DRIVER_* を指定する
+	//		(実際の反映はReset実行後になる)
+	//
+	if (mucom) {
+		mucom->SetDriverMode(p1);
+	}
+	return 0;
+}
+
+

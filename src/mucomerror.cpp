@@ -1,4 +1,4 @@
-
+﻿
 //
 //	MUCOM88 debug support
 //	(エラー処理)

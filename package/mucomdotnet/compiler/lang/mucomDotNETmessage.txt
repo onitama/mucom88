@@ -1,0 +1,175 @@
+﻿;英語メッセージ定義
+;I 通常のメッセージ
+;E エラーメッセージ
+
+;English Message Definition Table
+;I Info
+;E Error
+
+;NOTE: PLEASE SOMEBODY PROOFREAD THIS. CAN YOU?
+;English Translation By Chromaryu(knight-ryu12)
+;Please improve this :|
+
+;common
+E0000=Exception message:\r\n{0}\r\nException stacktrace:\r\n{1}\r\n
+
+;compiler.cs 0100
+E0100=Hmm, Error has been occured on compile. (Error on Line {0})
+
+;msub.cs 0200
+E0200=Sound data exceeded maximum capacity(64k).
+E0201={0}'s value is missing/not set.
+
+;MucException.cs 0300
+E0300=[row:{0} column:{1}]{2}
+
+;muc88.cs 0400
+I0400=Parse Macro
+I0401=Parse Line{0}
+I0402=Begin FMCOMP on Ch.{0}
+W0400=Macro number value range is exceeding $00~$ff.
+W0401=Can't set '^' or '&' command on rest length.
+W0402=Can only use one '.' on rest.
+W0403='r'Rest command value range is exceeding $01~$ff.(value:{0})
+W0404=The value range (1-255) was exceeded during shuffle calculation.(value:{0})
+W0405=Exceeded value range (1-255) during length analysis.
+W0406=SSG part can't use 'y' Command.
+W0407=SSG part can't use 'p' Command.
+W0408=A non-zero number is specified for the TL of the carrier (op:{1}) FM instrument number:{0}.(ALG:{2} TL:{3},{4},{5},{6})
+W0409=Illegal value on FM instrument define.
+W0410=FM instrument number 0 or 1 is used. (mucomDotNET does not reproduce the original incorrect state)
+W0411=Volume (246 to 251 or less) was specified when the VM command value was 0.
+W0412=If you use the 't' or 'T' command in the SSG part, the tempo of the entire song changes, not at the specified time.
+W0413=!!Caution!! The timer-B setting value is 253 to 255 or less. (Driver hang up!)
+W0414=Portamento specifies a clock of 129 or higher. (Value:{0})
+W0415=AutoPanning specifies a clock of 3 or lower. (Value:{0})
+E0400=Trying to call undefined macro!
+E0401=Unable to return from macro line.(Address Exceeded)
+E0402=Unable to return from macro line.(Address Undefined)
+E0403=Illegal note on portament beginning.
+E0404=Illegal note on portament ending.
+E0405=No note on portament ending.
+E0406=Portament range is too wide.
+E0407='}' not defined on portament end.
+E0408='R'Reverb command can only be used in FM or SSG part.
+E0409='R'Reverb command
+E0410='T'Tempo set command
+E0411='T'Can't set 0 on Tempo command
+E0412='H'Hardware LFO can only be used in FM part.
+E0413='H'Hardware LFO
+E0414='p'Pan command
+E0415='%'Direct note length command
+E0416='\'Echo configure command
+E0417='\\'Illegal value set on Echo configure command.
+E0418='V'Relative volume command
+E0419=can only use one / inside loop.
+E0420='s'Key-On reverse command
+E0421='K'Key-Shift command
+E0422='k'Key-Shift command(Not K Command)
+E0423='t'Timer B Set Command
+E0424='w'Noise frequency set command can only be used in SSG part.
+E0425='w'Noise frequency set command
+E0426='P'Mixer Mode set command can only be used in SSG part.
+E0427='P'Mixer Mode set command.
+E0428='P'Illegal value set on Mixer Mode set command.
+E0429='E'Software Envelope command can only be used in SSG part.
+E0430='E'Software Envelope command
+E0431='q'staccato command
+E0432='S'Slot detune command can only be used on FM Ch3(Part C).
+E0433='S'Slot detune command
+E0434='S'Illegal usage on Slot detune command.
+E0435='S'Illegal value on Slot detune command.
+E0436=']'Loop End command
+E0437=Mismatching ].
+E0438=Loop nest is too deep (>16).
+E0439='r'Illegal rest value
+E0440='M'Illegal value on Software LFO command.
+E0441='M'Illegal format on Software LFO command.
+E0442='M'Software LFO command
+E0443=Undefined value on Software LFO Switch'MF'. 
+E0444=Illegal value on Software LFO Switch'MF'.
+E0445=Illegal value on Software LFO Switch'MF'.(only 0/1)
+E0446=Delay'MW'.
+E0447=Clock unit'MC'
+E0448=Undefined value on Software LFO amplitude'ML'
+E0449=Illegal value on Software LFO amplitude'ML'
+E0450=Frequency'MD'
+E0451=Illegal definition on Software LFO.
+E0452=Software LFO Total Level'MT' can't be used in SSG port.
+E0453=Software LFO Total Level'MT' Value 1 is undefined.
+E0454=Software LFO Total Level'MT' Value 1 is illegal.
+E0455=Software LFO Total Level'MT' Value 2 is undefined.
+E0456=Software LFO Total Level'MT' Value 2 is illegal.
+E0457={0} value is undefined on Software LFO.
+E0458={0} value is illegal on Software LFO.
+E0459='y'Command address value is illegal.
+E0460='y'Command address value range is exceeding $00~$b2.
+E0461='y'Command can't read ','.
+E0462='y'Command data value undefined.
+E0463='y'Command data value illegal.
+E0464='y'Command FM Parameter setting is illegal.
+E0465='y'Command
+E0466='y'Command Operator set exceeding value(1~4).
+E0467={0} part can't use 'y' Command FM parametter setting!
+E0468=')'Relative volume set command value is illegal.
+E0469='('Relative volume set command value exceeded range.
+E0470='('Relative volume set command value is illegal.
+E0471=')'Relative volume set command value exceeded range.
+E0472='v'Volume set command value is illegal.
+E0473=Unable to found nesscery ',' in 'v'Volume set command in Rhythm part. 
+E0474='v'Volume set command in Rhythm part.
+E0475='v'Volume set command value is illegal(Rhythm).
+E0476='v'Volume set command value is illegal(ADPCM).
+E0477=Unknown command start with v(v{0}).
+E0478='vm'Volume correction command value is illegal(ADPCM)
+E0479='vm'Volume correction command value undefined.
+E0480='D'Detune setting command 
+E0481='D'Detune setting command value is illegal.
+E0482='l'Length set command
+E0483='l'Length set command value is illegal.
+E0484=Trying to set value[{1}] more than C-value[{0}].
+E0485='o'Octave command 
+E0486='o'Octave command value exceeding range(1~8).
+E0487='@='Command not implemented.
+E0488='@'Patch Set Command
+E0489='@'Patch Set Command value is illegal.
+E0490='@'Using Patch Set Command with string can only be used in FM part.
+E0491='@'Unable to find patch by specified name!
+E0492='@'Unable to find specified patch from patch definition or external patch definition file.
+E0493='C'Clock setting command
+E0494='C'Clock setting value is invalid.
+E0495=Macro definition number undefined.
+E0496=Macro definition number is invalid.
+E0497=Unable to find '{' for macro definition.
+E0498=Can't match '['']'Loop setting command 
+E0499=Analysis of the duration failed.Value is undefined on '%' command.
+E0500=Analysis of the duration failed.The value after '%' is invalid.
+E0501=Analysis of the duration failed.The value is invalid.
+E0502=Analysis of the duration failed.The read value exceeds the value specified by 'C'.(value:{0})
+E0503=Analysis of the duration failed.As a result of calculating the dot, the range was exceeded.(value:{0})
+E0504='S'Hardware envelope command
+E0505='S'Hardware envelope command value exceeding range(0~7).
+E0506='m'Hardware envelope speed command
+E0507='m'Hardware envelope speed command value exceeding range(0~65535).
+E0508=SSG Patch number exceeding range(0~7).(value:{0})
+E0509='@='SSG preset rewrite command
+E0510='@='Illegal format on SSG preset rewrite command.
+E0511='@='Illegal value on SSG preset rewrite command.
+E0512='E'Illegal format on Software Envelope command.
+E0513='E'Illegal value on Software Envelope command.
+E0514='MT'Illegal value1 on Software LFO command.(value1={0} range:0-15)
+E0515='MT'Illegal value2 on Software LFO command.(value2={0} range:0-255)
+E0516='KD'KeyOn Delay command
+E0517='KD'Illegal value on KeyOn Delay command.(value:{0})
+E0518='KD'Illegal value on KeyOn Delay command.(value:{0})
+E0519=Not found voice data file.Check TAG define.
+E0520='m'Hardware envelope speed command can only be used in SSG part.
+E0521='S'Hardware envelope command can only be used in SSG part.
+E0522='KD'KeyOn Delay command can only be used in FM part.
+
+;Program.cs 0600
+E0600=I want arguments(.muc File) please?
+
+;compiler.cs 0700
+E0700=The buffer (65535byte) that can be used per part has been exceeded.(Used buffer by the channel: Ch.{0}: {1}byte)
+

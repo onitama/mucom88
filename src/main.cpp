@@ -1,8 +1,9 @@
 
 //
 //	mucom : OpenMucom88 Command Line Tool
-//			MUCOM88 by Yuzo Koshiro Copyright 1987-2019(C) 
-//			Windows version by onion software/onitama 2018/11
+//			MUCOM88 by Yuzo Koshiro Copyright 1987-2020(C) 
+//			Windows version by onion software/onitama since 2018/11
+//			Special thanks to : WING☆, Makoto Wada (Ancient corp.), boukichi, kumatan
 //
 
 #include <stdio.h>
@@ -35,8 +36,14 @@
 #define RENDER_RATE 44100
 #define RENDER_SECONDS 90
 
-#ifndef _MAX_PATH
-#define _MAX_PATH	1024
+#ifdef __APPLE__
+#define STRCASECMP strcasecmp
+#else
+#ifdef _WIN32
+#define STRCASECMP _strcmpi
+#else
+#define STRCASECMP strcmpi
+#endif
 #endif
 
 /*----------------------------------------------------------*/
@@ -49,18 +56,22 @@ static const char *p[] = {
 	"       -v [filename] set load voice file name",
 	"       -o [filename] set output MUB file name",
 	"       -w [filename] set output WAV file name",
+	"       -b [filename] set output log(.vgm/.s98) file name",
 	"       -c [filename] compile mucom88 MML file name",
 	"       -i [filename] info print mucom88 MML file name",
 #ifdef MUCOM88WIN
 	"       -a [filename] add external plugin",
 #endif
 	"       -r [pathname] set rhythm WAV pathname",
+	"       -f [drivername] Force driver mode",
 	"       -e Use external ROM files",
 	"       -s Use SCCI device",
 	"       -k Skip PCM load",
-	"       -x Record WAV file",
+	"       -x Recording mode",
 	"       -d Dump used voice parameter",
-	"       -l [n] Set Recording lengh to n seconds ",
+	"       -l [n] Set recording lengh to n seconds ",
+	"       -g Compile only",
+	"       -?, -h Show help message ",
 	NULL };
 	int i;
 	for (i = 0; p[i]; i++) {
@@ -80,9 +91,11 @@ int main( int argc, char *argv[] )
 	const char *pcmfile;
 	const char *outfile;
 	const char *wavfile;
+	const char *logfile;
 	const char *voicefile;
 	const char* pluginfile;
 	const char* rhythmdir;
+	const char* drivername;
 
 #if defined(USE_SDL) && defined(_WIN32)
 	freopen( "CON", "w", stdout );
@@ -126,11 +139,15 @@ int main( int argc, char *argv[] )
 	st = 0; ppopt = 0; cmpopt = 0; scci_opt = 0; dumpopt = 0;
 	pcmfile = MUCOM_DEFAULT_PCMFILE;
 	outfile = DEFAULT_OUTFILE;
-	wavfile = DEFAULT_OUTWAVE;
+	wavfile = NULL;
+	logfile = NULL;
 	voicefile = NULL;
 	pluginfile = NULL;
 	rhythmdir = NULL;
+	drivername = NULL;
 	fname[0] = 0;
+
+	bool compile_only = false;
 
 	int song_length = 0;
 
@@ -153,17 +170,23 @@ int main( int argc, char *argv[] )
 			case 'w':
 				wavfile = argv[b + 1]; b++;
 				break;
+			case 'b':
+				logfile = argv[b + 1]; b++;
+				break;			
 			case 'a':
 				pluginfile = argv[b + 1]; b++;
+				break;
+			case 'f':
+				drivername = argv[b + 1]; b++;
 				break;
 			case 'l':
 				song_length = atoi(argv[b + 1]); b++;
 				break;
 			case 'c':
-				cmpopt |= 2;
+				cmpopt |= MUCOM_CMPOPT_COMPILE;
 				break;
 			case 'e':
-				cmpopt |= 1;
+				cmpopt |= MUCOM_CMPOPT_USE_EXTROM;
 				break;
 			case 'k':
 				ppopt = 1;
@@ -177,9 +200,15 @@ int main( int argc, char *argv[] )
 			case 'x':
 				cmpopt |= MUCOM_CMPOPT_STEP;
 				break;
+			case 'g':
+				compile_only = true;
+				break;
 			case 'd':
 				dumpopt = 1;
 				break;
+			case '?': case 'h':
+				usage1(); 
+				return -1;
 			case 'r':
 				rhythmdir = argv[b + 1]; b++;
 				break;
@@ -214,6 +243,16 @@ int main( int argc, char *argv[] )
 		}
 	}
 
+	// ログ設定
+	if (logfile) {
+		mucom.SetLogFilename(logfile);
+	}
+
+	// 初期化
+	if (wavfile) {
+		mucom.SetWavFilename(wavfile);
+	}
+
 	if (pluginfile) {
 		printf("#Adding plugin %s.\n", pluginfile);
 		int plgres = mucom.AddPlugins(pluginfile, 0);
@@ -221,6 +260,32 @@ int main( int argc, char *argv[] )
 			printf("#Error adding plugin.(%d)\n", plgres);
 		}
 	}
+
+
+	bool play_memory = false;
+	const char* ext = strrchr(fname, '.');
+
+	// mmlファイルはコンパイルをするようにする
+	if (ext != NULL && STRCASECMP(ext, ".muc") == 0) cmpopt |= MUCOM_CMPOPT_COMPILE;
+
+	int driver_mode;
+	if (drivername != NULL) {
+		driver_mode = mucom.GetDriverModeString(drivername);
+	}
+	else {
+		if (cmpopt & MUCOM_CMPOPT_COMPILE) {
+			driver_mode = mucom.GetDriverMode(fname);
+		}
+		else {
+			driver_mode = mucom.GetDriverModeMUB(fname);
+		}
+	}
+
+	if (driver_mode >= MUCOM_DRIVER_MUCOMDOTNET) {
+		printf("#Error MucomDotNet driver specified, Trying normal driver instead.\n");
+	}
+	mucom.SetDriverMode(driver_mode);
+
 
 	mucom.Reset(cmpopt);
 	st = 0;
@@ -246,10 +311,8 @@ int main( int argc, char *argv[] )
 		if (mucom.CompileFile(fname, outfile) < 0) {
 			st = 1;
 		}
-		// 現状はコンパイル時は再生できない
-		st = 1;
-	}
-	else {
+		play_memory = true;
+	} else {
 		if (mucom.LoadMusic(fname) < 0) {
 			st = 1;
 		}
@@ -261,7 +324,12 @@ int main( int argc, char *argv[] )
 		return st;
 	}
 
-	st = mucom.Play(0);
+	if (play_memory) { 
+		mucom.PlayMemory(); 
+	} else { 
+		st = mucom.Play(0); 
+	}
+
 	if (st == 0) {
 		if (dumpopt) {
 			int i, max;
@@ -275,6 +343,9 @@ int main( int argc, char *argv[] )
 	mucom.PrintInfoBuffer();
 	puts(mucom.GetMessageBuffer());
 
+	// コンパイルのみ
+	if (play_memory && compile_only) return st;
+
 	if (st == 0) {
 		if (cmpopt & MUCOM_CMPOPT_STEP) {
 			if (song_length <= 0) {
@@ -284,8 +355,11 @@ int main( int argc, char *argv[] )
 					song_length = RENDER_SECONDS;
 				}
 			}
-			printf("#Record to %s (%d sec).", wavfile, song_length);
-			RecordWave(&mucom, wavfile, RENDER_RATE, song_length);
+			if (logfile != NULL) printf("#Record to %s (%d sec).", logfile, song_length);
+			if (wavfile != NULL) printf( "#Record to %s (%d sec).", wavfile, song_length );
+			mucom.Record(song_length);
+
+			// RecordWave(&mucom, wavfile, RENDER_RATE, song_length);
 		}
 		else {
 			mucom.PlayLoop();

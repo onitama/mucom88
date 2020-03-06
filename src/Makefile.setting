@@ -1,10 +1,32 @@
 
-# Win32
+# Win32かどうか
+
+ifeq ($(OS),Windows_NT)
+WIN32 = 1
+else
 WIN32 = 0
+
+UNAME_S := $(shell uname -s)
+	ifeq ($(UNAME_S),Linux)
+		OS_LINUX=1
+	endif
+	ifeq ($(UNAME_S),Darwin)
+		OS_OSX=1
+	endif
+endif
+
 # SDL使用
 OS_SDL = 1
+
 # Win32ネイティブ
+ifeq ($(WIN32),1)
+ifeq ($(OS_SDL),1)
+SDL_WIN32 = 1
 OS_WIN32 = 0
+else 
+OS_WIN32 = 1
+endif
+endif
 
 # static
 STATIC = 1

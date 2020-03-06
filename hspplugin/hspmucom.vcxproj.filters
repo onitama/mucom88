@@ -65,6 +65,21 @@
     <ClCompile Include="..\src\plugin\plugin.cpp">
       <Filter>plugin</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\utils\pcmentry.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\pcmtool.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\s98write.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\vgmwrite.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\utils\wavwrite.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="hspdll.h" />
@@ -158,6 +173,21 @@
     <ClInclude Include="..\src\plugin\plugin.h">
       <Filter>plugin</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\utils\logwrite.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utils\pcmentry.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utils\s98write.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utils\vgmwrite.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\utils\wavwrite.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Z80">
@@ -174,6 +204,9 @@
     </Filter>
     <Filter Include="win32">
       <UniqueIdentifier>{680ebb63-051d-466b-bf92-c17fecc74e14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{08280e26-dd77-4c2b-924e-ad69317c9def}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
