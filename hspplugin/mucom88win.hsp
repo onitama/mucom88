@@ -816,7 +816,7 @@
 
 	buf="Error."
 	if strsize>0 {
-		cmd = s1+" -x -b "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
+		cmd = s1+" -r "+dir_exe+" -x -b "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
 		gosub *cmdexec_sub
 		if i=0 : buf=result+"\n["+wavout_fname+"] Saved.\n"
 	}
@@ -839,7 +839,7 @@
 
 	buf="Error."
 	if strsize>0 {
-		cmd = s1+" -x -w "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
+		cmd = s1+" -r "+dir_exe+" -x -w "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
 		gosub *cmdexec_sub
 		if i=0 : buf=result+"\n["+wavout_fname+"] Saved.\n"
 	}

@@ -8,6 +8,7 @@ MUCOM88 Windows update history
 	#driverタグによりMUCOM88ドライバを指定する機能を追加
 	MucomDotNetによるコンパイルと再生に対応
 	vgm/s98ファイル出力に対応
+	wavファイル出力時にリズム音源が反映されない不具合を修正
 
 2020/01/28 ver0.52
 
