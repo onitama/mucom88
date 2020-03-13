@@ -51,6 +51,7 @@
 
 #func mucomgetdriver mucomgetdriver $202
 #func mucomsetdriver mucomsetdriver $0
+#func mucomdumpvoice mucomdumpvoice $202
 
 #define MUCOM_DEFAULT_PCMFILE "mucompcm.bin"
 #define MUCOM_DEFAULT_VOICEFILE "voice.dat"

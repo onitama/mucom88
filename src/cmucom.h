@@ -402,6 +402,7 @@ public:
 	int SaveFMVoice(bool sw = true);
 	void StoreFMVoice(unsigned char *voice);
 	void DumpFMVoice(int no);
+	char *DumpFMVoiceAll(void);
 	MUCOM88_VOICEFORMAT *GetFMVoice(int no);
 	int UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice);
 	int StoreFMVoiceFromEmbed(void);
@@ -473,6 +474,7 @@ private:
 	WavWriter *p_wav;
 
 	bool original_mode; // original mode
+	bool octreverse_mode; // octave reverse mode
 	bool compiler_initialized; // 初期化後
 	bool use_extram;
 	int  original_ver;	// original mode version (MUCOM_ORIGINAL_VER_*)

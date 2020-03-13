@@ -738,3 +738,21 @@ EXPORT BOOL WINAPI mucomsetdriver(int p1, int p2, int p3, int p4)
 }
 
 
+EXPORT BOOL WINAPI mucomdumpvoice(HSPEXINFO *hei, int p1, int p2, int p3)
+{
+	//	DLL mucomdumpvoice var (type$202)
+	//	ボイスダンプ文字列を取得
+	//
+	PVal *pv;
+	APTR ap;
+	char *p;
+	ap = hei->HspFunc_prm_getva(&pv);		// パラメータ1:変数
+	if (mucom) {
+		p = mucom->DumpFMVoiceAll();
+		if (p == NULL) return -1;
+	}
+	hei->HspFunc_prm_setva(pv, ap, HSPVAR_FLAG_STR, p);	// 変数に値を代入
+	return 0;
+}
+
+

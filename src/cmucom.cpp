@@ -136,6 +136,7 @@ CMucom::CMucom( void )
 {
 	playflag = false;
 	original_mode = true;
+	octreverse_mode = false;
 	original_ver = MUCOM_ORIGINAL_VER_17;
 	compiler_initialized = false;
 	use_extram = false;
@@ -1027,6 +1028,20 @@ int CMucom::UpdateFMVoice(int no, MUCOM88_VOICEFORMAT *voice)
 }
 
 
+char *CMucom::DumpFMVoiceAll(void)
+{
+	//	使用中のFM音色をダンプする
+	//
+	int i, max;
+	vm->ResetMessageBuffer();
+	max = GetUseVoiceMax();
+	for (i = 0; i < max; i++) {
+		DumpFMVoice(GetUseVoiceNum(i));
+	}
+	return (char *)GetMessageBuffer();
+}
+
+
 void CMucom::DumpFMVoice(int no)
 {
 	//	音色データを表示する
@@ -1637,6 +1652,12 @@ int CMucom::Compile(char *text, int option, bool writeMub, const char *filename)
 
 	InitCompiler();
 	int vec = vm->Peekw(MUCOM_ADDRESS_POLL_VECTOR);
+
+	if ( octreverse_mode ) {
+		//	#octave reverseタグがあった場合はpoll iを実行する
+		res = vm->CallAndHalt2(vec, 'I');
+	}
+	
 	PRINTF("#poll a $%x.\r\n", vec);
 
 	int loopst = 0xf25a;
@@ -1883,15 +1904,27 @@ int CMucom::GetDriverModeMUB(char *fname)
 int CMucom::GetDriverModeMem(char *mem)
 {
 	//		MUCOM88 #driverタグ文字列からドライバーモードを取得する(MMLからダイレクトに取得)
+	//				#octaveタグ文字列からオクターブモードを反映させる
 	//		mem     = MMLデータ
 	//		(戻り値がマイナスの場合はエラー)
 	//		(正常な場合は、MUCOM_DRIVER_* の値が返る)
 	//
 	int res;
 	const char *driver;
+	const char *octave;
 	if (mem) {
 		res = ProcessHeader(mem);
 		if (res) return res;
+	}
+
+	//		#octaveタグを解析する
+	//		-> octreverse_modeに反映させる
+	octave = GetInfoBufferByName("octave");
+	if (STRCASECMP(octave, "reverse") == 0) {
+		octreverse_mode = true;
+	}
+	else {
+		octreverse_mode = false;
 	}
 
 	driver = GetInfoBufferByName("driver");

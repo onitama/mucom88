@@ -688,6 +688,10 @@ int mucomvm::ExecUntilHalt(int times)
 					Msgf("#Unknown message [%s].\r\n", stmp);
 				}
 			}
+			else if (pc == 0x18) {
+				//Msgf("#RST 18H Trap at $%04x.\r\n", GetA());
+				return -1;
+			}
 			else if (pc == 0x3b3) {
 				Msgf("#Error trap at $%04x.\r\n", pc);
 				//DumpBin(0, 0x100);
@@ -858,6 +862,7 @@ int mucomvm::CallAndHalt2(uint16_t adr,uint8_t code)
 {
 	uint16_t tempadr = 0xf000;
 	uint8_t *p = mem + tempadr;
+
 	*p++ = 0x21;				// ld hl
 	*p++ = 0x10;
 	*p++ = 0xf0;
