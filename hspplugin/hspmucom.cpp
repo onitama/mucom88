@@ -142,10 +142,10 @@ EXPORT BOOL WINAPI mucomreset(int p1, int p2, int p3, int p4)
 
 EXPORT BOOL WINAPI mucomplay(int p1, int p2, int p3, int p4)
 {
-	//	DLL mucomplay id (type$00)
+	//	DLL mucomplay id,flag (type$00)
 	//
 	if (mucom) {
-		mucom->Play(p1);
+		mucom->Play(p1,p2==0);
 	}
 	return 0;
 }

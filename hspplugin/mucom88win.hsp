@@ -705,8 +705,9 @@
 	chkbox "行番号を削除する",sw_toollnum
 	chkbox "Gチャンネルのqを@に",sw_toolrepl
 	chkbox "タグを追加する",sw_tooltag
-	objsize 120,24
+	objsize 240,24
 	button "実行",*to_toolexec
+	button "MMLの末尾に音色定義を追加",*to_vaddexec
 
 	mes "\n\nPCMデータファイルを作成\n"
 	pcmdir=""
@@ -739,7 +740,7 @@
 	if wavout_time <= 0 : wavout_time = 90
 
 	font msgothic,16,0
-	mes "\n\n別な形式にエクスポート\n"
+	mes "\n\n\n別な形式にエクスポート\n"
 	sysfont 17
 	mes "録音する時間(秒)"
 	input wavout_time
@@ -755,6 +756,19 @@
 	gosub *exec_tool
 	compflag=0
 	buf="#Tool executed.\n"
+	mucomedit_update mml
+	goto *to_editor
+
+*to_vaddexec
+	;	MMLに音色定義を追加
+	gosub *mmlcomp
+	if compflag=0 : goto *to_editor
+	mucomplay 0,1
+	mucomdumpvoice s1
+	mml+="\n"
+	mml+=s1
+	compflag=0
+	buf="#MML modified.\n"
 	mucomedit_update mml
 	goto *to_editor
 

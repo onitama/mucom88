@@ -311,7 +311,7 @@ public:
 	void LoadOriginal(int option);
 	void LoadPlayer(int option);
 	void SetChannelWork();
-	int Play(int num=0);
+	int Play(int num=0, bool start=true);
 	int Stop(int option=0);
 	int Restart(void);
 	int Fade(void);

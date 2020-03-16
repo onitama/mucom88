@@ -141,11 +141,8 @@ N88 Export current MML
 Start line
 &&&&dsmap:11,2654,10639
 Add line
-&&&&dsmap:29,3008,21210
-
-
-Export sound data file
-
+&&&&dsmap:15,3026,13062
+Export file
 &&&&dsmap:17,2693,15690
 Duration(second)
 &&&&dsmap:44,2796,40244
@@ -257,3 +254,10 @@ INTCOUNT:
 &&&&dsmap:46,4335,46430
 Editing text will be lost.
 Do you want to exit anyway?
+&&&&dsmap:31,3047,21430
+
+
+Export sound data file
+
+&&&&dsmap:26,2841,26806
+Add voice definition to MML

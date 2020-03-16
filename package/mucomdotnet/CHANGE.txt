@@ -1,4 +1,27 @@
 更新履歴
+TAG037 2020/03/15
+  Compiler
+  ・invertタグの追加
+  Driver
+  ・ポルタメント処理に伴うSSGのLFO処理不具合を修正
+  ・Driver.Init に appendReaderCallback 版を追加(TAN-Yさんより)
+
+TAG036 2020/03/13
+  Driver
+  ・どうがんばってもPCMが読み込めなかったときに、pcmが必要なデータを流すと落ちるのを修正。
+  (TAN-Yさんより)
+
+TAG035 2020/03/10
+  Compiler&Driver
+  ・ポルタメント処理の修正
+  Driver
+  ・Jコマンド向けスキップ処理追加。
+  (ぼうきちさん、mucomさんありがとうございます！)
+
+TAG034 2020/03/06
+  Vgm
+  ・.vgm出力向けmucomDotNETを作成
+
 TAG033 2020/03/05
   Compiler
   ・引数を変更。2個目には出力ファイル名を指定できるようにした。

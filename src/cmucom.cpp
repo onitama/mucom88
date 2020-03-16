@@ -426,7 +426,7 @@ int CMucom::GetMessageBufferSize(void)
 }
 
 
-int CMucom::Play(int num)
+int CMucom::Play(int num, bool start)
 {
 	//		MUCOM88音楽再生
 	//		num : 0   = 音楽No. (0～15)
@@ -482,9 +482,10 @@ int CMucom::Play(int num)
 
 	NoticePlugins(MUCOM88IF_NOTICE_PREPLAY);
 
-	PRINTF("#Play[%d]\r\n", num);
-
-	PlayMemory();
+	if (start) {
+		PRINTF("#Play[%d]\r\n", num);
+		PlayMemory();
+	}
 
 	return 0;
 }
@@ -1653,8 +1654,8 @@ int CMucom::Compile(char *text, int option, bool writeMub, const char *filename)
 	InitCompiler();
 	int vec = vm->Peekw(MUCOM_ADDRESS_POLL_VECTOR);
 
-	if ( octreverse_mode ) {
-		//	#octave reverseタグがあった場合はpoll iを実行する
+	if (octreverse_mode) {
+		//	#invert onタグがあった場合はpoll iを実行する
 		res = vm->CallAndHalt2(vec, 'I');
 	}
 	
@@ -1919,8 +1920,8 @@ int CMucom::GetDriverModeMem(char *mem)
 
 	//		#octaveタグを解析する
 	//		-> octreverse_modeに反映させる
-	octave = GetInfoBufferByName("octave");
-	if (STRCASECMP(octave, "reverse") == 0) {
+	octave = GetInfoBufferByName("invert");
+	if (STRCASECMP(octave, "on") == 0) {
 		octreverse_mode = true;
 	}
 	else {
