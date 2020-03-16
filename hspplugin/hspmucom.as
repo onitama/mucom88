@@ -49,6 +49,9 @@
 #func mucomedit_proc mucomedit_proc $202
 #func mucomedit_flush mucomedit_flush $202
 
+#func mucomgetdriver mucomgetdriver $202
+#func mucomsetdriver mucomsetdriver $0
+#func mucomdumpvoice mucomdumpvoice $202
 
 #define MUCOM_DEFAULT_PCMFILE "mucompcm.bin"
 #define MUCOM_DEFAULT_VOICEFILE "voice.dat"
@@ -125,6 +128,14 @@
 //	プラグインに通知するコード
 #define MUCOM88IF_NOTICE_TOOLSTART 3	// プラグインツール起動リクエスト
 #define MUCOM88IF_NOTICE_TOOLHIDE 10	// プラグインツール非表示リクエスト
+
+//	ドライバー
+#define MUCOM_DRIVER_UNKNOWN -1 	// 不明
+#define MUCOM_DRIVER_NONE 0 		// 未定義
+#define MUCOM_DRIVER_MUCOM88 1		// オリジナルのドライバ(1.7)
+#define MUCOM_DRIVER_MUCOM88E 2		// オリジナルのドライバ(1.5)
+#define MUCOM_DRIVER_MUCOM88EM 4	// 拡張メモリ版ドライバ(1.7)
+#define MUCOM_DRIVER_MUCOMDOTNET 8	// MucomDotNET
 
 #endif
 

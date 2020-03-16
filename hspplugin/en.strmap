@@ -95,6 +95,9 @@ Can't start playing due to error.
 &&&&dsmap:24,2324,21647
 Can't write file due to error.
 
+&&&&dsmap:44,2620,40888
+Can't execute mucomDotNET at this folder
+
 &&&&dsmap:50,4016,49658
 Same file name exists.
 Overwrite anyway?
@@ -138,17 +141,16 @@ N88 Export current MML
 Start line
 &&&&dsmap:11,2654,10639
 Add line
-&&&&dsmap:28,2665,20517
-
-
-Save as WAV file
-
+&&&&dsmap:15,3026,13062
+Export file
 &&&&dsmap:17,2693,15690
 Duration(second)
 &&&&dsmap:44,2796,40244
  ( Use #time tag to make default )
-&&&&dsmap:15,2710,13062
-Write File
+&&&&dsmap:18,3054,14776
+Export to WAV file
+&&&&dsmap:22,3072,16527
+Export to VGM/S98 file
 &&&&dsmap:18,2725,9988
 #Tool executed.
 
@@ -189,6 +191,9 @@ SCCI Device (*)
 SCCI enable
 &&&&dsmap:12,3138,8263
 SCCI setup...
+&&&&dsmap:23,3545,14981
+
+MucomDotNet folder
 &&&&dsmap:28,3150,22204
 Check update on startup (*)
 &&&&dsmap:28,3178,22267
@@ -249,3 +254,10 @@ INTCOUNT:
 &&&&dsmap:46,4335,46430
 Editing text will be lost.
 Do you want to exit anyway?
+&&&&dsmap:31,3047,21430
+
+
+Export sound data file
+
+&&&&dsmap:26,2841,26806
+Add voice definition to MML

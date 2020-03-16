@@ -105,6 +105,11 @@
     <ClInclude Include="..\src\plugin\mucom88if.h" />
     <ClInclude Include="..\src\plugin\plugin.h" />
     <ClInclude Include="..\src\soundbuf.h" />
+    <ClInclude Include="..\src\utils\logwrite.h" />
+    <ClInclude Include="..\src\utils\pcmentry.h" />
+    <ClInclude Include="..\src\utils\s98write.h" />
+    <ClInclude Include="..\src\utils\vgmwrite.h" />
+    <ClInclude Include="..\src\utils\wavwrite.h" />
     <ClInclude Include="..\src\wavout.h" />
     <ClInclude Include="..\src\win32\osdep_win.h" />
     <ClInclude Include="..\src\win32\realchip.h" />
@@ -131,6 +136,11 @@
     <ClCompile Include="..\src\osdep.cpp" />
     <ClCompile Include="..\src\plugin\plugin.cpp" />
     <ClCompile Include="..\src\soundbuf.cpp" />
+    <ClCompile Include="..\src\utils\pcmentry.cpp" />
+    <ClCompile Include="..\src\utils\pcmtool.cpp" />
+    <ClCompile Include="..\src\utils\s98write.cpp" />
+    <ClCompile Include="..\src\utils\vgmwrite.cpp" />
+    <ClCompile Include="..\src\utils\wavwrite.cpp" />
     <ClCompile Include="..\src\wavout.cpp" />
     <ClCompile Include="..\src\win32\osdep_win.cpp" />
     <ClCompile Include="..\src\win32\realchip.cpp" />

@@ -1,4 +1,4 @@
-
+﻿
 //
 //		PC-8801 virtual machine
 //		(PC-8801FA相当のCPUとOPNAのみをエミュレーションします)
@@ -28,22 +28,33 @@ interface
 
 mucomvm::mucomvm(void)
 {
-	m_flag = 0;
+	m_flag = VMFLAG_NONE;
 	m_option = 0;
 	m_fastfw = 4;
 	m_fmvol = 0;
 	m_ssgvol = -3;
+
+	p_log = NULL;
+	p_wav = NULL;
 
 	opn = NULL;
 	membuf = NULL;
 	osd = NULL;
 	master_window = NULL;
 
+	original_mode = true;
+
+	extram_bank_mode = 0;
+	extram_bank_no = 0;
+
 	channel_max = 0;
 	channel_size = 0;
 	pchdata = NULL;
 
 	playflag = false;
+	trace_fp = NULL;
+
+	ResetMessageBuffer();
 }
 
 mucomvm::~mucomvm(void)
@@ -69,6 +80,113 @@ mucomvm::~mucomvm(void)
 
 }
 
+void mucomvm::SetLogWriter(ILogWrite *log)
+{
+	p_log = log;
+}
+
+void mucomvm::SetWavWriter(WavWriter* wav) {
+	p_wav = wav;
+}
+
+void mucomvm::GetFMRegMemory(unsigned char* data, int address, int length)
+{
+	if (address < 0 || OPNAREG_MAX <= address) {
+		memset(data, 0, length);
+		return;
+	}
+	if (address + length >= OPNAREG_MAX) {
+		int actual_size = OPNAREG_MAX - address;
+		memcpy(data, regmap + address, actual_size);
+		memset(data + actual_size, 0, length - actual_size);
+		return;
+	}
+	memcpy(data, regmap + address, length);
+}
+
+
+void mucomvm::GetMemory(unsigned char *data, int address, int length)
+{
+	if (address < 0 || 0x10000 <= address) {
+		memset(data, 0, length);
+		return;
+	}
+	if (address + length >= 0x10000) {
+		int actual_size = 0x10000 - address;
+		RecvMem(data, address, actual_size);
+		memset(data + actual_size, 0, length - actual_size);
+		return;
+	}
+
+	RecvMem(data, address, length);
+}
+
+void mucomvm::GetMainMemory(unsigned char* data, int address, int length)
+{
+	if (address < 0 || 0x10000 <= address) {
+		memset(data, 0, length);
+		return;
+	}
+	if (address + length >= 0x10000) {
+		int actual_size = 0x10000 - address;
+		memcpy(data, mem + address, actual_size);
+		memset(data + actual_size, 0, length - actual_size);
+		return;
+	}
+
+	memcpy(data, mem + address, length);
+}
+
+void mucomvm::GetExtMemory(unsigned char* data, int bank, int address, int length)
+{
+	if (address < 0 || 0x8000 <= address) {
+		memset(data, 0, length);
+		return;
+	}
+
+	if (address + length >= 0x8000) {
+		int actual_size = 0x8000 - address;
+		memcpy(data, extram[bank] + address, actual_size);
+		memset(data + actual_size, 0, length - actual_size);
+		return;
+	}
+	memcpy(data, extram[bank] + address, length);
+}
+
+void mucomvm::SetMainMemory(unsigned char* data, int address, int length)
+{
+	if (address < 0 || 0x10000 <= address) {
+		return;
+	}
+
+	if (address + length >= 0x10000) {
+		int actual_size = 0x10000 - address;
+		memcpy(mem + address, data, actual_size);
+		return;
+	}
+
+	memcpy(mem + address, data, length);
+}
+
+void mucomvm::SetMemory(unsigned char* data, int address, int length)
+{
+}
+
+void mucomvm::SetExtMemory(unsigned char* data, int bank, int address, int length)
+{
+	if (address < 0 || 0x8000 <= address) {
+		return;
+	}
+
+	if (address + length >= 0x8000) {
+		int actual_size = 0x8000 - address;
+		memcpy(extram[bank] + address, data, actual_size);
+		return;
+	}
+	memcpy(extram[bank] + address, data, length);
+}
+
+
 
 void mucomvm::SetMucomInstance(CMucom *mucom)
 {
@@ -78,7 +196,6 @@ void mucomvm::SetMucomInstance(CMucom *mucom)
 
 void mucomvm::SetOption(int option)
 {
-	m_flag = 0;
 	m_option = option;
 }
 
@@ -216,8 +333,18 @@ void mucomvm::Reset(void)
 
 	p = &mem[0];
 	memset(p, 0, 0x10000);		// CLEAR
+
+	ResetExtRam();
+
 	ClearBank();
 	bankprg = VMPRGBANK_MAIN;
+
+	// バンクをリセット
+	int i = 0;
+	for (i = 0; i < 0x10; i++) {
+		membank[i] = &mem[i * 0x1000];
+		membank_wr[i] = &mem[i * 0x1000];
+	}
 
 	m_flag = VMFLAG_EXEC;
 	sound_reg_select = 0;
@@ -230,7 +357,18 @@ void mucomvm::Reset(void)
 	*p++ = 0x18;
 	*p++ = 0xfb;		// JR LABEL1
 #endif
+	ResetMessageBuffer();
+}
 
+void mucomvm::ResetExtRam()
+{
+	int i;
+	for (i = 0; i < 4; i++) {
+		memset(extram[i], 0, 0x8000);
+	}
+}
+
+void mucomvm::ResetMessageBuffer(void) {
 	if (membuf) delete membuf;
 	membuf = new CMemBuf;
 }
@@ -260,23 +398,23 @@ int32_t mucomvm::loadpc(uint16_t adr)
 {
 	if (bankprg == VMPRGBANK_SHADOW) {
 		if ((adr < 0xde00)||(adr >=0xe300)) {
-			return (int32_t)mem[adr];
+			return (int32_t)membank[adr>>12][adr&0xfff];
 		}
 		return (int32_t)memprg[adr];
 	}
-	return (int32_t)mem[adr];
+	return (int32_t)membank[adr>>12][adr&0xfff];
 }
 
 
 int32_t mucomvm::load(uint16_t adr)
 {
-	return (int32_t)mem[adr];
+	return (int32_t)membank[adr>>12][adr & 0xfff];
 }
 
 
 void mucomvm::store(uint16_t adr, uint8_t data)
 {
-	mem[adr] = data;
+	membank_wr[adr>>12][adr&0xfff] = data;
 }
 
 
@@ -284,6 +422,9 @@ int32_t mucomvm::input(uint16_t adr)
 {
 	//printf("input : %x\n", adr);
 	int port = adr & 0xff;
+
+	// キーボードはOFF状態
+	if (port < 0x10) return 0xff;
 	switch (port)
 	{
 	case 0x32:
@@ -301,7 +442,6 @@ int32_t mucomvm::input(uint16_t adr)
 
 void mucomvm::output(uint16_t adr, uint8_t data)
 {
-	//printf("output: %x %x\n", adr, data);
 	int port = adr & 0xff;
 	switch (port)
 	{
@@ -326,9 +466,83 @@ void mucomvm::output(uint16_t adr, uint8_t data)
 	case 0x5f:
 		ChangeBank( port - 0x5c );
 		break;
+	case 0xe2:
+		ChangeExtRamMode(data);
+		break;
+	case 0xe3:
+		ChangeExtRamBank(data);
+		break;
 	default:
 		break;
 	}
+}
+
+
+
+int mucomvm::GetExtRamBank()
+{
+	return extram_bank_no;
+}
+
+void mucomvm::SetExtRamBank(uint8_t bank)
+{
+	extram_bank_no = bank;
+}
+
+int mucomvm::GetExtRamMode()
+{
+	return extram_bank_mode;
+}
+
+// 拡張RAM切り替え
+void mucomvm::ChangeExtRam(uint8_t mode, uint8_t bank)
+{
+	extram_bank_no = bank;
+	ChangeExtRamMode(mode);
+}
+
+
+// 拡張RAM切り替え
+void mucomvm::ChangeExtRamMode(uint8_t mode)
+{
+	extram_bank_mode = mode;
+	ChangeExtRamBank(extram_bank_no);
+}
+
+// 拡張RAM切り替え
+void mucomvm::ChangeExtRamBank(uint8_t bank)
+{
+	extram_bank_no = bank & 0x3;
+	uint8_t* wrp;
+	uint8_t* rdp;
+
+	// bit4 = 書き込み
+	if (extram_bank_mode & 0x10) {
+		wrp = extram[extram_bank_no];
+	}
+	else {
+		wrp = mem;
+	}
+
+	// bit0 = 読み込み
+	if (extram_bank_mode & 0x01) {
+		rdp = extram[extram_bank_no];
+	}
+	else {
+		rdp = mem;
+	}
+
+	int i;
+	for (i = 0; i < 0x8; i++) {
+		membank[i] = &rdp[i * 0x1000];
+		membank_wr[i] = &wrp[i * 0x1000];
+	}
+}
+
+// ドライバの種類を設定
+void mucomvm::SetOrignalMode( bool mode )
+{
+	original_mode = mode;
 }
 
 void mucomvm::Halt(void)
@@ -391,29 +605,33 @@ void mucomvm::RestoreMem(uint8_t *mem_bak)
 
 int mucomvm::Peek(uint16_t adr)
 {
-	return (int)mem[adr];
+	return (int)membank[adr>>12][adr&0xfff];
 }
-
 
 int mucomvm::Peekw(uint16_t adr)
 {
-	int res;
-	res = ((int)mem[adr+1])<<8;
-	res += (int)mem[adr];
-	return res;
+	return ((Peek(adr+1))<<8) + Peek(adr);
 }
 
 
 void mucomvm::Poke(uint16_t adr, uint8_t data)
 {
-	mem[adr] = data;
+	membank[adr >> 12][adr & 0xfff] = data;
+}
+
+void mucomvm::FillMem(uint16_t adr, uint8_t value, uint16_t length)
+{
+	int i;
+	for (i = 0; i < length; i++) {
+		Poke(adr + i, value);
+	}
 }
 
 
 void mucomvm::Pokew(uint16_t adr, uint16_t data)
 {
-	mem[adr] = data & 0xff;
-	mem[adr+1] = (data>>8) & 0xff;
+	Poke(adr, data & 0xff);
+	Poke(adr+1, (data>>8) & 0xff);
 }
 
 
@@ -429,6 +647,14 @@ void mucomvm::PeekToStr(char *out, uint16_t adr, uint16_t length)
 
 int mucomvm::ExecUntilHalt(int times)
 {
+    if (m_flag == VMFLAG_NONE) {
+        return 0;
+    }
+
+	bool adrmap[0x10000];
+	memset(adrmap, 0, 0x10000);
+
+	int last_pc = 0x0;
 	int cnt=0;
 	int id = 0;
 	msgid = 0;
@@ -462,6 +688,10 @@ int mucomvm::ExecUntilHalt(int times)
 					Msgf("#Unknown message [%s].\r\n", stmp);
 				}
 			}
+			else if (pc == 0x18) {
+				//Msgf("#RST 18H Trap at $%04x.\r\n", GetA());
+				return -1;
+			}
 			else if (pc == 0x3b3) {
 				Msgf("#Error trap at $%04x.\r\n", pc);
 				//DumpBin(0, 0x100);
@@ -473,92 +703,108 @@ int mucomvm::ExecUntilHalt(int times)
 			}
 		}
 
-		if (pc==0xaf80) {				// expand内のCULC: を置き換える
-			int amul = GetA();
-			int val = Peekw(0xAF93);
-			int frq = Peekw(0xAFFA);
-			int ans,count;
-			float facc;
-			float frqbef = (float)frq;
-			if (val == 0x0A1BB) {
-				facc = 0.943874f;
-			}
-			else {
-				facc = 1.059463f;
-			}
-			for (count = 0; count < amul; count++) {
-				frqbef = frqbef * facc;
-			}
-			ans = int(frqbef);
-			SetHL(ans);
-			//Msgf("#CULC A=%d : %d * %f =%d.\r\n", amul, frq, facc, ans);
-
-			pc = 0xafb3;				// retの位置まで飛ばす
-		}
-
-#if 0
-		if (pc == 0x9000) {				// MWRITE(コマンド書き込みメイン)
-			int mdata = Peekw(0x0f320);
-			printf("#MWRITE MDATA$%04x.\r\n", mdata);
-		}
-#endif
+		if (original_mode) ExecuteCLUC(); else ExecuteModCLUC();
 
 #if 1
-		if (pc == 0xde06) {				// CONVERT(音色定義コンバート)
-										//	出力データが大きい場合、DE06H～とかぶるので代替コードで実行する
-										// $6001～ 38byteの音色データを25byteに圧縮する->$6001から書き込む
-										//
-			MUCOM88_VOICEFORMAT *v = (MUCOM88_VOICEFORMAT *)(memprg + 0x6000);
-			unsigned char *src = mem + 0x6001;
-			v->ar_op1 = *src++;  v->dr_op1 = *src++; v->sr_op1 = *src++; v->rr_op1 = *src++; v->sl_op1 = *src++; v->tl_op1 = *src++; v->ks_op1 = *src++; v->ml_op1 = *src++; v->dt_op1 = *src++;
-			v->ar_op2 = *src++;  v->dr_op2 = *src++; v->sr_op2 = *src++; v->rr_op2 = *src++; v->sl_op2 = *src++; v->tl_op2 = *src++; v->ks_op2 = *src++; v->ml_op2 = *src++; v->dt_op2 = *src++;
-			v->ar_op3 = *src++;  v->dr_op3 = *src++; v->sr_op3 = *src++; v->rr_op3 = *src++; v->sl_op3 = *src++; v->tl_op3 = *src++; v->ks_op3 = *src++; v->ml_op3 = *src++; v->dt_op3 = *src++;
-			v->ar_op4 = *src++;  v->dr_op4 = *src++; v->sr_op4 = *src++; v->rr_op4 = *src++; v->sl_op4 = *src++; v->tl_op4 = *src++; v->ks_op4 = *src++; v->ml_op4 = *src++; v->dt_op4 = *src++;
-			v->fb = *src++; v->al = *src++;
-			memcpy(mem + 0x6000, memprg + 0x6000, 26);
-
-			SetHL(0x6001);
-			pc = 0xafb3;				// retの位置まで飛ばす($c9のコードなら何でもいい)
-		}
-#endif
-#if 0
-		if (pc == 0xde06) {				// CONVERT(音色定義コンバート)
-			//	出力データが大きい場合、DE06H～とかぶるので別バンクで実行する
-			bankprg = VMPRGBANK_SHADOW;
-		}
-		if (pc == 0xe132) {				// CONVERT(音色定義コンバート終了)
-			bankprg = VMPRGBANK_MAIN;
-		}
+		ConvertVoice();
 #endif
 
-#if 0
-		if (pc==0x979c) {				// COMPST(コンパイラメイン)
-			int ch = Peek(0x0f330);
-			int line = Peekw(0x0f32b);
-			int link = Peekw(0x0f354);
-			int mdata = Peekw(0x0f320);
-			printf("#CMPST $%04x LINKPT%04x CH%d LINE%04x MDATA%04x.\r\n", pc, link, ch, line,mdata);
+		if (!adrmap[pc]) {
+			adrmap[pc] = true;
+			if (verbose) printf("run:pc:%04x\n", pc);
 		}
-		if ((pc >= 0xAD86) && (pc < 0xb000)) {
-				printf("#VOICECONV1 %04x.\r\n", pc);
-		}
-#endif
 
+		last_pc = pc;
 		Execute(times);
 		if (m_flag == VMFLAG_HALT) break;
 		cnt++;
-#if 0
-		if ( cnt>=0x100000) {
-			Msgf( "#Force halted.\n" );
-			break;
-		}
-#endif
 	}
 #ifdef DEBUGZ80_TRACE
 	membuf->SaveFile("trace.txt");
 #endif
 	//Msgf( "#CPU halted.\n" );
 	return 0;
+}
+
+// アドレスを元に設定
+#define CONVERT 0xde06
+
+// 音色変換 em版ではスキップ
+void mucomvm::ConvertVoice()
+{
+	if (!original_mode) return;
+
+	if (pc == CONVERT) {
+		// CONVERT(音色定義コンバート)
+		//	出力データが大きい場合、DE06H～とかぶるので代替コードで実行する
+		// $6001～ 38byteの音色データを25byteに圧縮する->$6001から書き込む
+
+		// 音色は表メモリでの処理になる
+		MUCOM88_VOICEFORMAT* v = (MUCOM88_VOICEFORMAT*)(memprg + 0x6000);
+		unsigned char* src = mem + 0x6001;
+		v->ar_op1 = *src++;  v->dr_op1 = *src++; v->sr_op1 = *src++; v->rr_op1 = *src++; v->sl_op1 = *src++; v->tl_op1 = *src++; v->ks_op1 = *src++; v->ml_op1 = *src++; v->dt_op1 = *src++;
+		v->ar_op2 = *src++;  v->dr_op2 = *src++; v->sr_op2 = *src++; v->rr_op2 = *src++; v->sl_op2 = *src++; v->tl_op2 = *src++; v->ks_op2 = *src++; v->ml_op2 = *src++; v->dt_op2 = *src++;
+		v->ar_op3 = *src++;  v->dr_op3 = *src++; v->sr_op3 = *src++; v->rr_op3 = *src++; v->sl_op3 = *src++; v->tl_op3 = *src++; v->ks_op3 = *src++; v->ml_op3 = *src++; v->dt_op3 = *src++;
+		v->ar_op4 = *src++;  v->dr_op4 = *src++; v->sr_op4 = *src++; v->rr_op4 = *src++; v->sl_op4 = *src++; v->tl_op4 = *src++; v->ks_op4 = *src++; v->ml_op4 = *src++; v->dt_op4 = *src++;
+		v->fb = *src++; v->al = *src++;
+		memcpy(mem + 0x6000, memprg + 0x6000, 26);
+
+		SetHL(0x6001);
+		Poke(CONVERT, 0xc9);
+		// pc = 0xafb3;				// retの位置まで飛ばす($c9のコードなら何でもいい)
+	}
+}
+
+void mucomvm::ExecuteCLUC()
+{
+	if (pc == 0xaf80) {				// expand内のCULC: を置き換える
+		int amul = GetA();
+		int val = Peekw(0xAF93); // 0xAF93 = CULLP2 + 1
+		int frq = Peekw(0xAFFA); // 0xAFFA = FRQBEF
+		int ans, count;
+		float facc;
+		float frqbef = (float)frq;
+		if (val == 0x0A1BB) {
+			facc = 0.943874f;
+		}
+		else {
+			facc = 1.059463f;
+		}
+		for (count = 0; count < amul; count++) {
+			frqbef = frqbef * facc;
+		}
+		ans = int(frqbef);
+		SetHL(ans);
+		//Msgf("#CULC A=%d : %d * %f =%d.\r\n", amul, frq, facc, ans);
+
+		Poke(0xaf80, 0xc9); // RETにする
+
+		//pc = 0xafb3;				// retの位置まで飛ばす
+	}
+}
+
+
+// MUCOM88em版
+void mucomvm::ExecuteModCLUC()
+{
+	if (pc != MUCOM_EM_CULC) { return; }
+
+	int amul = GetA();
+	int val = Peekw(MUCOM_EM_CULLP2 + 1);
+	int frq = Peekw(MUCOM_EM_FRQBEF);
+	int ans, count;
+	float facc;
+	float frqbef = (float)frq;
+	facc = (val == 0x0A1BB) ? 0.943874f : 1.059463f;
+		
+	for (count = 0; count < amul; count++) {
+		frqbef = frqbef * facc;
+	}
+	ans = int(frqbef);
+	SetHL(ans);
+	//Msgf("#CULC A=%d : %d * %f =%d.\r\n", amul, frq, facc, ans);
+
+	Poke(MUCOM_EM_CULC, 0xc9); // RETにする	
 }
 
 
@@ -598,6 +844,9 @@ void mucomvm::SetPC(uint16_t adr)
 
 void mucomvm::CallAndHalt(uint16_t adr)
 {
+    if (m_flag == VMFLAG_NONE) {
+        return;
+    }
 	uint16_t tempadr = 0xf000;
 	uint8_t *p = mem + tempadr;
 	*p++ = 0xcd;				// Call
@@ -613,6 +862,7 @@ int mucomvm::CallAndHalt2(uint16_t adr,uint8_t code)
 {
 	uint16_t tempadr = 0xf000;
 	uint8_t *p = mem + tempadr;
+
 	*p++ = 0x21;				// ld hl
 	*p++ = 0x10;
 	*p++ = 0xf0;
@@ -645,6 +895,20 @@ int mucomvm::CallAndHaltWithA(uint16_t adr, uint8_t areg)
 	return (int)GetIX();
 }
 
+int mucomvm::CallAndHaltWithB(uint16_t adr, uint8_t val)
+{
+	uint16_t tempadr = 0xf000;
+	uint8_t* p = mem + tempadr;
+	*p++ = 0x06;				// ld b
+	*p++ = val;
+	*p++ = 0xcd;				// Call
+	*p++ = (adr & 0xff);
+	*p++ = ((adr >> 8) & 0xff);
+	*p++ = 0x76;				// Halt
+	SetPC(tempadr);
+	ExecUntilHalt();
+	return (int)GetIX();
+}
 
 int mucomvm::LoadMem(const char *fname, int adr, int size)
 {
@@ -698,7 +962,7 @@ void mucomvm::LoadAllocFree(char *ptr)
 	free(ptr);
 }
 
-
+// ADPCM読み出し VMのメモリを経由せずにロードする
 int mucomvm::LoadPcmFromMem(const char *buf, int sz, int maxpcm)
 {
 	//	PCMデータをOPNAのRAMにロード(メモリから)
@@ -711,36 +975,49 @@ int mucomvm::LoadPcmFromMem(const char *buf, int sz, int maxpcm)
 	int inftable;
 	int adr, whl, eadr;
 	char pcmname[17];
+	const unsigned char *table = (const unsigned char*)buf;
+
 
 	infosize = 0x400;
 	inftable = 0xd000;
-	SendMem((const unsigned char *)buf, inftable, infosize);
+	//SendMem((const unsigned char *)buf, inftable, infosize);
 	pcmtable = 0xe300;
 	for (i = 0; i < maxpcm; i++) {
-		adr = Peekw(inftable + 28);
-		whl = Peekw(inftable + 30);
+		//adr = Peekw(inftable + 28);
+		//whl = Peekw(inftable + 30);
+		adr = PeekTableWord(table, 28);
+		whl = PeekTableWord(table, 30);
 		eadr = adr + (whl >> 2);
 		if (buf[i * 32] != 0) {
 			Pokew(pcmtable, adr);
 			Pokew(pcmtable + 2, eadr);
 			Pokew(pcmtable + 4, 0);
-			Pokew(pcmtable + 6, Peekw(inftable + 26));
+			//Pokew(pcmtable + 6, Peekw(inftable + 26));
+			Pokew(pcmtable + 6, PeekTableWord(table,26));
 			memcpy(pcmname, buf + i * 32, 16);
 			pcmname[16] = 0;
 			Msgf("#PCM%d $%04x $%04x %s\r\n", i + 1, adr, eadr, pcmname);
 		}
 		pcmtable += 8;
 		inftable += 32;
+		table += 32;
 	}
 	pcmdat = (char *)buf + infosize;
 	pcmmem = (char *)opn->GetADPCMBuffer();
 	memcpy(pcmmem, pcmdat, sz - infosize);
+
+	//if (p_log) p_log->WriteAdpcmMemory(pcmdat, sz - infosize);
 
 	if (m_option & VM_OPTION_SCCI) {
 		osd->OutputRealChipAdpcm(pcmdat, sz - infosize);
 	}
 
 	return 0;
+}
+
+int mucomvm::PeekTableWord(const unsigned char* table, int adr)
+{
+	return (table[adr] | (table[adr + 1] << 8));
 }
 
 
@@ -764,16 +1041,33 @@ int mucomvm::SendMem(const unsigned char *src, int adr, int size)
 {
 	//	VMメモリにデータを転送
 	//
-	memcpy(mem + adr, src, size);
+	CopyMemToVm(src, adr, size);
 	return 0;
 }
 
+int mucomvm::SendExtMem(const unsigned char* src, int bank, int adr, int size)
+{
+	CopyMemToExtRam(src, bank, adr, size);
+	return 0;
+}
+
+
+int mucomvm::RecvMem(unsigned char* mem, int adr, int size)
+{
+	CopyMemFromVm(mem, adr, size);
+	return 0;
+}
 
 int mucomvm::SaveMem(const char *fname, int adr, int size)
 {
 	//	VMメモリの内容をファイルにセーブ
 	//
-	return SaveToFile( fname, mem+adr, size );
+
+	uint8_t* rdbuf = new uint8_t[size];
+	CopyMemFromVm(rdbuf, adr, size);
+	int ret = SaveToFile(fname, rdbuf, size);
+	delete[] rdbuf;
+	return ret;
 }
 
 
@@ -790,6 +1084,50 @@ int mucomvm::SaveToFile(const char *fname, const unsigned char *src, int size)
 	return 0;
 }
 
+void mucomvm::CopyMemToVm(const uint8_t * src, int address, int length) 
+{
+	int i = 0;
+	int left = length;
+	int start = address & 0xfff;
+	int bank = address >> 12;
+
+	while(0 < left) {
+		int block_size = start + left < 0x1000 ? left : 0x1000 - start;
+		memcpy(membank_wr[bank + i] + start, src, block_size);
+		i++;
+		start = 0;
+		src += block_size;
+		left -= block_size;
+	}
+}
+
+void mucomvm::CopyMemToExtRam(const uint8_t* src, int bank, int address, int length)
+{
+	if (bank < 0 || 4 <= bank) return;
+	if (address < 0 || 0x8000 <= address) return;
+
+	int block_size = address + length < 0x8000 ? length : 0x8000 - address;
+	memcpy(extram[bank] + address, src, block_size);
+}
+
+
+void mucomvm::CopyMemFromVm(uint8_t *dest, int address, int length) 
+{
+	int i = 0;
+	int left = length;
+	int start = address & 0xfff;
+	int bank = address >> 12;
+
+	while (0 < left) {
+		int block_size = start + left < 0x1000 ? left : 0x1000 - start;
+		memcpy(dest, membank[bank + i] + start, block_size);
+		i++;
+		start = 0;
+		dest += block_size;
+		left -= block_size;
+	}
+}
+
 
 int mucomvm::SaveMemExpand(const char *fname, int adr, int size, char *header, int hedsize, char *footer, int footsize, char *pcm, int pcmsize)
 {
@@ -799,7 +1137,12 @@ int mucomvm::SaveMemExpand(const char *fname, int adr, int size, char *header, i
 	fp = fopen(fname, "wb");
 	if (fp == NULL) return -1;
 	if (header) fwrite(header, 1, hedsize, fp);
-	fwrite(mem + adr, 1, size, fp);
+
+	uint8_t* rdbuf = new uint8_t[size];
+	CopyMemFromVm(rdbuf, adr, size);	
+	fwrite(rdbuf, 1, size, fp);
+	delete[] rdbuf;
+
 	if (footer) fwrite(footer, 1, footsize, fp);
 	if (pcm) fwrite(pcm, 1, pcmsize, fp);
 	fclose(fp);
@@ -813,7 +1156,12 @@ int mucomvm::StoreMemExpand(CMemBuf *buf, int adr, int size, char *header, int h
 	//
 	if ( buf==NULL ) return -1;
 	if (header) buf->PutData(header, hedsize);
-	buf->PutData(mem + adr, size);
+
+	uint8_t* rdbuf = new uint8_t[size];
+	CopyMemFromVm(rdbuf, adr, size);
+	buf->PutData(rdbuf, size);
+	delete[] rdbuf;
+
 	if (footer) buf->PutData(footer, footsize);
 	if (pcm) buf->PutData(pcm, pcmsize);
 	return 0;
@@ -886,6 +1234,7 @@ void mucomvm::ResetTimer(void)
 
 	pass_tick = 0;
 	last_tick = 0;
+	audio_output_ms = 0;
 
 	osd->ResetTime();
 }
@@ -899,6 +1248,8 @@ void mucomvm::UpdateTime(int base)
 	if (playflag == false) {
 		return;
 	}
+
+	if (p_log != NULL) p_log->Wait(((double)base)/(1024*1000));
 
 	bool stream_event = false;
 	bool int3_mode = int3flag;
@@ -950,9 +1301,15 @@ void mucomvm::UpdateTime(int base)
 		pass_tick = time_scount >> TICK_SHIFT;
 		time_scount = ( time_scount & ((int)TICK_FACTOR - 1) );
 		osd->SendAudio(pass_tick);
+		audio_output_ms += pass_tick;
 	}
 	tmflag = false;
+}
 
+// Z80の処理を待つ
+void mucomvm::WaitReady(void)
+{
+	while(busyflag) osd->Delay(10);
 }
 
 
@@ -1018,13 +1375,15 @@ void mucomvm::checkThreadBusy(void)
 
 
 void mucomvm::PlayLoop() {
-	while (1) {
+	osd->SetBreakHook();
+	while (!osd->GetBreakStatus()) {
 		osd->Delay(20);
 	}
 }
 
 void mucomvm::RenderAudio(void *mix, int size) {
 	opn->Mix((FM::Sample *)mix, size);
+	if (p_wav != NULL) p_wav->WriteData((int*)mix, size);
 }
 
 void mucomvm::UpdateCallback(int tick) {
@@ -1050,6 +1409,7 @@ void mucomvm::FMRegDataOut(int reg, int data)
 {
 	regmap[reg] = (uint8_t)data;			// 内部レジスタ保持用
 	opn->SetReg(reg, data);
+	if (p_log != NULL) p_log->WriteData(0, reg, data);
 
 	if (m_option & VM_OPTION_SCCI) {
 		// リアルチップ出力
@@ -1066,6 +1426,7 @@ int mucomvm::FMRegDataGet(int reg)
 void mucomvm::FMOutData(int data)
 {
 	//printf("FMReg: %04x = %02x\n", sound_reg_select, data);
+	//TraceLog(data);
 
 	switch (sound_reg_select) {
 	case 0x28:
@@ -1091,10 +1452,19 @@ void mucomvm::FMOutData(int data)
 	FMRegDataOut(sound_reg_select, data);
 }
 
+void mucomvm::TraceLog(int data)
+{
+	if (trace_fp == NULL) {
+		trace_fp = fopen("tracelog.txt","w");
+	}
+	if (trace_fp != NULL) 
+		fprintf(trace_fp,"FMReg: %04x = %02x\n", sound_reg_select, data);
+}
+
 //	データ出力(OPNA側)
 void mucomvm::FMOutData2(int data)
 {
-	//printf("FMReg2: %04x = %02x\n", sound_reg_select, data);
+	//if (verbose) printf("FMReg2: %04x = %02x\n", sound_reg_select, data);
 
 	if (sound_reg_select2 == 0x00) {
 		if (chmute[OPNACH_ADPCM]) return;

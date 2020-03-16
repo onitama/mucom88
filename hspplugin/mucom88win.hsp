@@ -4,6 +4,7 @@
 ;	onitama 2018/11
 ;
 #include "hspmucom.as"
+#include "hspext.as"
 #include "mod_fontdlg.as"
 #include "mod_selfolder.as"
 #include "mod_mucom88.as"
@@ -25,8 +26,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 52
-#define APP_VER "0.52"
+#const VER_NUMBER 53
+#define APP_VER "0.53"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -81,6 +82,10 @@
 	sdim pcmdir,256
 	sdim mylist,$10000
 
+	sdim cmd,256
+	sdim ln,4096
+	sdim cmdbuf,$8000
+
 	langid = GetUserDefaultUILanguage()
 	if langid!=$411 : langset=1
 
@@ -91,6 +96,10 @@
 	onexit *byebye
 	onkey gosub *cmdkey
 
+	extdriver=0
+	curdriver=0
+
+	mucomsetdriver 0
 	mucomreset 0
 	mucomres welcome_mes
 	welcome_mes+="#Z80 emulation by Yasuo Kuwahara 2002-2018(C)\n"
@@ -572,6 +581,7 @@
 		gosub *updatebuf
 		goto *to_main2
 	}
+	if extdriver>0 : goto *to_selplay_ext
 	gosub *getmucominfo
 
 	;buf="Play["+fname+"].\n"
@@ -587,6 +597,11 @@
 *to_main2
 	objsel obj_list
 	goto *main2
+
+*to_selplay_ext
+	cmd=folder_dotnet+"\\player\\mucomDotNETPlayer.exe -D=EMU \""+sname+"\""
+	exec cmd
+	goto *to_main2
 
 *to_selmub
 	if sellist<0 : goto *to_main2
@@ -613,8 +628,17 @@
 	goto *to_main2
 
 *selcomp_sub
+	compflag=0
 	mucomstop 0
 	;
+	extdriver=0
+	mucomgetdriver curdriver,fname
+	if curdriver>=MUCOM_DRIVER_MUCOMDOTNET {
+		extdriver=1
+		goto *selcomp_ext
+	}
+	mucomsetdriver curdriver
+
 	mucomreset MUCOM_RESET_COMPILE
 	if voicefile!=MUCOM_DEFAULT_VOICEFILE {
 		mucomloadvoice voicefile
@@ -623,6 +647,23 @@
 	res=stat
 	mucomres result
 	mucomtag tag_pcm,"pcm"
+	return
+*selcomp_ext
+	;	外部コンパイラ
+	res=-1
+	cmd=folder_dotnet+"\\compiler\\mucomDotNETConsole.exe \""+fname+"\" \""+sname+"\""
+	gosub *cmdexec_sub
+	if i : dialog "mucomDotNETが指定したパスで実行できません\n"+folder_dotnet : return
+
+	notesel result
+	i=notefind("[INFO",1)
+	if i<0 : return		; 起動できていない
+
+	i=notefind("[ERROR",1)
+	if i>=0 {		; エラーが発生
+		return
+	}
+	res=0
 	return
 
 *to_menusave
@@ -664,8 +705,9 @@
 	chkbox "行番号を削除する",sw_toollnum
 	chkbox "Gチャンネルのqを@に",sw_toolrepl
 	chkbox "タグを追加する",sw_tooltag
-	objsize 120,24
+	objsize 240,24
 	button "実行",*to_toolexec
+	button "MMLの末尾に音色定義を追加",*to_vaddexec
 
 	mes "\n\nPCMデータファイルを作成\n"
 	pcmdir=""
@@ -698,12 +740,13 @@
 	if wavout_time <= 0 : wavout_time = 90
 
 	font msgothic,16,0
-	mes "\n\nWAVファイルとして保存\n"
+	mes "\n\n\n別な形式にエクスポート\n"
 	sysfont 17
 	mes "録音する時間(秒)"
 	input wavout_time
 	objsize 240,24
-	button "ファイルに出力",*to_wavout
+	button "WAVファイルに出力",*to_wavout
+	button "VGM/S98ファイルに出力",*to_vgmout
 	mes " (#time タグでデフォルト時間を設定できます)"
 
 	return
@@ -713,6 +756,19 @@
 	gosub *exec_tool
 	compflag=0
 	buf="#Tool executed.\n"
+	mucomedit_update mml
+	goto *to_editor
+
+*to_vaddexec
+	;	MMLに音色定義を追加
+	gosub *mmlcomp
+	if compflag=0 : goto *to_editor
+	mucomplay 0,1
+	mucomdumpvoice s1
+	mml+="\n"
+	mml+=s1
+	compflag=0
+	buf="#MML modified.\n"
 	mucomedit_update mml
 	goto *to_editor
 
@@ -758,9 +814,31 @@
 	gosub *exec_pcmtool2
 	stop
 
+*to_vgmout
+	;	vgm Export
+	dialogEx 1, "VGM sound file (*.vgm)|*.vgm|S98 sound file (*.vs98|*.s98", getpath(myfile,9), "", filedir
+	if stat=0 : goto *main2
+	fname = refstr
+	exname=getpath(fname,2)		; ファイル名の拡張子を取得
+	if exname="" : fname+=".vgm"	; 拡張子がなければ追加
+	wavout_fname=fname
+
+	chdir filedir
+	gosub *mmlcomp
+	s1=dir_exe+"\\mucom88.exe"
+	exist s1
+
+	buf="Error."
+	if strsize>0 {
+		cmd = s1+" -r "+dir_exe+" -x -b "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
+		gosub *cmdexec_sub
+		if i=0 : buf=result+"\n["+wavout_fname+"] Saved.\n"
+	}
+	gosub *updatebuf
+	goto *main_menu
+
 *to_wavout
 	;	wav Export
-	;dialog "wav",17,"WAV sound file"
 	dialogEx 1, "WAV sound file (*.wav)|*.wav", getpath(myfile,9), "", filedir
 	if stat=0 : goto *main2
 	fname = refstr
@@ -772,12 +850,13 @@
 	gosub *mmlcomp
 	s1=dir_exe+"\\mucom88.exe"
 	exist s1
-	if strsize>0 {
-		exec s1+" -x -w "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
-	}
-	;mucomrecord wavout_fname, wavout_time
 
-	buf="["+wavout_fname+"] Saved.\n"
+	buf="Error."
+	if strsize>0 {
+		cmd = s1+" -r "+dir_exe+" -x -w "+wavout_fname+" -l "+wavout_time+" "+TEMPBIN
+		gosub *cmdexec_sub
+		if i=0 : buf=result+"\n["+wavout_fname+"] Saved.\n"
+	}
 	gosub *updatebuf
 	goto *main_menu
 
@@ -797,6 +876,7 @@
 	input voicefile
 	mes "\n標準ADPCMファイル"
 	input pcmfile
+
 	mes "\nウインドウサイズ"
 	myx=ginfo_cx:myy=ginfo_cy
 	objsize 92,24
@@ -827,6 +907,14 @@
 	objsize 120,24
 	chkbox "SCCIを使用",scci_mode
 	button "SCCI設定...",*to_sccicfg
+
+	objsize 240,24
+	mes "\nMucomDotNet フォルダ"
+	tmpx=ginfo_cx:tmpy=ginfo_cy
+	input folder_dotnet
+	pos tmpx+250,tmpy-2
+	objsize 30,24
+	button "...",*to_dotnet
 
 	objsize 200,24
 	pos myx+320,myy-200
@@ -912,6 +1000,13 @@
 	bgcolor = (ginfo_r<<16)+(ginfo_g<<8)+ginfo_b
 	goto *main_menu
 
+*to_dotnet
+	s1=folderdialog(dir_exe)
+	if s1="" : goto *main_menu
+	folder_dotnet = strtrim( s1, 2, '\\' )
+	folder_dotnet = strtrim( folder_dotnet, 2, '/' )
+	goto *main_menu
+
 *menu_web
 	;menu_str="Web"
 	pos sx,0
@@ -961,7 +1056,7 @@
 	pos sx+34,200
 	mes "Application Icon designed by OXYGEN"
 	mes "\nSpecial thanks to:"
-	mes "WING☆、Makoto Wada (Ancient corp.)"
+	mes "WING☆, Makoto Wada (Ancient corp.), boukichi, kumatan"
 
 	return
 
@@ -1023,6 +1118,14 @@
 	;notesel mml
 	;notesave TEMPMML
 
+	extdriver=0
+	mucomgetdriver curdriver,TEMPMML
+	if curdriver>=MUCOM_DRIVER_MUCOMDOTNET {
+		extdriver=1
+		goto *mmlcomp_ext
+	}
+	mucomsetdriver curdriver
+
 	mucomreset MUCOM_RESET_COMPILE
 	if voicefile!=MUCOM_DEFAULT_VOICEFILE {
 		mucomloadvoice voicefile
@@ -1046,6 +1149,47 @@
 	mucomres result
 	compflag=1
 
+	return
+
+*mmlcomp_ext
+	;	外部コンパイラ
+	result=""
+	cmd=folder_dotnet+"\\compiler\\mucomDotNETConsole.exe "+TEMPMML+" "+TEMPBIN
+	gosub *cmdexec_sub
+	if i : dialog "mucomDotNETが指定したパスで実行できません\n"+folder_dotnet : return
+
+	buf=result
+	gosub *updatebuf
+
+	notesel result
+	i=notefind("[INFO",1)
+	if i<0 {
+		msg "Compile result not found."
+		return
+	}
+
+	i=notefind("[ERROR",1)
+	if i>=0 {
+		msg "Compile Error in external player."
+		return
+	}
+	msg "Playing on external player."
+
+	cmd=folder_dotnet+"\\player\\mucomDotNETPlayer.exe -D=EMU "+dir_cur+"\\"+TEMPBIN
+	exec cmd
+
+	return
+
+*cmdexec_sub
+	i=0
+	pipeexec result,cmd,0
+	i=stat
+	if i : return
+	repeat
+	pipeget ln
+	if stat=0 : break
+	await 10
+	loop
 	return
 
 *getmucominfo

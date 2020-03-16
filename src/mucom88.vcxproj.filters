@@ -65,6 +65,18 @@
     <ClCompile Include="plugin\plugin.cpp">
       <Filter>plugin</Filter>
     </ClCompile>
+    <ClCompile Include="utils\pcmentry.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\s98write.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\vgmwrite.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\wavwrite.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="fmgen\types.h" />
@@ -158,6 +170,21 @@
     <ClInclude Include="voiceformat.h">
       <Filter>mucom88</Filter>
     </ClInclude>
+    <ClInclude Include="utils\logwrite.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\pcmentry.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\s98write.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\vgmwrite.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\wavwrite.h">
+      <Filter>utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Z80">
@@ -174,6 +201,9 @@
     </Filter>
     <Filter Include="win32">
       <UniqueIdentifier>{33210cf8-78bb-49fc-908d-1f7ba9402f7c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="utils">
+      <UniqueIdentifier>{4c10f201-8b9f-4cbc-a37b-3e72434b2b53}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

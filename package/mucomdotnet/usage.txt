@@ -1,0 +1,48 @@
+How to mucom.NET !
+
+[手順]
+  1.mucファイルをテキストエディタで作る
+    作り方はオリジナルのmucom88winと同じです。
+  2.コンパイラでmubファイルを作る
+    エラーが出たら1に戻って修正
+  3.プレイヤーでmubファイルを演奏する
+    悦に入ります。気に食わなければ1に戻って修正
+  4.完成!! Let's 8801 Programing!
+
+
+
+[使い方]
+＊コンパイラ
+  mucomDotNETConsole.exe file.muc ...
+
+  *mucomDotNETConsoleに.mucファイルをドロップするとコンパイルを実施し、エラーが無ければmubファイルを作成します。
+   複数ドロップすることも可能です。
+  *音色定義ファイルの指定がmucファイル中にない場合や見つからない場合は、
+   voice.datまたはmucompcm.binをmucomDotNETConsole.exeがある位置を検索します。
+
+
+＊プレイヤー
+  mucomDotNETPlayer.exe [-D=[EMU|GIMIC|SCCI]] file.mub
+
+  *mucomDotNETPlayerに.mubファイルをドロップすると演奏を開始します。
+  *オプション指定
+   -D
+     -Dオプションを指定することにより再生デバイスを変更できます。
+     -D=EMU
+       デフォルト値です。
+       エミュレーションによる再生をWindowsの音声デバイスから行います。
+     -D=GIMIC
+       G.I.M.I.C.のOPNAモジュールによる再生を行います。モジュールが見つからない場合はEMUと同じ動作になります
+     -D=SCCI
+       SCCIのOPNAモジュールによる再生を行います。モジュールが見つからない場合はEMUと同じ動作になります
+
+   -LOADADPCM
+     -LOADADPCMオプションを指定するとADPCMを音源のメモリに転送するか否かを指定できます。
+     -LOADADPCM=TRUE
+       デフォルト値です。
+       演奏前にADPCMの転送処理が入ります。
+     -LOADADPCM=FALSE
+       演奏前のADPCMの転送処理をスキップします。
+     -LOADADPCM=ONLY
+       ADPCMの転送処理のみ行います。演奏は行いません。
+

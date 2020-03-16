@@ -31,6 +31,10 @@ goto *_end_mod_mucom88
 	fgcolor=$dcdcdc
 	bgcolor=0
 
+	sdim folder_dotnet,256
+	folder_dotnet=dir_exe+"\\mucomdotnet"
+	pmode_dotnet=0
+
 	plg_fmedit=1
 	plg_smon=1
 	slowfw=0
@@ -86,6 +90,8 @@ goto *_end_mod_mucom88
 		cfg_getvari asave_count,"asave_count"
 		cfg_getvari asave_max,"asave_max"
 
+		cfg_getvars folder_dotnet,"folder_dotnet"
+		cfg_getvari pmode_dotnet,"pmode_dotnet"
 	}
 
 	return
@@ -96,6 +102,7 @@ goto *_end_mod_mucom88
 	;
 	if wx<640 : wx=640
 	if wy<480 : wy=480
+
 	cfg_init INIFILE,APPNAME
 	cfg_seti "wx",wx
 	cfg_seti "wy",wy
@@ -129,6 +136,9 @@ goto *_end_mod_mucom88
 	cfg_seti "langset",langset
 	cfg_seti "asave_count",asave_count
 	cfg_seti "asave_max",asave_max
+
+	cfg_sets "folder_dotnet",folder_dotnet
+	cfg_seti "pmode_dotnet",pmode_dotnet
 
 	cfg_save
 

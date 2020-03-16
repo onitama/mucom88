@@ -98,6 +98,10 @@
     <ClCompile Include="osdep.cpp" />
     <ClCompile Include="plugin\plugin.cpp" />
     <ClCompile Include="soundbuf.cpp" />
+    <ClCompile Include="utils\pcmentry.cpp" />
+    <ClCompile Include="utils\s98write.cpp" />
+    <ClCompile Include="utils\vgmwrite.cpp" />
+    <ClCompile Include="utils\wavwrite.cpp" />
     <ClCompile Include="wavout.cpp" />
     <ClCompile Include="win32\osdep_win.cpp" />
     <ClCompile Include="win32\realchip.cpp" />
@@ -128,6 +132,11 @@
     <ClInclude Include="plugin\mucom88if.h" />
     <ClInclude Include="plugin\plugin.h" />
     <ClInclude Include="soundbuf.h" />
+    <ClInclude Include="utils\logwrite.h" />
+    <ClInclude Include="utils\pcmentry.h" />
+    <ClInclude Include="utils\s98write.h" />
+    <ClInclude Include="utils\vgmwrite.h" />
+    <ClInclude Include="utils\wavwrite.h" />
     <ClInclude Include="voiceformat.h" />
     <ClInclude Include="wavout.h" />
     <ClInclude Include="win32\osdep_win.h" />

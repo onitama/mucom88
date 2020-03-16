@@ -5,7 +5,7 @@ hspmucom
 3.6
 
 %date
-2019/07/10
+2020/03/16
 
 %author
 onitama
@@ -106,13 +106,16 @@ mucomplay
 ‰¹Šy‚ÌÄ¶
 
 %prm
-p1
+p1,p2
 p1(0) : ƒoƒ“ƒNNo.
+p2(0) : Ä¶ƒtƒ‰ƒO(0=Ä¶A1=€”õ‚Ì‚Ý)
 
 %inst
 Žw’è‚³‚ê‚½ƒoƒ“ƒNNo.‚Ì‰¹Šy‚ðÄ¶‚µ‚Ü‚·B
 Å‰‚ÉAmucomload–½—ß‚É‚æ‚èMUCOM88‰¹Šyƒf[ƒ^(.mub)‚ð“Ç‚Ýž‚ñ‚Å‚¨‚­•K—v‚ª‚ ‚è‚Ü‚·B
 ƒGƒ‰[‚ª”­¶‚µ‚½ê‡‚ÍAƒVƒXƒeƒ€•Ï”stat‚É0ˆÈŠO‚ª‘ã“ü‚³‚ê‚Ü‚·B
+p2ƒpƒ‰ƒ[ƒ^[‚É0ˆÈŠO‚ðÝ’è‚µ‚½ê‡‚ÍAÄ¶‚Ì€”õ‚¾‚¯‚ðs‚Á‚½ã‚ÅÄ¶‚ÍƒXƒLƒbƒv‚µ‚Ü‚·B
+‰¹F‚Ìó‘Ô‚âƒgƒ‰ƒbƒN‚Ìî•ñ‚Ì‚Ý‚ðŽæ“¾‚·‚éê‡‚ÉÝ’è‚µ‚Ä‚­‚¾‚³‚¢B
 
 %href
 mucomload
@@ -423,5 +426,68 @@ mucomgetchdata–½—ß‚ÅƒGƒ‰[‚ª”­¶‚µ‚½ê‡‚ÍAƒVƒXƒeƒ€•Ï”stat‚É0ˆÈŠO‚ª‘ã“ü‚³‚ê‚Ü‚
 mucomplay
 
 
+%index
+mucomgetdriver
+MUCOM88ƒhƒ‰ƒCƒo[–¼‚ðŽæ“¾
+
+%prm
+var,"filename",option
+var        : Žæ“¾‚³‚ê‚½ƒf[ƒ^‚ª‘ã“ü‚³‚ê‚é•Ï”
+"filename" : .mub‚Ü‚½‚Í.mucƒtƒ@ƒCƒ‹‚ÌƒpƒX
+option(0)  : 0‚ÌŽž‚Í.mucƒtƒ@ƒCƒ‹A1‚ÌŽž‚Í.mubƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚Þ
+
+%inst
+#driverƒ^ƒO‚ÅŽw’è‚³‚ê‚½ƒhƒ‰ƒCƒo[–¼‚ðŽæ“¾‚µ‚Ü‚·B
+option’l‚Å.mucƒtƒ@ƒCƒ‹A‚Ü‚½‚Í.mubƒtƒ@ƒCƒ‹‚ÌŽí•Ê‚ðŽw’è‚µ‚ÄA"filename"‚ÅƒpƒX–¼‚ðŽw’è‚µ‚Ü‚·B
+var‚ÅŽw’è‚µ‚½•Ï”‚ÉŒ‹‰Ê‚ª‘ã“ü‚³‚ê‚Ü‚·B’l‚ÍAMUCOM_DRIVER_*‚ÅŽ¦‚³‚ê‚é’l‚É‚È‚è‚Ü‚·B
+#driverƒ^ƒO‚ªÝ’è‚³‚ê‚Ä‚¢‚È‚¢ê‡‚ÍAMUCOM_DRIVER_NONE(–¢’è‹`)‚Æ‚È‚è‚Ü‚·B
+‚Ü‚½A•s–¾‚Èƒhƒ‰ƒCƒo[–¼‚Ìê‡‚ÍAMUCOM_DRIVER_UNKNOWN(•s–¾)‚ª•Ô‚³‚ê‚Ü‚·B
+
+%href
+mucomsetdriver
+
+
+%index
+mucomsetdriver
+MUCOM88ƒhƒ‰ƒCƒo[–¼‚ðÝ’è
+
+%prm
+p1
+p1(0) : ƒhƒ‰ƒCƒo[–¼‚ðŽ¦‚·’l(MUCOM_DRIVER_*)
+
+%inst
+p1‚ÅŽw’è‚µ‚½ƒhƒ‰ƒCƒo[’l‚ðƒVƒXƒeƒ€‚ÉÝ’è‚µ‚Ü‚·B’l‚ÍAMUCOM_DRIVER_*‚ÅŽ¦‚³‚ê‚é’l‚É‚È‚è‚Ü‚·B
+^p
+   ƒhƒ‰ƒCƒo[–¼  : ƒ}ƒNƒ–¼                : “à—e
+ ------------------------------------------------------------------------
+   "mucom88"       MUCOM_DRIVER_MUCOM88      ƒIƒŠƒWƒiƒ‹‚Ìƒhƒ‰ƒCƒo(1.7)
+   "mucom88e"      MUCOM_DRIVER_MUCOM88E     ƒIƒŠƒWƒiƒ‹‚Ìƒhƒ‰ƒCƒo(1.5)
+   "mucom88em"     MUCOM_DRIVER_MUCOM88EM    Šg’£ƒƒ‚ƒŠ”Åƒhƒ‰ƒCƒo(1.7)
+   "mucomdotnet"   MUCOM_DRIVER_MUCOMDOTNET  MucomDotNET(ŠO•”ƒhƒ‰ƒCƒo)
+^p
+ˆÈ~‚ÍAƒhƒ‰ƒCƒo[’l‚ÅÝ’è‚³‚ê‚½“à—e‚Å“®ì‚µ‚Ü‚·B
+ƒfƒtƒHƒ‹ƒg‚Å‚ÍAMUCOM_DRIVER_MUCOM88‚ªÝ’è‚³‚ê‚Ä‚¨‚èAmucomreset‚ÅÝ’è‚ªƒŠƒZƒbƒg‚³‚ê‚é‚±‚Æ‚Í‚ ‚è‚Ü‚¹‚ñB
+
+
+%href
+mucomgetdriver
+
+
+%index
+mucomdumpvoice
+MUCOM88‰¹F’è‹`‚ðŽæ“¾‚·‚é
+
+%prm
+var
+var        : Žæ“¾‚³‚ê‚½ƒf[ƒ^‚ª‘ã“ü‚³‚ê‚é•Ï”
+
+%inst
+MML“à‚ÅŽg—p‚³‚ê‚Ä‚¢‚é‚·‚×‚Ä‚ÌFM‰¹Fƒf[ƒ^‚ðA‰¹F’è‹`•¶Žš—ñ‚Æ‚µ‚ÄŽæ“¾‚µ‚Ü‚·B
+‚ ‚ç‚©‚¶‚ßAmucomload–½—ß‚Å.mubƒtƒ@ƒCƒ‹‚ð“Ç‚Ýž‚ÝAmucomplay–½—ß‚ÅÄ¶€”õ‚ðs‚Á‚Ä‚¨‚­•K—v‚ª‚ ‚è‚Ü‚·B
+Œ‹‰Ê‚ÍAvar‚ÅŽw’è‚³‚ê‚½•Ï”‚É•¶Žš—ñŒ^‚Æ‚µ‚Ä‘ã“ü‚³‚ê‚Ü‚·B
+
+%href
+mucomload
+mucomplay
 
 
