@@ -79,7 +79,12 @@ SRCS += callback.cpp
 SRCS += wavout.cpp
 SRCS += osdep.cpp
 
-SRCS += utils/logwrite.cpp
+# ログ機能
+SRCS += utils/s98write.cpp
+SRCS += utils/vgmwrite.cpp
+
+# WAV出力機能
+SRCS += utils/wavwrite.cpp
 
 
 MAIN_SRCS = main.cpp
