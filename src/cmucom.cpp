@@ -693,8 +693,8 @@ int CMucom::LoadTagFromMusic(int num)
 
 	if (hed->tagdata) {
 		infobuf->PutStr(MUBGetTagData(hed, tagsize));
-		infobuf->Put((int)0);
 	}
+	infobuf->Put((int)0);
 
 	return 0;
 }
@@ -1435,9 +1435,10 @@ const char *CMucom::GetInfoBufferByName(const char *name)
 	if (infobuf == NULL) return "";
 
 	const char *src = GetInfoBuffer();
+
 	while (1) {
-		if (src == NULL) break;
 		src = GetTextLine(src);
+		if (src == NULL) break;
 
 		len = strpick_spc((char *)linebuf+1, infoname, 63);
 		if (len > 0) {

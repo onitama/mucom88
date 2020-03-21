@@ -269,6 +269,7 @@ int main( int argc, char *argv[] )
 	if (ext != NULL && STRCASECMP(ext, ".muc") == 0) cmpopt |= MUCOM_CMPOPT_COMPILE;
 
 	int driver_mode;
+
 	if (drivername != NULL) {
 		driver_mode = mucom.GetDriverModeString(drivername);
 	}
