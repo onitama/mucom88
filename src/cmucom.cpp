@@ -193,6 +193,7 @@ void CMucom::Init(void *window, int option, int rate)
 	//
 	vm = new mucomvm;
 	flag = 1;
+	if (original_mode) vm->SetOrignalMode();
 
 	// レート設定
 	AudioCurrentRate = rate;
@@ -357,8 +358,6 @@ void CMucom::LoadModBinary(int option)
 
 		LoadFMVoice(MUCOM_DEFAULT_VOICEFILE, true);
 	}
-
-	vm->FillMem(MUCOM_ADDRESS_BASIC, 0xc9, 0x4000);
 }
 
 void CMucom::LoadExternalCompiler()
