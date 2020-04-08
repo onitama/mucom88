@@ -12,9 +12,10 @@
 
 ;common
 E0000=Exception message:\r\n{0}\r\nException stacktrace:\r\n{1}\r\n
+E0001=従来の書式が既に使われていて自動でmucomDotNET形式に移行できませんでした。Driverタグを使用してmucomDotNETを予め宣言してください。
 
 ;compiler.cs 0100
-E0100=Hmm, Error has been occured on compile. (Error on Line {0})
+E0100=Hmm, Error has been occured on compile. (Error on row:{0} col:{1})
 
 ;msub.cs 0200
 E0200=Sound data exceeded maximum capacity(64k).
@@ -42,7 +43,8 @@ W0411=Volume (246 to 251 or less) was specified when the VM command value was 0.
 W0412=If you use the 't' or 'T' command in the SSG part, the tempo of the entire song changes, not at the specified time.
 W0413=!!Caution!! The timer-B setting value is 253 to 255 or less. (Driver hang up!)
 W0414=Portamento specifies a clock of 129 or higher. (Value:{0})
-W0415=AutoPanning specifies a clock of 3 or lower. (Value:{0})
+W0415=If the value1 (upper 4 bits for rhythm) is 1-3 with the 'p' pan command, no wait value is required.(value:{0})
+W0416=']' command value range is exceeding $01~$ff.(Value:{0})
 E0400=Trying to call undefined macro!
 E0401=Unable to return from macro line.(Address Exceeded)
 E0402=Unable to return from macro line.(Address Undefined)
@@ -80,7 +82,7 @@ E0433='S'Slot detune command
 E0434='S'Illegal usage on Slot detune command.
 E0435='S'Illegal value on Slot detune command.
 E0436=']'Loop End command
-E0437=Mismatching ].
+E0437=Mismatching ']'.
 E0438=Loop nest is too deep (>16).
 E0439='r'Illegal rest value
 E0440='M'Illegal value on Software LFO command.
@@ -166,6 +168,10 @@ E0519=Not found voice data file.Check TAG define.
 E0520='m'Hardware envelope speed command can only be used in SSG part.
 E0521='S'Hardware envelope command can only be used in SSG part.
 E0522='KD'KeyOn Delay command can only be used in FM part.
+E0523='/' Was used without a corresponding '['.
+E0524='p'Illegal value1 on Pan command.(value1={0} range:1-6)
+E0525=When 4 to 6 is specified for the 'p' pan command, the wait value must be specified.
+E0526=Exceeds the range (1 to {0}) that can be specified for the weight value of the 'p' pan command.(value:{1})
 
 ;Program.cs 0600
 E0600=I want arguments(.muc File) please?
