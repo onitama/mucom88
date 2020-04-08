@@ -1,7 +1,7 @@
-This is the Japanese documentation. The English documentation can
-be found at README-en.md.
-
 # OPEN MUCOM88プロジェクトについて
+
+This is the Japanese documentation. The English documentation can be found at README-en.md.
+https://github.com/onitama/mucom88/blob/master/README-en.md
 
 MUCOM88 Windowsは、OPEN MUCOM88プロジェクトの一部として公開されています。
 詳細については、Open MUCOM88 WiKiをご覧ください。<br>
