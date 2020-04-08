@@ -59,9 +59,6 @@
     <ClCompile Include="osdep.cpp">
       <Filter>mucom88</Filter>
     </ClCompile>
-    <ClCompile Include="wavout.cpp">
-      <Filter>mucom88</Filter>
-    </ClCompile>
     <ClCompile Include="plugin\plugin.cpp">
       <Filter>plugin</Filter>
     </ClCompile>
@@ -75,6 +72,9 @@
       <Filter>utils</Filter>
     </ClCompile>
     <ClCompile Include="utils\wavwrite.cpp">
+      <Filter>utils</Filter>
+    </ClCompile>
+    <ClCompile Include="utils\codeconv\codeconv_dummy.cpp">
       <Filter>utils</Filter>
     </ClCompile>
   </ItemGroup>
@@ -161,9 +161,6 @@
     <ClInclude Include="callback.h">
       <Filter>mucom88</Filter>
     </ClInclude>
-    <ClInclude Include="wavout.h">
-      <Filter>mucom88</Filter>
-    </ClInclude>
     <ClInclude Include="plugin\plugin.h">
       <Filter>plugin</Filter>
     </ClInclude>
@@ -183,6 +180,9 @@
       <Filter>utils</Filter>
     </ClInclude>
     <ClInclude Include="utils\wavwrite.h">
+      <Filter>utils</Filter>
+    </ClInclude>
+    <ClInclude Include="utils\codeconv\codeconv_dummy.h">
       <Filter>utils</Filter>
     </ClInclude>
   </ItemGroup>

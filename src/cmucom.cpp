@@ -57,13 +57,14 @@
 #ifdef _WIN32
 #define STRCASECMP _strcmpi
 #else
-#define STRCASECMP strcmpi
+#define STRCASECMP strcasecmp
 #endif
 #endif
 
 
 
 #define PRINTF vm->Msgf
+#define PRINTF_NOCONV vm->MsgfNoConvert
 
 int CMucom::htoi_sub(char hstr)
 {
@@ -693,8 +694,8 @@ int CMucom::LoadTagFromMusic(int num)
 
 	if (hed->tagdata) {
 		infobuf->PutStr(MUBGetTagData(hed, tagsize));
+		infobuf->Put((int)0);
 	}
-	infobuf->Put((int)0);
 
 	return 0;
 }
@@ -1350,13 +1351,18 @@ int CMucom::GetMultibyteCharacter(const unsigned char *text)
 #endif
 
 #ifdef MUCOM88UTF8
-	if (a1 >= 128) {				// 全角文字チェック(UTF8)
+	if (a1 & 0x80) {				// 全角文字チェック(UTF8)
+		int utf8bytes = 0;
+		if ((a1 & 0xe0) == 0x0c0) utf8bytes = 1;
+		if ((a1 & 0xf0) == 0x0e0) utf8bytes = 2;
+		if ((a1 & 0xf8) == 0x0f0) utf8bytes = 3;
+
 		int utf8cnt = 0;
-		if ((a1 >= 192) && (p[1] != 0)) utf8cnt++;
-		if ((a1 >= 224) && (p[2] != 0)) utf8cnt++;
-		if ((a1 >= 240) && (p[3] != 0)) utf8cnt++;
-		if ((a1 >= 248) && (p[4] != 0)) utf8cnt++;
-		if ((a1 >= 252) && (p[5] != 0)) utf8cnt++;
+		while(utf8bytes > 0) {
+			if ((*(++p) & 0xc0) != 0x80) break;
+			utf8cnt++;
+			utf8bytes--;
+		}
 		mulchr += utf8cnt;
 	}
 #endif
@@ -1435,10 +1441,9 @@ const char *CMucom::GetInfoBufferByName(const char *name)
 	if (infobuf == NULL) return "";
 
 	const char *src = GetInfoBuffer();
-
 	while (1) {
-		src = GetTextLine(src);
 		if (src == NULL) break;
+		src = GetTextLine(src);
 
 		len = strpick_spc((char *)linebuf+1, infoname, 63);
 		if (len > 0) {
@@ -1591,10 +1596,18 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 		i = 0;
 		while (1) {
 			a1 = linebuf[i];
+
+			if (a1 == ';') {
+				while(a1 != 0) {
+					a1 = linebuf[++i];
+				}
+			}
+
 			if (a1 == 0) {
 				vm->Poke(mptr++, 0);
 				break;
 			}
+
 			mulchr = GetMultibyteCharacter(linebuf+i);
 			i += mulchr;
 			if ( mulchr==1) {
@@ -1669,7 +1682,7 @@ int CMucom::Compile(char *text, int option, bool writeMub, const char *filename)
 		int line = vm->Peekw(0x0f32e);
 		int msgid = vm->GetMessageId();
 		if (msgid > 0) {
-			PRINTF("#error %d in line %d.\r\n-> %s (%s)\r\n", msgid, line, mucom_geterror_j(msgid), mucom_geterror(msgid));
+			PRINTF_NOCONV("#error %d in line %d.\r\n-> %s (%s)\r\n", msgid, line, mucom_geterror_j(msgid), mucom_geterror(msgid));
 		}
 		else {
 			PRINTF("#unknown error in line %d.\r\n", line);
@@ -1709,7 +1722,7 @@ int CMucom::Compile(char *text, int option, bool writeMub, const char *filename)
 		if (voiceid <= 1) badvoice = true;
 	}
 	if (badvoice) {
-		PRINTF("#Abort: bad voice No. detected.\r\n-> 音色番号 @0 は使用できません。\r\n");
+		PRINTF_NOCONV("#Abort: bad voice No. detected.\r\n-> 音色番号 @0 は使用できません。\r\n");
 		return -1;
 	}
 

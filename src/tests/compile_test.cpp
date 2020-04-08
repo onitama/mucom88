@@ -1,11 +1,6 @@
 #include <stdio.h>
 #include <string.h>
 
-// mainをSDL_mainにするために必要
-#ifdef USE_SDL
-#include <SDL.h>
-#endif
-
 #include "mucom_module.h"
 
 void WriteWORD(unsigned char *p, unsigned short v) {
@@ -78,7 +73,9 @@ void RecordWav(const char *outputFilename, MucomModule *m,int seconds) {
 int CompileWav(const char *filename, const char *wavFilename) {
     MucomModule *module = new MucomModule();
     // module->SetVolume(1.0);
-    printf("File:%s\n", filename);
+    printf("Input File:%s\n", filename);
+    printf("Output File:%s\n", wavFilename);
+
     bool r = module->Open(".", filename);
     printf("open\n");
     puts(module->GetResult());
@@ -92,22 +89,22 @@ int CompileWav(const char *filename, const char *wavFilename) {
     delete module;
 }
 
-int CompileSong() {
-    if (CompileWav("sampl1.muc","sampl1.wav") < 0) return -1; 
-    if (CompileWav("sampl2.muc","sampl2.wav") < 0) return -1; 
-    if (CompileWav("sampl3.muc","sampl3.wav") < 0) return -1; 
-    return 0;
-}
-
 int main(int argc, char *argv[])
 {
-#if defined(USE_SDL) && defined(_WIN32)
-    freopen( "CON", "w", stdout );
-    freopen( "CON", "w", stderr );
-#endif
+    char *inputMuc;
+    char outputFilename[512];
+    printf("MucomModule Compile Test\n");
+    if (argc < 2) {
+        printf("Usage compile input.muc\n");
+        return 0;
+    }
 
-    printf("MucomModule Test\n");
-    if (CompileSong() < 0) return -1;
+    inputMuc = argv[1];
+    strcpy(outputFilename, inputMuc);
+    char *pos = strrchr(outputFilename,'.');
+    const char *extWav = ".wav";
+    if (pos != NULL) strcpy(pos,extWav); else strcat(outputFilename,extWav);
+    if (CompileWav(argv[1], outputFilename) < 0) return -1; 
     return 0;
 }
 

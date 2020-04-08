@@ -11,7 +11,7 @@ CC = gcc
 CFLAGS = 
 CXXFLAGS = 
 # CXXFLAGS += -Wno-write-strings
-COMMON_FLAGS = 
+COMMON_FLAGS =
 # COMMON_FLAGS += -Wall -Werror
 LDFLAGS = 
 DEFINES = 
@@ -35,11 +35,10 @@ TARGET_DEPTEST = dep_test$(EXE_SUFFIX)
 TARGET_MINIPLAY = miniplay$(EXE_SUFFIX)
 TARGET_PCMTOOL = pcmtool$(EXE_SUFFIX)
 
-
 ifeq ($(DEBUG),1)
 TARGET = $(TARGET_NAME)_d$(EXE_SUFFIX)
-LDFLAGS = -g
-COMMON_FLAGS = -O0 -g
+LDFLAGS += -g
+COMMON_FLAGS += -O0 -g
 OBJS_DIR = objs_d
 endif
 
@@ -51,7 +50,7 @@ mini: makedir $(TARGET_MINIPLAY)
 tool: makedir $(TARGET_PCMTOOL)
 
 
-DIRS = z80 fmgen plugin module tests
+DIRS = z80 fmgen plugin module tests utils utils/codeconv
 
 SRCS = membuf.cpp adpcm.cpp
 
@@ -62,11 +61,7 @@ SRCS += soundbuf.cpp
 SRCS += cmucom.cpp
 SRCS += mucomvm.cpp
 
-ifeq ($(WIN32),1)
 SRCS += mucomerror.cpp
-else
-SRCS += mucomerror_utf8.cpp
-endif
 
 SRCS += plugin/plugin.cpp
 
@@ -76,7 +71,6 @@ SRCS += fmgen/file.cpp fmgen/fmgen.cpp fmgen/fmtimer.cpp
 SRCS += fmgen/opm.cpp fmgen/opna.cpp fmgen/psg.cpp
 
 SRCS += callback.cpp
-SRCS += wavout.cpp
 SRCS += osdep.cpp
 
 # ログ機能
@@ -85,7 +79,6 @@ SRCS += utils/vgmwrite.cpp
 
 # WAV出力機能
 SRCS += utils/wavwrite.cpp
-
 
 MAIN_SRCS = main.cpp
 
@@ -140,6 +133,15 @@ endif
 else 
 DIRS += dummy
 DEP_SRCS += dummy/osdep_dummy.cpp
+endif
+
+
+# 文字コード変換
+SRCS += utils/codeconv/codeconv_dummy.cpp
+
+ifdef USE_ICONV
+COMMON_FLAGS += -DDUSE_ICONV
+SRCS += utils/codeconv/codeconv_iconv.cpp
 endif
 
 

@@ -28,6 +28,7 @@ interface
 
 mucomvm::mucomvm(void)
 {
+	Conv = new CODECONVERT();
 	m_flag = VMFLAG_NONE;
 	m_option = 0;
 	m_fastfw = 4;
@@ -824,7 +825,22 @@ void mucomvm::DumpBin(uint16_t adr, uint16_t length)
 }
 
 
+// 変換
 void mucomvm::Msgf(const char *format, ...)
+{
+	char textbf[4096];
+	char outbuf[4096];
+	va_list args;
+	va_start(args, format);
+	vsprintf(textbf, format, args);
+	va_end(args);
+
+	Conv->FromSjis(textbf, outbuf, 4096);
+	membuf->PutStr(outbuf);
+}
+
+// 変換なし
+void mucomvm::MsgfNoConvert(const char *format, ...)
 {
 	char textbf[4096];
 	va_list args;

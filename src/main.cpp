@@ -21,7 +21,6 @@
 #endif
 
 #include "cmucom.h"
-#include "wavout.h"
 
 // mainをSDL_mainにするために必要
 #ifdef USE_SDL
@@ -42,7 +41,7 @@
 #ifdef _WIN32
 #define STRCASECMP _strcmpi
 #else
-#define STRCASECMP strcmpi
+#define STRCASECMP strcasecmp
 #endif
 #endif
 
@@ -269,7 +268,6 @@ int main( int argc, char *argv[] )
 	if (ext != NULL && STRCASECMP(ext, ".muc") == 0) cmpopt |= MUCOM_CMPOPT_COMPILE;
 
 	int driver_mode;
-
 	if (drivername != NULL) {
 		driver_mode = mucom.GetDriverModeString(drivername);
 	}
@@ -359,8 +357,6 @@ int main( int argc, char *argv[] )
 			if (logfile != NULL) printf("#Record to %s (%d sec).", logfile, song_length);
 			if (wavfile != NULL) printf( "#Record to %s (%d sec).", wavfile, song_length );
 			mucom.Record(song_length);
-
-			// RecordWave(&mucom, wavfile, RENDER_RATE, song_length);
 		}
 		else {
 			mucom.PlayLoop();

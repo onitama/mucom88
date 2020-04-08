@@ -16,6 +16,8 @@
 #include "utils/logwrite.h"
 #include "utils/wavwrite.h"
 
+#include "codeconv.h"
+
 //#define DEBUGZ80_TRACE
 
 enum {
@@ -132,6 +134,7 @@ public:
 
 	//		デバッグ用
 	void Msgf(const char *format, ...);
+	void MsgfNoConvert(const char *format, ...);
 	char *GetMessageBuffer(void) { return membuf->GetBuffer(); }
 	int GetMessageBufferSize(void) { return membuf->GetSize(); }
 	void DumpBin(uint16_t adr, uint16_t length);
@@ -202,6 +205,7 @@ public:
 	void SetMemory(unsigned char* data, int address, int length);
 	void SetExtMemory(unsigned char* data, int bank, int address, int length);
 
+	CodeConvert *Conv;
 
 private:
 	//		Z80

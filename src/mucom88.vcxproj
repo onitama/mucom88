@@ -14,7 +14,7 @@
     <ProjectGuid>{DC3A1DD3-7664-48A9-88C2-AB16D9CACCE1}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>mucom88</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -42,9 +42,12 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(VC_IncludePath);$(WindowsSdk_71A_IncludePath);utils/codeconv;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <IntDir>$(Configuration)\$(ProjectName)</IntDir>
+    <IncludePath>$(VC_IncludePath);$(WindowsSdk_71A_IncludePath);utils/codeconv;</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -98,11 +101,11 @@
     <ClCompile Include="osdep.cpp" />
     <ClCompile Include="plugin\plugin.cpp" />
     <ClCompile Include="soundbuf.cpp" />
+    <ClCompile Include="utils\codeconv\codeconv_dummy.cpp" />
     <ClCompile Include="utils\pcmentry.cpp" />
     <ClCompile Include="utils\s98write.cpp" />
     <ClCompile Include="utils\vgmwrite.cpp" />
     <ClCompile Include="utils\wavwrite.cpp" />
-    <ClCompile Include="wavout.cpp" />
     <ClCompile Include="win32\osdep_win.cpp" />
     <ClCompile Include="win32\realchip.cpp" />
     <ClCompile Include="win32\soundds.cpp" />
@@ -132,13 +135,13 @@
     <ClInclude Include="plugin\mucom88if.h" />
     <ClInclude Include="plugin\plugin.h" />
     <ClInclude Include="soundbuf.h" />
+    <ClInclude Include="utils\codeconv\codeconv_dummy.h" />
     <ClInclude Include="utils\logwrite.h" />
     <ClInclude Include="utils\pcmentry.h" />
     <ClInclude Include="utils\s98write.h" />
     <ClInclude Include="utils\vgmwrite.h" />
     <ClInclude Include="utils\wavwrite.h" />
     <ClInclude Include="voiceformat.h" />
-    <ClInclude Include="wavout.h" />
     <ClInclude Include="win32\osdep_win.h" />
     <ClInclude Include="win32\realchip.h" />
     <ClInclude Include="win32\scci.h" />
