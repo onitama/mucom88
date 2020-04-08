@@ -8,13 +8,13 @@ but does not strictly follow changes to README.md.
 # About the OPEN MUCOM 88 Project
 
 A Windows version of MUCOM 88 is released as part of the OPEN MUCOM 88 project.
-For more information, see Open MUCOM 88 Wiki (not yet available in English). <br>
-https://github.com/onitama/mucom88/wiki
+For more information, see Open MUCOM 88 Wiki<br>
+https://github.com/onitama/mucom88/wiki/Home-en
 
 MUCOM 88 for Windows is primarily distributed at the following site:
 
 MUCOM 88 Windows <br>
-https://onitama.tv/mucom88/
+https://onitama.tv/mucom88/index_en.html
 
 MUCOM 88 is a Music Macro Language (MML) compiler and music creation tool for
 the NEC PC-8801 platform developed by Yuzo Koshiro in 1987. In addition to a
