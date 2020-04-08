@@ -12,7 +12,6 @@
 
 #include "hspdll.h"
 #include "../src/cmucom.h"
-#include "../src/wavout.h"
 
 #define MUCOM_USE_UUID
 
@@ -456,24 +455,6 @@ EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, int p1, int p2, int p3)
 		pt = (PCHDATA *)pv->pt;
 		ep2 = mucom->GetChannelData( ep1,pt );
 		if (ep2 != 0) return -1;
-	}
-	return 0;
-}
-
-
-EXPORT BOOL WINAPI mucomrecord(HSPEXINFO *hei, int p1, int p2, int p3)
-{
-	//	DLL mucomrecord "filename",time (type$202)
-	//	(wav録音機能は通常起動すると任意に実行できないため機能保留中)
-	//
-	int ep1;
-	char *p;
-	char outfile[_MAX_PATH];
-	p = hei->HspFunc_prm_gets();			// パラメータ1:文字列
-	strncpy(outfile, p, _MAX_PATH);
-	ep1 = hei->HspFunc_prm_getdi(90);	// パラメータ1:数値
-	if (mucom) {
-		RecordWave(mucom, outfile, MUCOM_AUDIO_RATE, ep1);
 	}
 	return 0;
 }

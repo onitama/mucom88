@@ -261,7 +261,7 @@ int main( int argc, char *argv[] )
 	}
 
 
-	bool play_memory = false;
+	bool play_direct = false;
 	const char* ext = strrchr(fname, '.');
 
 	// mmlファイルはコンパイルをするようにする
@@ -310,7 +310,7 @@ int main( int argc, char *argv[] )
 		if (mucom.CompileFile(fname, outfile) < 0) {
 			st = 1;
 		}
-		play_memory = true;
+		play_direct = true;
 	} else {
 		if (mucom.LoadMusic(fname) < 0) {
 			st = 1;
@@ -323,8 +323,17 @@ int main( int argc, char *argv[] )
 		return st;
 	}
 
-	if (play_memory) { 
-		mucom.PlayMemory(); 
+	if (play_direct) {
+		mucom.PrintInfoBuffer();
+		puts(mucom.GetMessageBuffer());
+
+		mucom.Reset(0);
+		if (mucom.LoadMusic(outfile) < 0) {
+			st = 1;
+		}
+		st = mucom.Play(0);
+
+		//mucom.PlayMemory(); 
 	} else { 
 		st = mucom.Play(0); 
 	}
@@ -343,7 +352,7 @@ int main( int argc, char *argv[] )
 	puts(mucom.GetMessageBuffer());
 
 	// コンパイルのみ
-	if (play_memory && compile_only) return st;
+	if (play_direct && compile_only) return st;
 
 	if (st == 0) {
 		if (cmpopt & MUCOM_CMPOPT_STEP) {
