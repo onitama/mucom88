@@ -26,8 +26,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 53
-#define APP_VER "0.53"
+#const VER_NUMBER 54
+#define APP_VER "0.54"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -1012,7 +1012,12 @@
 	pos sx,0
 	axobj ie, "Shell.Explorer.2",wx-sx,wy-80
 	comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",*webevent  ; DIID_DWebBrowserEvents2     
-	ie->"Navigate" "file://"+dir_exe+"\\index.html"
+
+	if langset=0 {
+		ie->"Navigate" "file://"+dir_exe+"\\index.html"
+	} else {
+		ie->"Navigate" "file://"+dir_exe+"\\index_en.html"
+	}
 	return
 *webevent
 	;	COMイベント処理
@@ -1029,9 +1034,10 @@
 
 *menu_share
 	menu_str="シェア"
-	mes "MMLをネットワークで共有します(準備中)"
+	mes "MMLのサウンドをネットワークで共有しよう"
 	sysfont 17
 	mes "\n"
+	exec "https://twitter.com/search?q=%23mucom88&src=typed_query&f=live",16
 	return
 
 *menu_about
