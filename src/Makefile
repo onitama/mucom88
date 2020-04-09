@@ -50,7 +50,7 @@ mini: makedir $(TARGET_MINIPLAY)
 tool: makedir $(TARGET_PCMTOOL)
 
 
-DIRS = z80 fmgen plugin module tests utils utils/codeconv
+DIRS = Z80 fmgen plugin module tests utils utils/codeconv
 
 SRCS = membuf.cpp adpcm.cpp
 

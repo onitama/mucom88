@@ -18,6 +18,7 @@
 #else
 #include <unistd.h>
 #define CHDIR chdir
+#define _MAX_PATH 512
 #endif
 
 #include "cmucom.h"
