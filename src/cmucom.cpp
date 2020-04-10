@@ -51,6 +51,8 @@
 #include "bin_em/bin_smon_em.h"
 #include "bin_em/bin_music_em.h"
 
+#include "bin_cnvkana.h"
+
 #ifdef __APPLE__
 #define STRCASECMP strcasecmp
 #else
@@ -60,8 +62,6 @@
 #define STRCASECMP strcasecmp
 #endif
 #endif
-
-
 
 #define PRINTF vm->Msgf
 #define PRINTF_NOCONV vm->MsgfNoConvert
@@ -1494,7 +1494,9 @@ int CMucom::ProcessFile(const char *fname)
 		return -1;
 	}
 	ProcessHeader( mml );
-	vm->LoadAllocFree(mml);
+	if (*fname != 0) {
+		vm->LoadAllocFree(mml);
+	}
 	return 0;
 }
 
@@ -1568,6 +1570,26 @@ int CMucom::ProcessHeader(char *text)
 }
 
 
+unsigned char CMucom::ConvertUTF8Kana(unsigned char *ptr)
+{
+	//		UTF8の文字列ポインタが半角カナだった場合、SJISコードを返す
+	//		(半角カナでなかった場合は0を返す)
+	//
+	unsigned char res;
+	unsigned int utf8code;
+	const unsigned int *kanacode;
+
+	utf8code = (ptr[0]<<16)| (ptr[1]<<8)| (ptr[2]);
+	kanacode = cnv_utf8kana;
+	res = 0xa1;
+	while (1) {
+		if ( *kanacode == utf8code ) return res;
+		res++;
+		kanacode++;
+	}
+	return 0;
+}
+
 int CMucom::StoreBasicSource(char *text, int line, int add)
 {
 	//	BASICソースの形式でリストを作成
@@ -1609,10 +1631,18 @@ int CMucom::StoreBasicSource(char *text, int line, int add)
 			}
 
 			mulchr = GetMultibyteCharacter(linebuf+i);
-			i += mulchr;
-			if ( mulchr==1) {
+			if (mulchr == 1) {
 				vm->Poke(mptr++, a1);	// 半角の文字のみ登録する
 			}
+#ifdef MUCOM88UTF8
+			if (mulchr == 3) {
+				a1 = ConvertUTF8Kana(linebuf+i);
+				if (a1 != 0) {
+					vm->Poke(mptr++, a1);	// 半角カナを登録する
+				}
+			}
+#endif
+			i += mulchr;
 		}
 		vm->Pokew(linkptr, mptr);		// 次のポインタを保存する
 		ln += add;

@@ -1713,5 +1713,3 @@ void mucomvm::NoticePlugins(int cmd, void *p1, void *p2)
 	}
 #endif
 }
-
-

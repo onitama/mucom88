@@ -259,9 +259,6 @@
 #define MUCOM_MUSIC_OFFSET_MFADE 0x0006
 
 
-
-
-
 //	MUBHED structure
 //
 typedef struct
@@ -449,6 +446,7 @@ public:
 	int ConvertADPCM(const char *fname, const char *sname);
 	void GetMD5(char *res, char *buffer, int size);
 	void SetUUID(char *uuid);
+	unsigned char ConvertUTF8Kana(unsigned char *ptr);
 
 	//	Player Service
 	void SetFastFW(int value);
