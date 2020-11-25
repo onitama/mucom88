@@ -26,8 +26,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 54
-#define APP_VER "0.54"
+#const VER_NUMBER 55
+#define APP_VER "0.55"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -105,7 +105,7 @@
 	welcome_mes+="#Z80 emulation by Yasuo Kuwahara 2002-2018(C)\n"
 	welcome_mes+="#FM Sound Generator by cisc 1998, 2003(C)\n"
 	welcome_mes+="#SCCI system / adpcm converter by gasshi 2018(C)\n"
-	welcome_mes+="#Windows version by ONION software/onitama 2018-2020(C)\n"
+	welcome_mes+="#Windows version by ONION software/onitama 2018-2021(C)\n"
 
 	buf=welcome_mes
 	compflag=0

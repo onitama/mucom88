@@ -58,7 +58,9 @@ goto *_end_mod_mucom88
 	cfg_load:modcfg=stat
 	if modcfg {	; iniƒtƒ@ƒCƒ‹“Ç‚İ‚İ
 		wx=0+cfg_getvar("wx")
+		if wx<320 : wx=320
 		wy=0+cfg_getvar("wy")
+		if wy<240 : wy=240
 		app_winx=0+cfg_getvar("winx")
 		app_winy=0+cfg_getvar("winy")
 		voicefile=cfg_getvar("voicefile")
