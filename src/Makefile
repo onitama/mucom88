@@ -11,7 +11,7 @@ CC = gcc
 CFLAGS = 
 CXXFLAGS = 
 # CXXFLAGS += -Wno-write-strings
-COMMON_FLAGS =
+COMMON_FLAGS = -Wall -O3
 # COMMON_FLAGS += -Wall -Werror
 LDFLAGS = 
 DEFINES = 
@@ -37,8 +37,8 @@ TARGET_PCMTOOL = pcmtool$(EXE_SUFFIX)
 
 ifeq ($(DEBUG),1)
 TARGET = $(TARGET_NAME)_d$(EXE_SUFFIX)
-LDFLAGS += -g
-COMMON_FLAGS += -O0 -g
+LDFLAGS = -g
+COMMON_FLAGS = -O0 -g -Wall
 OBJS_DIR = objs_d
 endif
 
@@ -115,13 +115,22 @@ DEP_SRCS += sdl/osdep_sdl.cpp
 DEP_SRCS += sdl/audiobuffer.cpp
 DEP_SRCS += sdl/audiotime.cpp
 
-SDL_CFLAGS = $(shell sdl-config --cflags) -DUSE_SDL
+SDL_CFLAGS = `sdl-config --cflags` -DUSE_SDL
 COMMON_FLAGS += $(SDL_CFLAGS)
 
 ifeq ($(STATIC),1)
-SDL_LIBS =  $(shell sdl-config --static-libs)
+ifeq ($(OS_LINUX),1)
+SDL_LIBS =  `sdl-config --static-libs` -static-libgcc -static-libstdc++
+LDFLAGS +=  -Wl,-rpath,/usr/local/lib,-rpath,/usr/lib/x86_64-linux-gnu,-rpath,/usr/lib/gcc/x86_64-linux-gnu
 else
-SDL_LIBS =  $(shell sdl-config --libs)
+SDL_LIBS =  `sdl-config --static-libs`
+endif
+else
+ifeq ($(OS_LINUX),1)
+SDL_LIBS =  `sdl-config --libs` -lX11
+else 
+SDL_LIBS =  `sdl-config --libs`
+endif
 endif
 
 ifeq ($(SDL_WIN32),1)

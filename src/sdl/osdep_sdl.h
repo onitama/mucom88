@@ -4,7 +4,7 @@
 #ifndef _OS_DEP_SDL_H_
 #define _OS_DEP_SDL_H_
 
-
+#include <SDL.h>
 #include <stdint.h>
 #include "../osdep.h"
 #include "audiotime.h"
@@ -69,7 +69,7 @@ public:
     bool AudioOpenFlag;
 
 private:
-	void *TimerId;
+	SDL_TimerID TimerId;
 };
 
 #endif
