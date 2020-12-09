@@ -265,6 +265,7 @@ int CMemBuf::PutFile(const char *fname )
 	fseek( ff,0,SEEK_END );
 	length=(int)ftell( ff );			// normal file size
 	fclose(ff);
+	if (length < 0) return -1;
 
 	p = PreparePtr( length+1 );
 	ff=fopen( fname,"rb" );
