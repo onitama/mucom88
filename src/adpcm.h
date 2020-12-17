@@ -15,6 +15,11 @@ typedef unsigned long DWORD;
 typedef unsigned short WORD;
 #endif
 
+#ifndef _WIN32
+typedef unsigned long ULONG_PTR;
+typedef ULONG_PTR DWORD_PTR;
+#endif
+
 typedef struct {
 	BYTE	bID[4];		// ヘッダ
 	DWORD	dSize;		// サイズ

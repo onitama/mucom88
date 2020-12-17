@@ -29,4 +29,12 @@ endif
 endif
 
 # static
+ifeq ($(WIN32),1)
 STATIC = 1
+endif
+ifeq ($(OS_OSX),1)
+STATIC = 1
+endif
+ifeq ($(OS_LINUX),1)
+STATIC = 0
+endif
