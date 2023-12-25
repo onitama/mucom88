@@ -479,6 +479,23 @@ EXPORT BOOL WINAPI mucomplg_init(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
+EXPORT BOOL WINAPI mucomplg_delete(HSPEXINFO* hei, int p1, int p2, int p3)
+{
+	//	DLL mucomplg_delete "filename" (type$202)
+	//	MUCOM88プラグインの削除
+	//
+	int res;
+	char* p;
+	p = hei->HspFunc_prm_gets();		// パラメータ1:文字列
+
+	if (mucom) {
+		res = mucom->DeletePlugins(p);
+		if (res) return -1;
+	}
+	return 0;
+}
+
+
 EXPORT BOOL WINAPI mucomplg_notice(HSPEXINFO *hei, int p1, int p2, int p3)
 {
 	//	DLL mucomplg_notice p1,p2,p3 (type$202)

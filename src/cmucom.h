@@ -440,6 +440,7 @@ public:
 
 	//	Plugin Service
 	int AddPlugins(const char *filename, int bootopt);
+	int DeletePlugins(const char* filename);
 	void NoticePlugins(int cmd, void *p1 = NULL, void *p2 = NULL);
 
 	//	Utility

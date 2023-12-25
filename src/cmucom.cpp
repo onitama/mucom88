@@ -238,6 +238,15 @@ void CMucom::NoticePlugins(int cmd, void *p1, void *p2)
 }
 
 
+int CMucom::DeletePlugins(const char* filename)
+{
+	//		プラグイン削除
+	//		filename = DLLファイル名(今のところWinのみ)
+	//
+	return vm->DeletePlugins(filename);
+}
+
+
 void CMucom::SetAudioRate(int rate)
 {
 	//		外部レンダリング用の出力レート設定

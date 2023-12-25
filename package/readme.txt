@@ -4,7 +4,7 @@ MUCOM88 Windows document (Japanese UTF8 text)
 OpenMucom88 Ver.1.7d Copyright 1987-2020(C) Yuzo Koshiro
 Z80 emulation by Yasuo Kuwahara 2002-2018(C)
 FM Sound Generator by cisc 1998, 2003(C)
-Windows version by ONION software/onitama 2018-2020(C)
+Windows version by ONION software/onitama 2018-2024(C)
 ------------------------------------------------------------------------------
 
 ・はじめに

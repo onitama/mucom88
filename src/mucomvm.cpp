@@ -1686,6 +1686,28 @@ int mucomvm::AddPlugins(const char *filename, int bootopt)
 }
 
 
+int mucomvm::DeletePlugins(const char* filename)
+{
+	//		プラグインを削除する
+	//		filename = プラグインDLL名
+	//		終了コード : 0=何もせず終了 1=削除して終了
+	//
+#ifndef USE_SDL
+	Mucom88Plugin* plg;
+	for (auto it = begin(plugins); it != end(plugins); ++it) {
+		plg = *it;
+		if (plg->if_notice != NULL) {
+			if (strcmp(plg->filename, filename) == 0) {
+				plugins.erase(it);
+				return 1;
+			}
+		}
+	}
+#endif
+	return 0;
+}
+
+
 void mucomvm::FreePlugins(void)
 {
 	//		プラグインをすべて破棄する
