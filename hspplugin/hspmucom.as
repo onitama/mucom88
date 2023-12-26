@@ -38,6 +38,7 @@
 #func mucomrecord mucomrecord $202
 #func mucomplg_init mucomplg_init $202
 #func mucomplg_notice mucomplg_notice $202
+#func mucomplg_delete mucomplg_delete $202
 
 #func mucomedit_reset mucomedit_reset $202
 #func mucomedit_setfile mucomedit_setfile $202

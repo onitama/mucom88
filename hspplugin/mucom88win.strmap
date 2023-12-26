@@ -43,826 +43,824 @@ _mucomgetchdata@16
 _mucomplg_init@16
 &&&&dsmap:20,324,13259
 _mucomplg_notice@16
-&&&&dsmap:20,344,13287
+&&&&dsmap:20,344,13154
+_mucomplg_delete@16
+&&&&dsmap:20,364,13287
 _mucomedit_reset@16
-&&&&dsmap:22,364,14735
+&&&&dsmap:22,384,14735
 _mucomedit_setfile@16
-&&&&dsmap:22,386,14847
+&&&&dsmap:22,406,14847
 _mucomedit_getstat@16
-&&&&dsmap:22,408,14707
+&&&&dsmap:22,428,14707
 _mucomedit_getline@16
-&&&&dsmap:19,430,12456
+&&&&dsmap:19,450,12456
 _mucomedit_save@16
-&&&&dsmap:21,449,13979
+&&&&dsmap:21,469,13979
 _mucomedit_update@16
-&&&&dsmap:19,470,12491
+&&&&dsmap:19,490,12491
 _mucomedit_proc@16
-&&&&dsmap:20,489,13280
+&&&&dsmap:20,509,13280
 _mucomedit_flush@16
-&&&&dsmap:19,509,12624
+&&&&dsmap:19,529,12624
 _mucomgetdriver@16
-&&&&dsmap:19,528,12708
+&&&&dsmap:19,548,12708
 _mucomsetdriver@16
-&&&&dsmap:19,547,12624
+&&&&dsmap:19,567,12624
 _mucomdumpvoice@16
-&&&&dsmap:11,566,7265
+&&&&dsmap:11,586,7265
 hspext.dll
-&&&&dsmap:13,577,7869
+&&&&dsmap:11,597,6376
+_aplsel@16
+&&&&dsmap:13,608,7869
 _pipeexec@16
-&&&&dsmap:12,590,7150
+&&&&dsmap:12,621,7150
 _pipeget@16
-&&&&dsmap:10,602,5442
+&&&&dsmap:10,633,5442
 gdi32.dll
-&&&&dsmap:11,612,6719
+&&&&dsmap:11,643,6719
 GetObjectA
-&&&&dsmap:13,623,5713
+&&&&dsmap:13,654,5713
 COMDLG32.DLL
-&&&&dsmap:12,636,7633
+&&&&dsmap:12,667,7633
 ChooseFontA
-&&&&dsmap:8,648,5278
+&&&&dsmap:8,679,5278
 fontdlg
-&&&&dsmap:39,672,17905
+&&&&dsmap:39,703,17905
 {DC1C5A9C-E88A-4dde-A5A1-60F82A20AEF7}
-&&&&dsmap:8,727,4487
+&&&&dsmap:8,758,4487
 shell32
-&&&&dsmap:28,735,19019
+&&&&dsmap:28,766,19019
 SHCreateItemFromParsingName
-&&&&dsmap:9,763,5230
+&&&&dsmap:9,794,5230
 kernel32
-&&&&dsmap:9,772,6049
+&&&&dsmap:9,803,6049
 lstrlenW
-&&&&dsmap:6,781,2962
+&&&&dsmap:6,812,2962
 ole32
-&&&&dsmap:14,787,8869
+&&&&dsmap:14,818,8869
 CoTaskMemFree
-&&&&dsmap:9,801,5153
+&&&&dsmap:9,832,5153
 comdlg32
-&&&&dsmap:17,810,10804
+&&&&dsmap:17,841,10804
 GetOpenFileNameA
-&&&&dsmap:17,827,10783
+&&&&dsmap:17,858,10783
 GetSaveFileNameA
-&&&&dsmap:14,844,9576
+&&&&dsmap:14,875,9576
 _folderdialog
-&&&&dsmap:1,858,0
+&&&&dsmap:1,889,0
 
-&&&&dsmap:1,859,0
+&&&&dsmap:1,890,0
 
-&&&&dsmap:39,860,19746
+&&&&dsmap:39,891,19746
 {43826d1e-e718-42ee-bc55-a1e261c37bfe}
-&&&&dsmap:1,899,0
+&&&&dsmap:1,930,0
 
-&&&&dsmap:1,900,0
+&&&&dsmap:1,931,0
 
-&&&&dsmap:1,901,0
+&&&&dsmap:1,932,0
 
-&&&&dsmap:9,902,5951
+&&&&dsmap:9,933,5951
 dialogex
-&&&&dsmap:24,911,16600
+&&&&dsmap:24,942,16600
 GetEnvironmentVariableA
-&&&&dsmap:17,935,11826
+&&&&dsmap:17,966,11826
 get_appdata_path
-&&&&dsmap:8,952,3577
+&&&&dsmap:8,983,3577
 APPDATA
-&&&&dsmap:1,960,0
+&&&&dsmap:1,991,0
 
-&&&&dsmap:1,961,0
+&&&&dsmap:1,992,0
 
-&&&&dsmap:19,962,12393
+&&&&dsmap:19,993,12393
 Hot Soup Processor
-&&&&dsmap:2,981,645
+&&&&dsmap:2,1012,645
 \
-&&&&dsmap:1,983,0
+&&&&dsmap:1,1014,0
 
-&&&&dsmap:9,984,5881
+&&&&dsmap:9,1015,5881
 cfg_init
-&&&&dsmap:15,993,7105
+&&&&dsmap:1,1024,0
+
+&&&&dsmap:15,1025,7105
 ;appcfg v1.0
 
-&&&&dsmap:9,1008,5888
+&&&&dsmap:9,1040,5888
 cfg_seti
-&&&&dsmap:3,1017,675
+&&&&dsmap:3,1049,675
 ;%
-&&&&dsmap:2,1020,428
+&&&&dsmap:2,1052,428
 =
-&&&&dsmap:3,1022,164
+&&&&dsmap:3,1054,164
 
 
-&&&&dsmap:9,1025,5853
+&&&&dsmap:9,1057,5853
 cfg_setd
-&&&&dsmap:9,1034,5958
+&&&&dsmap:9,1066,5958
 cfg_sets
-&&&&dsmap:9,1043,5699
+&&&&dsmap:9,1075,5699
 cfg_data
-&&&&dsmap:9,1052,5846
+&&&&dsmap:9,1084,5846
 cfg_save
-&&&&dsmap:11,1061,7391
+&&&&dsmap:11,1093,7391
 cfg_getvar
-&&&&dsmap:1,1072,0
+&&&&dsmap:1,1104,0
 
-&&&&dsmap:12,1073,8137
+&&&&dsmap:12,1105,8137
 cfg_getvari
-&&&&dsmap:1,1085,0
+&&&&dsmap:1,1117,0
 
-&&&&dsmap:12,1086,8207
+&&&&dsmap:12,1118,8207
 cfg_getvars
-&&&&dsmap:1,1098,0
+&&&&dsmap:1,1130,0
 
-&&&&dsmap:9,1099,5741
+&&&&dsmap:9,1131,5741
 cfg_load
-&&&&dsmap:12,1108,7969
+&&&&dsmap:12,1140,7969
 cfg_getdata
-&&&&dsmap:1,1120,0
+&&&&dsmap:1,1152,0
 
-&&&&dsmap:16,1121,10683
+&&&&dsmap:16,1153,10683
 mucom88app_init
-&&&&dsmap:10,1137,6296
+&&&&dsmap:10,1169,6296
 voice.dat
-&&&&dsmap:13,1147,8646
+&&&&dsmap:13,1179,8646
 mucompcm.bin
-&&&&dsmap:9,1160,5741
+&&&&dsmap:9,1192,5741
 FixedSys
-&&&&dsmap:4,1169,1329
+&&&&dsmap:4,1201,1329
 ???
-&&&&dsmap:1,1173,0
+&&&&dsmap:1,1205,0
 
-&&&&dsmap:1,1174,0
+&&&&dsmap:1,1206,0
 
-&&&&dsmap:1,1175,0
+&&&&dsmap:1,1207,0
 
-&&&&dsmap:28,1176,17815
+&&&&dsmap:28,1208,17815
 https://onitama.tv/mucom88/
-&&&&dsmap:13,1204,9115
+&&&&dsmap:13,1236,9115
 \mucomdotnet
-&&&&dsmap:15,1217,9604
+&&&&dsmap:15,1249,9604
 mucom88win.ini
-&&&&dsmap:8,1232,3507
+&&&&dsmap:8,1264,3507
 MUCOM88
-&&&&dsmap:3,1240,1676
+&&&&dsmap:3,1272,1676
 wx
-&&&&dsmap:3,1243,1683
+&&&&dsmap:3,1275,1683
 wy
-&&&&dsmap:5,1246,3188
+&&&&dsmap:5,1278,3188
 winx
-&&&&dsmap:5,1251,3195
+&&&&dsmap:5,1283,3195
 winy
-&&&&dsmap:10,1256,6695
+&&&&dsmap:10,1288,6695
 voicefile
-&&&&dsmap:8,1266,5180
+&&&&dsmap:8,1298,5180
 pcmfile
-&&&&dsmap:9,1274,6028
+&&&&dsmap:9,1306,6028
 fontname
-&&&&dsmap:9,1283,6210
+&&&&dsmap:9,1315,6210
 fontsize
-&&&&dsmap:8,1292,5173
+&&&&dsmap:8,1324,5173
 filedir
-&&&&dsmap:7,1300,4634
+&&&&dsmap:7,1332,4634
 author
-&&&&dsmap:4,1307,2379
+&&&&dsmap:4,1339,2379
 url
-&&&&dsmap:7,1311,4508
+&&&&dsmap:7,1343,4508
 recent
-&&&&dsmap:5,1318,3083
+&&&&dsmap:5,1350,3083
 uuid
-&&&&dsmap:10,1323,6583
+&&&&dsmap:10,1355,6583
 scci_mode
-&&&&dsmap:7,1333,4578
+&&&&dsmap:7,1365,4578
 fastfw
-&&&&dsmap:8,1340,5264
+&&&&dsmap:8,1372,5264
 fgcolor
-&&&&dsmap:8,1348,5236
+&&&&dsmap:8,1380,5236
 bgcolor
-&&&&dsmap:11,1356,7412
+&&&&dsmap:11,1388,7412
 plg_fmedit
-&&&&dsmap:9,1367,6077
+&&&&dsmap:9,1399,6077
 plg_smon
-&&&&dsmap:7,1376,4739
+&&&&dsmap:7,1408,4739
 slowfw
-&&&&dsmap:10,1383,6583
+&&&&dsmap:10,1415,6583
 upd_check
-&&&&dsmap:13,1393,9080
+&&&&dsmap:13,1425,9080
 aplayer_auto
-&&&&dsmap:13,1406,9010
+&&&&dsmap:13,1438,9010
 aplayer_time
-&&&&dsmap:13,1419,9087
+&&&&dsmap:13,1451,9087
 aplayer_loop
-&&&&dsmap:9,1432,6035
+&&&&dsmap:9,1464,6035
 asave_sw
-&&&&dsmap:11,1441,7433
+&&&&dsmap:11,1473,7433
 asave_time
-&&&&dsmap:8,1452,5278
+&&&&dsmap:8,1484,5278
 langset
-&&&&dsmap:12,1460,8298
+&&&&dsmap:12,1492,8298
 asave_count
-&&&&dsmap:10,1472,6688
+&&&&dsmap:10,1504,6688
 asave_max
-&&&&dsmap:14,1482,9786
+&&&&dsmap:14,1514,9786
 folder_dotnet
-&&&&dsmap:13,1496,9052
+&&&&dsmap:13,1528,9052
 pmode_dotnet
-&&&&dsmap:16,1509,10711
+&&&&dsmap:16,1541,10711
 mucom88app_term
-&&&&dsmap:25,1525,16918
+&&&&dsmap:25,1557,16918
 GetUserDefaultUILanguage
-&&&&dsmap:1,1550,0
+&&&&dsmap:1,1582,0
 
-&&&&dsmap:1,1551,0
+&&&&dsmap:1,1583,0
 
-&&&&dsmap:12,1552,7262
+&&&&dsmap:12,1584,7262
 mucom88.png
-&&&&dsmap:1,1564,0
+&&&&dsmap:1,1596,0
 
-&&&&dsmap:10,1565,6485
+&&&&dsmap:10,1597,6485
 en.strmap
-&&&&dsmap:48,1575,25950
+&&&&dsmap:48,1607,25950
 #Z80 emulation by Yasuo Kuwahara 2002-2018(C)
 
-&&&&dsmap:44,1623,22632
+&&&&dsmap:44,1655,22632
 #FM Sound Generator by cisc 1998, 2003(C)
 
-&&&&dsmap:51,1667,29317
+&&&&dsmap:51,1699,29317
 #SCCI system / adpcm converter by gasshi 2018(C)
 
-&&&&dsmap:58,1718,33881
-#Windows version by ONION software/onitama 2018-2020(C)
+&&&&dsmap:58,1750,33909
+#Windows version by ONION software/onitama 2018-2024(C)
 
-&&&&dsmap:14,1776,9184
+&&&&dsmap:14,1808,9184
 \updcheck.exe
-&&&&dsmap:2,1790,225
+&&&&dsmap:2,1822,225
  
-&&&&dsmap:20,1792,14057
+&&&&dsmap:20,1824,14057
 muplug_fmeditor.dll
-&&&&dsmap:17,1812,10916
+&&&&dsmap:17,1844,10916
 Missing plugin [
-&&&&dsmap:2,1829,652
+&&&&dsmap:2,1861,652
 ]
-&&&&dsmap:10,1831,4553
+&&&&dsmap:10,1863,4553
 MENU [F1]
-&&&&dsmap:14,1841,7665
+&&&&dsmap:14,1873,7665
 SAVE [ctrl+S]
-&&&&dsmap:10,1855,4588
+&&&&dsmap:10,1887,4588
 PLAY [F5]
-&&&&dsmap:11,1865,5382
+&&&&dsmap:11,1897,5382
 STOP [ESC]
-&&&&dsmap:5,1876,2229
+&&&&dsmap:5,1908,2229
 SMON
-&&&&dsmap:7,1881,3003
+&&&&dsmap:7,1913,3003
 V.EDIT
-&&&&dsmap:7,1888,3850
+&&&&dsmap:7,1920,3850
 Ready.
-&&&&dsmap:15,1895,9324
+&&&&dsmap:15,1927,9324
 System Halted.
-&&&&dsmap:1,1910,0
+&&&&dsmap:1,1942,0
 
-&&&&dsmap:2,1911,323
+&&&&dsmap:2,1943,323
 .
-&&&&dsmap:3,1913,843
+&&&&dsmap:3,1945,843
 <<
-&&&&dsmap:5,1916,2761
+&&&&dsmap:5,1948,2761
 Home
-&&&&dsmap:5,1921,2698
+&&&&dsmap:5,1953,2698
 Load
-&&&&dsmap:5,1926,2803
+&&&&dsmap:5,1958,2803
 Save
-&&&&dsmap:11,1931,5522
+&&&&dsmap:11,1963,5522
 Save as...
-&&&&dsmap:4,1942,2092
+&&&&dsmap:4,1974,2092
 New
-&&&&dsmap:7,1946,4452
+&&&&dsmap:7,1978,4452
 Option
-&&&&dsmap:5,1953,2908
+&&&&dsmap:5,1985,2908
 Tool
-&&&&dsmap:6,1958,3508
+&&&&dsmap:6,1990,3508
 Share
-&&&&dsmap:4,1964,2008
+&&&&dsmap:4,1996,2008
 Web
-&&&&dsmap:6,1968,3564
+&&&&dsmap:6,2000,3564
 About
-&&&&dsmap:1,1974,0
+&&&&dsmap:1,2006,0
 
-&&&&dsmap:14,1975,9772
+&&&&dsmap:14,2007,9772
 ＭＳ ゴシック
-&&&&dsmap:1,1989,0
+&&&&dsmap:1,2021,0
 
-&&&&dsmap:54,1990,56857
+&&&&dsmap:54,2022,56857
 編集内容が破棄されます。
 読み込みを行っていいですか?
-&&&&dsmap:60,2044,63531
+&&&&dsmap:60,2076,63531
 編集された音色が破棄されます。
 読み込みを行っていいですか?
-&&&&dsmap:76,2104,42449
+&&&&dsmap:76,2136,42449
 MUCOM88 MML(*.muc)|*.muc|N88 Basic Source(*.n88)|*.n88|All Files (*.*)|*.*|
-&&&&dsmap:1,2180,0
+&&&&dsmap:1,2212,0
 
-&&&&dsmap:1,2181,0
+&&&&dsmap:1,2213,0
 
-&&&&dsmap:2,2182,638
+&&&&dsmap:2,2214,638
 [
-&&&&dsmap:10,2184,5337
+&&&&dsmap:10,2216,5337
 ] Loaded.
-&&&&dsmap:10,2194,5365
+&&&&dsmap:10,2226,5365
 No file [
-&&&&dsmap:7,2204,5145
+&&&&dsmap:7,2236,5145
 ホーム
-&&&&dsmap:26,2211,24580
+&&&&dsmap:26,2243,24580
 MMLの編集を始めましょう
 
-&&&&dsmap:13,2237,9283
+&&&&dsmap:13,2269,9283
 編集 [Enter]
-&&&&dsmap:10,2250,7059
+&&&&dsmap:10,2282,7059
 再生 [F5]
-&&&&dsmap:13,2260,8877
+&&&&dsmap:13,2292,8877
 MUB作成 [F2]
-&&&&dsmap:18,2273,14279
+&&&&dsmap:18,2305,14279
 フォルダを参照...
-&&&&dsmap:14,2291,9464
+&&&&dsmap:14,2323,9464
 プレイヤー...
-&&&&dsmap:4,2305,916
+&&&&dsmap:4,2337,916
 *.*
-&&&&dsmap:5,2309,815
+&&&&dsmap:5,2341,815
 ..
 
-&&&&dsmap:2,2314,421
+&&&&dsmap:2,2346,421
 <
-&&&&dsmap:2,2316,435
+&&&&dsmap:2,2348,435
 >
-&&&&dsmap:6,2318,2906
+&&&&dsmap:6,2350,2906
 *.muc
-&&&&dsmap:6,2324,2185
+&&&&dsmap:6,2356,2185
 *.n88
-&&&&dsmap:1,2330,0
+&&&&dsmap:1,2362,0
 
-&&&&dsmap:1,2331,0
+&&&&dsmap:1,2363,0
 
-&&&&dsmap:6,2332,3837
+&&&&dsmap:6,2364,3837
 title
-&&&&dsmap:1,2338,0
+&&&&dsmap:1,2370,0
 
-&&&&dsmap:9,2339,4061
+&&&&dsmap:9,2371,4061
 NO TITLE
-&&&&dsmap:9,2348,6140
+&&&&dsmap:9,2380,6140
 composer
-&&&&dsmap:6,2357,3753
+&&&&dsmap:6,2389,3753
 voice
-&&&&dsmap:4,2363,2246
+&&&&dsmap:4,2395,2246
 pcm
-&&&&dsmap:5,2367,2908
+&&&&dsmap:5,2399,2908
 date
-&&&&dsmap:8,2372,5313
+&&&&dsmap:8,2404,5313
 comment
-&&&&dsmap:8,2380,4823
+&&&&dsmap:8,2412,4823
 Author:
-&&&&dsmap:12,2388,6800
+&&&&dsmap:12,2420,6800
   Composer:
-&&&&dsmap:6,2400,3095
+&&&&dsmap:6,2432,3095
 Date:
-&&&&dsmap:9,2406,4404
+&&&&dsmap:9,2438,4404
   Voice:
-&&&&dsmap:7,2415,2443
+&&&&dsmap:7,2447,2443
   PCM:
-&&&&dsmap:9,2422,5503
+&&&&dsmap:9,2454,5503
 Comment:
-&&&&dsmap:52,2431,53238
+&&&&dsmap:52,2463,53238
 編集された音色が破棄されます。
 続行していいですか?
-&&&&dsmap:9,2483,6042
+&&&&dsmap:9,2515,6042
 mucombin
-&&&&dsmap:24,2492,20541
+&&&&dsmap:24,2524,20541
 エラーのため演奏不可.
 
-&&&&dsmap:1,2516,0
+&&&&dsmap:1,2548,0
 
-&&&&dsmap:39,2517,24541
+&&&&dsmap:39,2549,24541
 \player\mucomDotNETPlayer.exe -D=EMU "
-&&&&dsmap:2,2556,239
+&&&&dsmap:2,2588,239
 "
-&&&&dsmap:5,2558,2600
+&&&&dsmap:5,2590,2600
 .mub
-&&&&dsmap:24,2563,21647
+&&&&dsmap:24,2595,21647
 エラーのため作成不可.
 
-&&&&dsmap:11,2587,4906
+&&&&dsmap:11,2619,4906
 ] Saved.
 
-&&&&dsmap:35,2598,23492
+&&&&dsmap:35,2630,23492
 \compiler\mucomDotNETConsole.exe "
-&&&&dsmap:4,2633,706
+&&&&dsmap:4,2665,706
 " "
-&&&&dsmap:44,2637,40888
+&&&&dsmap:44,2669,40888
 mucomDotNETが指定したパスで実行できません
 
-&&&&dsmap:6,2681,2752
+&&&&dsmap:6,2713,2752
 [INFO
-&&&&dsmap:7,2687,3416
+&&&&dsmap:7,2719,3416
 [ERROR
-&&&&dsmap:52,2694,54484
+&&&&dsmap:52,2726,54484
 編集内容が破棄されます。
 すべて削除していいですか?
-&&&&dsmap:1,2746,0
+&&&&dsmap:1,2778,0
 
-&&&&dsmap:1,2747,0
+&&&&dsmap:1,2779,0
 
-&&&&dsmap:9,2748,5181
+&&&&dsmap:9,2780,5181
 No Title
-&&&&dsmap:7,2757,5061
+&&&&dsmap:7,2789,5061
 ツール
-&&&&dsmap:20,2764,16850
+&&&&dsmap:20,2796,16850
 編集中のMMLを整形
 
-&&&&dsmap:17,2784,18434
+&&&&dsmap:17,2816,18434
 行番号を削除する
-&&&&dsmap:20,2801,18103
+&&&&dsmap:20,2833,18103
 Gチャンネルのqを@に
-&&&&dsmap:15,2821,15197
+&&&&dsmap:15,2853,15197
 タグを追加する
-&&&&dsmap:5,2836,4140
+&&&&dsmap:5,2868,4140
 実行
-&&&&dsmap:26,2841,26806
+&&&&dsmap:26,2873,26806
 MMLの末尾に音色定義を追加
-&&&&dsmap:30,2867,21043
+&&&&dsmap:30,2899,21043
 
 
 PCMデータファイルを作成
 
-&&&&dsmap:1,2897,0
+&&&&dsmap:1,2929,0
 
-&&&&dsmap:10,2898,6408
+&&&&dsmap:10,2930,6408
 mypcm.bin
-&&&&dsmap:19,2908,18490
+&&&&dsmap:19,2940,18490
 作成するファイル名
-&&&&dsmap:25,2927,19739
+&&&&dsmap:25,2959,19739
 DATAファイルフォルダ指定
-&&&&dsmap:21,2952,18697
+&&&&dsmap:21,2984,18697
 ファイルリストを指定
-&&&&dsmap:31,2973,23950
+&&&&dsmap:31,3005,23950
 編集中のMMLをN88エクスポート
 
-&&&&dsmap:11,3004,9540
+&&&&dsmap:11,3036,9540
 開始行番号
-&&&&dsmap:11,3015,10639
+&&&&dsmap:11,3047,10639
 行番号増分
-&&&&dsmap:15,3026,13062
+&&&&dsmap:15,3058,13062
 ファイルに出力
-&&&&dsmap:1,3041,0
+&&&&dsmap:1,3073,0
 
-&&&&dsmap:5,3042,3027
+&&&&dsmap:5,3074,3027
 time
-&&&&dsmap:31,3047,21430
+&&&&dsmap:31,3079,21430
 
 
 
 別な形式にエクスポート
 
-&&&&dsmap:17,3078,15690
+&&&&dsmap:17,3110,15690
 録音する時間(秒)
-&&&&dsmap:18,3095,14776
+&&&&dsmap:18,3127,14776
 WAVファイルに出力
-&&&&dsmap:22,3113,16527
+&&&&dsmap:22,3145,16527
 VGM/S98ファイルに出力
-&&&&dsmap:44,3135,40244
+&&&&dsmap:44,3167,40244
  (#time タグでデフォルト時間を設定できます)
-&&&&dsmap:18,3179,9988
+&&&&dsmap:18,3211,9988
 #Tool executed.
 
-&&&&dsmap:17,3197,8529
+&&&&dsmap:17,3229,8529
 #MML modified.
 
-&&&&dsmap:30,3214,15737
+&&&&dsmap:30,3246,15737
 N88 Basic Source(*.n88)|*.n88
-&&&&dsmap:1,3244,0
+&&&&dsmap:1,3276,0
 
-&&&&dsmap:1,3245,0
+&&&&dsmap:1,3277,0
 
-&&&&dsmap:5,3246,1886
+&&&&dsmap:5,3278,1886
 .n88
-&&&&dsmap:1,3251,0
+&&&&dsmap:1,3283,0
 
-&&&&dsmap:3,3252,500
+&&&&dsmap:3,3284,500
  '
-&&&&dsmap:1,3255,0
+&&&&dsmap:1,3287,0
 
-&&&&dsmap:3,3256,1081
+&&&&dsmap:3,3288,1081
 OK
-&&&&dsmap:4,3259,2470
+&&&&dsmap:4,3291,2470
 txt
-&&&&dsmap:17,3263,12750
+&&&&dsmap:17,3295,12750
 テキストファイル
-&&&&dsmap:58,3280,34126
+&&&&dsmap:58,3312,34126
 VGM sound file (*.vgm)|*.vgm|S98 sound file (*.vs98|*.s98
-&&&&dsmap:1,3338,0
+&&&&dsmap:1,3370,0
 
-&&&&dsmap:1,3339,0
+&&&&dsmap:1,3371,0
 
-&&&&dsmap:5,3340,2642
+&&&&dsmap:5,3372,2642
 .vgm
-&&&&dsmap:13,3345,7897
+&&&&dsmap:13,3377,7897
 \mucom88.exe
-&&&&dsmap:7,3358,3997
+&&&&dsmap:7,3390,3997
 Error.
-&&&&dsmap:5,3365,1571
+&&&&dsmap:5,3397,1571
  -r 
-&&&&dsmap:8,3370,2856
+&&&&dsmap:8,3402,2856
  -x -b 
-&&&&dsmap:5,3378,1529
+&&&&dsmap:5,3410,1529
  -l 
-&&&&dsmap:4,3383,804
+&&&&dsmap:4,3415,804
 
 [
-&&&&dsmap:29,3387,16870
+&&&&dsmap:29,3419,16870
 WAV sound file (*.wav)|*.wav
-&&&&dsmap:1,3416,0
+&&&&dsmap:1,3448,0
 
-&&&&dsmap:1,3417,0
+&&&&dsmap:1,3449,0
 
-&&&&dsmap:5,3418,2670
+&&&&dsmap:5,3450,2670
 .wav
-&&&&dsmap:8,3423,3003
+&&&&dsmap:8,3455,3003
  -x -w 
-&&&&dsmap:11,3431,8553
+&&&&dsmap:11,3463,8553
 オプション
-&&&&dsmap:25,3442,26410
+&&&&dsmap:25,3474,26410
 ツールの設定を編集します
-&&&&dsmap:47,3467,46315
+&&&&dsmap:47,3499,46315
 (*) 一部の設定はツール再起動後に反映されます
 
-&&&&dsmap:23,3514,19720
+&&&&dsmap:23,3546,19720
 ユーザー名(タグ設定用)
-&&&&dsmap:19,3537,14003
+&&&&dsmap:19,3569,14003
 
 標準音色ファイル
-&&&&dsmap:20,3556,12769
+&&&&dsmap:20,3588,12769
 
 標準ADPCMファイル
-&&&&dsmap:19,3576,12540
+&&&&dsmap:19,3608,12540
 
 ウインドウサイズ
-&&&&dsmap:8,3595,2982
+&&&&dsmap:8,3627,2982
 800x600
-&&&&dsmap:9,3603,3424
+&&&&dsmap:9,3635,3424
 1024x768
-&&&&dsmap:9,3612,3368
+&&&&dsmap:9,3644,3368
 1280x720
-&&&&dsmap:5,3621,4105
+&&&&dsmap:5,3653,4105
 変更
-&&&&dsmap:17,3626,14003
+&&&&dsmap:17,3658,14003
 
 スロー再生速度
-&&&&dsmap:20,3643,7197
+&&&&dsmap:20,3675,7197
 x2
 x4
 x6
 x8
 x10
-&&&&dsmap:17,3663,15550
+&&&&dsmap:17,3695,15550
 
 早送り再生速度
-&&&&dsmap:30,3680,19398
+&&&&dsmap:30,3712,19398
 
 SCCIデバイス使用スイッチ(*)
-&&&&dsmap:11,3710,8231
+&&&&dsmap:11,3742,8231
 SCCIを使用
-&&&&dsmap:12,3721,8263
+&&&&dsmap:12,3753,8263
 SCCI設定...
-&&&&dsmap:23,3733,14981
+&&&&dsmap:23,3765,14981
 
 MucomDotNet フォルダ
-&&&&dsmap:4,3756,972
+&&&&dsmap:4,3788,972
 ...
-&&&&dsmap:28,3760,22204
+&&&&dsmap:28,3792,22204
 起動時にアップデート確認(*)
-&&&&dsmap:28,3788,22267
+&&&&dsmap:28,3820,22267
 FM音色エディタと連携する(*)
-&&&&dsmap:19,3816,14962
+&&&&dsmap:19,3848,14962
 
 オートセーブ設定
-&&&&dsmap:23,3835,26405
+&&&&dsmap:23,3867,26405
 一定時間ごとに保存する
-&&&&dsmap:13,3858,9822
+&&&&dsmap:13,3890,9822
 更新間隔(秒)
-&&&&dsmap:17,3871,14360
+&&&&dsmap:17,3903,14360
 世代バックアップ
-&&&&dsmap:23,3888,18628
+&&&&dsmap:23,3920,18628
 
 オートプレイヤー設定
-&&&&dsmap:27,3911,27609
+&&&&dsmap:27,3943,27609
 条件を満たせばスキップする
-&&&&dsmap:17,3938,15711
+&&&&dsmap:17,3970,15711
 最大演奏時間(秒)
-&&&&dsmap:14,3955,11354
+&&&&dsmap:14,3987,11354
 経過の割合(%)
-&&&&dsmap:12,3969,7024
+&&&&dsmap:12,4001,7024
 UI Language
-&&&&dsmap:18,3981,10961
+&&&&dsmap:18,4013,10961
 Japanese
 English
-&&&&dsmap:16,3999,12622
+&&&&dsmap:16,4031,12622
 
 フォント設定:
-&&&&dsmap:2,4015,407
+&&&&dsmap:2,4047,407
 :
-&&&&dsmap:8,4017,5089
+&&&&dsmap:8,4049,5089
 変更...
-&&&&dsmap:16,4025,13406
+&&&&dsmap:16,4057,13406
 文字色の変更...
-&&&&dsmap:16,4041,12601
+&&&&dsmap:16,4073,12601
 背景色の変更...
-&&&&dsmap:16,4057,10676
+&&&&dsmap:16,4089,10676
 \scciconfig.exe
-&&&&dsmap:1,4073,0
+&&&&dsmap:1,4105,0
 
-&&&&dsmap:1,4074,0
+&&&&dsmap:1,4106,0
 
-&&&&dsmap:1,4075,0
+&&&&dsmap:1,4107,0
 
-&&&&dsmap:17,4076,10601
-Shell.Explorer.2
-&&&&dsmap:39,4093,16316
-{34A715A0-6587-11D0-924A-0020AFC7AC4D}
-&&&&dsmap:9,4132,5741
-Navigate
-&&&&dsmap:8,4141,4004
-file://
-&&&&dsmap:12,4149,7843
-\index.html
-&&&&dsmap:12,4161,7542
-LocationURL
-&&&&dsmap:9,4173,5853
-Document
-&&&&dsmap:6,4182,3613
-Title
-&&&&dsmap:7,4188,4319
+&&&&dsmap:23,4108,19363
+MUCOM88情報をWEBで探す
+&&&&dsmap:40,4131,26694
+https://github.com/onitama/mucom88/wiki
+&&&&dsmap:7,4171,4319
 シェア
-&&&&dsmap:38,4195,34730
-MMLをネットワークで共有します(準備中)
-&&&&dsmap:1,4233,0
+&&&&dsmap:40,4178,36403
+MMLのサウンドをネットワークで共有しよう
+&&&&dsmap:63,4218,42882
+https://twitter.com/search?q=%23mucom88&src=typed_query&f=live
+&&&&dsmap:1,4281,0
 
-&&&&dsmap:17,4234,11007
+&&&&dsmap:17,4282,11007
 Windows Version 
-&&&&dsmap:5,4251,1396
-0.53
-&&&&dsmap:17,4256,9586
+&&&&dsmap:5,4299,1417
+0.56
+&&&&dsmap:17,4304,9586
 Original MUCOM88
-&&&&dsmap:26,4273,16817
+&&&&dsmap:26,4321,16817
 Created and Programmed by
-&&&&dsmap:36,4299,22953
+&&&&dsmap:36,4347,22953
 Application Icon designed by OXYGEN
-&&&&dsmap:21,4335,12292
+&&&&dsmap:21,4383,12292
 
 Special thanks to:
-&&&&dsmap:55,4356,34966
+&&&&dsmap:55,4404,34966
 WING☆, Makoto Wada (Ancient corp.), boukichi, kumatan
-&&&&dsmap:9,4411,6133
+&&&&dsmap:9,4459,6133
 mucommml
-&&&&dsmap:19,4420,11931
+&&&&dsmap:19,4468,11931
 Error file write [
-&&&&dsmap:1,4439,0
+&&&&dsmap:1,4487,0
 
-&&&&dsmap:1,4440,0
+&&&&dsmap:1,4488,0
 
-&&&&dsmap:34,4441,23220
+&&&&dsmap:34,4489,23220
 \compiler\mucomDotNETConsole.exe 
-&&&&dsmap:26,4475,17146
+&&&&dsmap:26,4523,17146
 Compile result not found.
-&&&&dsmap:34,4501,22569
+&&&&dsmap:34,4549,22569
 Compile Error in external player.
-&&&&dsmap:28,4535,18627
+&&&&dsmap:28,4583,18627
 Playing on external player.
-&&&&dsmap:38,4563,24265
+&&&&dsmap:38,4611,24265
 \player\mucomDotNETPlayer.exe -D=EMU 
-&&&&dsmap:1,4601,0
+&&&&dsmap:1,4649,0
 
-&&&&dsmap:15,4602,9373
+&&&&dsmap:15,4650,9373
 Compiled Text:
-&&&&dsmap:8,4617,3563
+&&&&dsmap:8,4665,3563
 % Data:
-&&&&dsmap:2,4625,260
+&&&&dsmap:2,4673,260
 %
-&&&&dsmap:11,4627,4619
+&&&&dsmap:11,4675,4619
 [  MUCOM88
-&&&&dsmap:13,4638,5867
+&&&&dsmap:13,4686,5867
 [  MUSICLALF
-&&&&dsmap:1,4651,0
+&&&&dsmap:1,4699,0
 
-&&&&dsmap:7,4652,3794
+&&&&dsmap:7,4700,3794
 #Abort
-&&&&dsmap:5,4659,332
+&&&&dsmap:5,4707,332
 
 
 
-&&&&dsmap:7,4664,4144
+&&&&dsmap:7,4712,4144
 #error
-&&&&dsmap:5,4671,2978
+&&&&dsmap:5,4719,2978
 line
-&&&&dsmap:15,4676,9940
+&&&&dsmap:15,4724,9940
 #unknown error
-&&&&dsmap:14,4691,8960
+&&&&dsmap:14,4739,8960
 Compile Error
-&&&&dsmap:1,4705,0
+&&&&dsmap:1,4753,0
 
-&&&&dsmap:26,4706,13079
+&&&&dsmap:26,4754,13079
 MUCOM88 MML (*.muc)|*.muc
-&&&&dsmap:1,4732,0
+&&&&dsmap:1,4780,0
 
-&&&&dsmap:1,4733,0
+&&&&dsmap:1,4781,0
 
-&&&&dsmap:5,4734,2607
+&&&&dsmap:5,4782,2607
 .muc
-&&&&dsmap:50,4739,49658
+&&&&dsmap:50,4787,49658
 同名のファイルがあります。
 上書きしていいですか?
-&&&&dsmap:9,4789,4726
+&&&&dsmap:9,4837,4726
 ] Saved.
-&&&&dsmap:4,4798,769
+&&&&dsmap:4,4846,769
  - 
-&&&&dsmap:2,4802,274
+&&&&dsmap:2,4850,274
 '
-&&&&dsmap:2,4804,792
+&&&&dsmap:2,4852,792
 q
-&&&&dsmap:2,4806,449
+&&&&dsmap:2,4854,449
 @
-&&&&dsmap:1,4808,0
+&&&&dsmap:1,4856,0
 
-&&&&dsmap:8,4809,4319
+&&&&dsmap:8,4857,4319
 #title 
-&&&&dsmap:13,4817,6812
+&&&&dsmap:13,4865,6812
 
 #composer 
-&&&&dsmap:11,4830,5298
+&&&&dsmap:11,4878,5298
 
 #author 
-&&&&dsmap:10,4841,4413
+&&&&dsmap:10,4889,4413
 
 #voice 
-&&&&dsmap:8,4851,2898
+&&&&dsmap:8,4899,2898
 
 #pcm 
-&&&&dsmap:9,4859,3564
+&&&&dsmap:9,4907,3564
 
 #date 
-&&&&dsmap:2,4868,330
+&&&&dsmap:2,4916,330
 /
-&&&&dsmap:12,4870,5981
+&&&&dsmap:12,4918,5981
 
 #comment 
-&&&&dsmap:5,4882,1984
+&&&&dsmap:5,4930,1984
 DATA
-&&&&dsmap:27,4887,23976
+&&&&dsmap:27,4935,23976
 DATAファイルがありません。
-&&&&dsmap:17,4914,5932
+&&&&dsmap:17,4962,5932
 0123456789012345
-&&&&dsmap:45,4931,17692
+&&&&dsmap:45,4979,17692
 #%d $%05x $%04x $%04x $%04x $%04x $%02x (%s)
-&&&&dsmap:9,4976,4712
+&&&&dsmap:9,5024,4712
 Saved. [
-&&&&dsmap:8,4985,4410
+&&&&dsmap:8,5033,4410
 ] size:
-&&&&dsmap:11,4993,6852
+&&&&dsmap:11,5041,6852
 _adpcm.bin
-&&&&dsmap:9,5004,5643
+&&&&dsmap:9,5052,5643
 convert 
-&&&&dsmap:5,5013,1207
+&&&&dsmap:5,5061,1207
  -> 
-&&&&dsmap:1,5018,0
+&&&&dsmap:1,5066,0
 
-&&&&dsmap:24,5019,15011
+&&&&dsmap:24,5067,15011
 No data.Convert failed.
-&&&&dsmap:1,5043,0
+&&&&dsmap:1,5091,0
 
-&&&&dsmap:21,5044,7819
+&&&&dsmap:21,5092,7819
 #%d $%04x $%04x (%s)
-&&&&dsmap:8,5065,3633
+&&&&dsmap:8,5113,3633
 VOICE._
-&&&&dsmap:9,5073,5552
+&&&&dsmap:9,5121,5552
 Missing:
-&&&&dsmap:7,5082,3206
+&&&&dsmap:7,5130,3206
 EDITOR
-&&&&dsmap:25,5089,9092
+&&&&dsmap:25,5137,9092
 C C+D D+E F F+G G+A A+B 
-&&&&dsmap:10,5114,4847
+&&&&dsmap:10,5162,4847
 INTCOUNT:
-&&&&dsmap:1,5124,0
+&&&&dsmap:1,5172,0
 
-&&&&dsmap:44,5125,22457
+&&&&dsmap:44,5173,22457
    Mut @   Vol Det   Adr  Key LFO Rev p qtz
-&&&&dsmap:4,5169,678
+&&&&dsmap:4,5217,678
    
-&&&&dsmap:50,5173,19299
+&&&&dsmap:50,5221,19299
 %c   %d  %03d %03d %05d %04x %s  %d   %d  %c %03d
-&&&&dsmap:13,5223,8548
+&&&&dsmap:13,5271,8548
 \aplayer.exe
-&&&&dsmap:9,5236,6301
+&&&&dsmap:19,5284,12442
+FmToneEditor(Mucom
+&&&&dsmap:9,5303,6301
 toolshow
-&&&&dsmap:9,5245,5958
+&&&&dsmap:9,5312,5958
 clearmsg
-&&&&dsmap:4,5254,2295
+&&&&dsmap:4,5321,2295
 msg
-&&&&dsmap:8,5258,5285
+&&&&dsmap:8,5325,5285
 msgline
-&&&&dsmap:7,5266,3619
+&&&&dsmap:7,5333,3619
 line: 
-&&&&dsmap:12,5273,8291
+&&&&dsmap:12,5340,8291
 clrmusicbar
-&&&&dsmap:12,5285,8459
+&&&&dsmap:12,5352,8459
 putmusicbar
-&&&&dsmap:46,5297,46430
+&&&&dsmap:46,5364,46430
 編集内容が破棄されます。
 終了していいですか?

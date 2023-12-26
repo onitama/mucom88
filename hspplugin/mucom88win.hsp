@@ -26,14 +26,17 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 55
-#define APP_VER "0.55"
+#const VER_NUMBER 56
+#define APP_VER "0.56"
 
 #define EDITOR_TITLE "MUCOM88"
 
 #define TEMPMML "mucommml"
 #define TEMPBIN "mucombin"
 #define STRMAP_EN "en.strmap"
+
+#define FMEDITOR_DLL "muplug_fmeditor.dll"
+
 
 	randomize
 	goto *boot
@@ -105,7 +108,7 @@
 	welcome_mes+="#Z80 emulation by Yasuo Kuwahara 2002-2018(C)\n"
 	welcome_mes+="#FM Sound Generator by cisc 1998, 2003(C)\n"
 	welcome_mes+="#SCCI system / adpcm converter by gasshi 2018(C)\n"
-	welcome_mes+="#Windows version by ONION software/onitama 2018-2021(C)\n"
+	welcome_mes+="#Windows version by ONION software/onitama 2018-2024(C)\n"
 
 	buf=welcome_mes
 	compflag=0
@@ -125,7 +128,7 @@
 	}
 
 	if plg_fmedit {
-		s1="muplug_fmeditor.dll"
+		s1=FMEDITOR_DLL
 		mucomplg_init s1
 		if stat : dialog "Missing plugin ["+s1+"]"
 		toolsw = 1
@@ -1008,28 +1011,11 @@
 	goto *main_menu
 
 *menu_web
-	;menu_str="Web"
-	pos sx,0
-	axobj ie, "Shell.Explorer.2",wx-sx,wy-80
-	comevent ie_event, ie, "{34A715A0-6587-11D0-924A-0020AFC7AC4D}",*webevent  ; DIID_DWebBrowserEvents2     
-
-	if langset=0 {
-		ie->"Navigate" "file://"+dir_exe+"\\index.html"
-	} else {
-		ie->"Navigate" "file://"+dir_exe+"\\index_en.html"
-	}
-	return
-*webevent
-	;	COMイベント処理
-	dispid = comevdisp(ie_event)
-	if dispid = DISPID_NAVIGATECOMPLETE2 : gosub *OnNavigateComplete2
-	return
-
-*OnNavigateComplete2
-	name = ie("LocationURL")
-	pDoc = ie("Document")
-	name = pDoc("Title")
-	delcom pDoc
+	menu_str="Web"
+	mes "MUCOM88情報をWEBで探す"
+	sysfont 17
+	mes "\n"
+	exec "https://github.com/onitama/mucom88/wiki",16
 	return
 
 *menu_share
@@ -1278,6 +1264,7 @@
 *m_play
 	;	PLAY
 	if compflag {
+		gosub *fmedit_check
 		mucomplay 0
 		curplay=1
 	}
@@ -1659,6 +1646,15 @@
 	mucom88app_term				; 設定を保存する
 	exec dir_exe+"\\aplayer.exe"
 	goto *main2
+
+*fmedit_check
+	;	FMエディタとの連携をチェックする
+	;	(FMエディタが既に終了されていたら連携を停止する)
+	if plg_fmedit=0 : return
+	aplsel "FmToneEditor(Mucom"
+	if stat=0 : return			; 連携中
+	mucomplg_delete FMEDITOR_DLL
+	return
 
 	;---------------------------------------------------------------------------
 
