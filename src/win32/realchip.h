@@ -1,7 +1,6 @@
-#pragma once
+﻿#pragma once
 #include <Windows.h>
-#include "scci.h"
-#include "SCCIDefines.h"
+#include "scci2.h"
 
 // リアルチップ制御用
 class realchip
@@ -26,17 +25,17 @@ public:
 	// ADPCMの転送
 	void SendAdpcmData(void *pData, DWORD size);
 	// 認識しているチップのタイプ
-	SC_CHIP_TYPE GetChipType(void) { return m_chiptype; }
+	SC2_CHIP_TYPE GetChipType(void) { return m_chiptype; }
 
 private:
 	// SCCI関連
 	HMODULE					m_hScci;
-	SoundInterfaceManager	*m_pManager;
-	SoundChip				*m_pSoundChip;
+	Scci2SoundInterfaceManager	*m_pManager;
+	Scci2SoundChip				*m_pSoundChip;
 	// 実チップフラグ
 	bool					m_IsRealChip;
 	// ADPCM用
 	BYTE					m_bADPCMBuff[0x40000];
 	// type情報
-	SC_CHIP_TYPE			m_chiptype;
+	SC2_CHIP_TYPE			m_chiptype;
 };
