@@ -48,15 +48,15 @@ https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ja
 	MUCOM88 Windowsは、以下のライブラリ及びソースコード・データにより作成されています。
 
 	・Portable Z80 emulation作者 Yasuo Kuwahara氏
-	  http://www.geocities.jp/kwhr0/
+	  http://kwhr0.g2.xrea.com/
 	・fmgen作者 cisc氏
 	  http://www.retropc.net/cisc/
 	・MUCOM88作者 古代祐三氏
-	  https://twitter.com/yuzokoshiro
+	  https://x.com/yuzokoshiro
 	・HSPMUCOM作者 おにたま(ONION software)
-	  https://www.onionsoft.net/
+	  https://x.com/onionsoftware
 	・adpcm converter/SCCI作者 がし３(gasshi)氏
-	  http://www.pyonpyon.jp/~gasshi/fm/
+	  https://www.pyonpyon.jp/~gasshi/fm/
 
 	作成にあたり、ご協力頂いた和田誠(エインシャント)様、
 	WING☆様、OXYGEN様、がし３(gasshi)様、@MUCOM88様、UME-3様そして
