@@ -1,4 +1,4 @@
-#include "realchip.h"
+﻿#include "realchip.h"
 
 // コンストラクタ
 realchip::realchip()
@@ -18,7 +18,7 @@ realchip::~realchip()
 void realchip::Initialize()
 {
 	// SCCIを読み込む
-	m_hScci = ::LoadLibrary((LPCSTR)"scci.dll");
+	m_hScci = ::LoadLibrary((LPCSTR)"scci2.dll");
 	if (m_hScci == NULL) {
 		return;
 	}
@@ -39,20 +39,20 @@ void realchip::Initialize()
 	m_pManager->reset();
 
 	// サウンドチップ取得
-	m_chiptype = SC_TYPE_YM2608;
-	m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_7987200);
+	m_chiptype = SC2_TYPE_YM2608;
+	m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC2_CLOCK_7987200);
 
 	// サウンドチップの取得が出来ない場合
 	if (m_pSoundChip == NULL)
 	{
-		m_chiptype = SC_TYPE_YM2203;
-		m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC_CLOCK_3993600);	// 2203も探す
+		m_chiptype = SC2_TYPE_YM2203;
+		m_pSoundChip = m_pManager->getSoundChip(m_chiptype, SC2_CLOCK_3993600);	// 2203も探す
 		if (m_pSoundChip == NULL) {
 			// サウンドマネージャーを解放して終了
 			m_pManager->releaseInstance();
 			::FreeLibrary(m_hScci);
 			m_hScci = NULL;
-			m_chiptype = SC_TYPE_NONE;
+			m_chiptype = SC2_TYPE_NONE;
 			return;
 		}
 	}
@@ -98,14 +98,14 @@ bool realchip::IsRealChip() {
 // SB2チップチェック
 bool realchip::IsRealChipSB2() {
 	// SB2(YM2608)の有無を返却する
-	return (m_chiptype == SC_TYPE_YM2608);
+	return (m_chiptype == SC2_TYPE_YM2608);
 }
 
 // レジスタ設定
 void realchip::SetRegister(DWORD reg, DWORD data) {
 	if (m_pSoundChip) {
 		if (reg & 0x100) {
-			if (m_chiptype != SC_TYPE_YM2608) return;
+			if (m_chiptype != SC2_TYPE_YM2608) return;
 		}
 		m_pSoundChip->setRegister(reg, data);
 	}
@@ -114,7 +114,7 @@ void realchip::SetRegister(DWORD reg, DWORD data) {
 // ADPCMの転送
 void realchip::SendAdpcmData(void *pData, DWORD size) {
 
-	if (m_chiptype != SC_TYPE_YM2608) return;
+	if (m_chiptype != SC2_TYPE_YM2608) return;
 
 	// 差分があるかチェック
 	if (memcmp(m_bADPCMBuff, pData, size) == 0) {
@@ -151,9 +151,9 @@ void realchip::SendAdpcmData(void *pData, DWORD size) {
 	}
 	// 終了
 	m_pSoundChip->setRegister(0x100, 0x00);
-	m_pSoundChip->setRegister(SC_WAIT_REG, 16);
+	m_pSoundChip->setRegister(SC2_WAIT_REG, 16);
 	m_pSoundChip->setRegister(0x110, 0x80);
-	m_pSoundChip->setRegister(SC_WAIT_REG, 16);
+	m_pSoundChip->setRegister(SC2_WAIT_REG, 16);
 
 	// バッファが空になるまで待たせる
 	while (!m_pSoundChip->isBufferEmpty()) {
