@@ -26,8 +26,8 @@
 
 ;#define EDITOR_DEBUG
 
-#const VER_NUMBER 61
-#define APP_VER "0.61"
+#const VER_NUMBER 70
+#define APP_VER "0.70"
 
 #define EDITOR_TITLE "MUCOM88"
 
@@ -107,8 +107,8 @@
 	mucomres welcome_mes
 	welcome_mes+="#Z80 emulation by Yasuo Kuwahara 2002-2018(C)\n"
 	welcome_mes+="#FM Sound Generator by cisc 1998, 2003(C)\n"
-	welcome_mes+="#SCCI system / adpcm converter by gasshi 2018-2026(C)\n"
-	welcome_mes+="#Windows version by ONION software/onitama 2018-2026(C)\n"
+	welcome_mes+="#FM Tone Editor / SCCI2 system / adpcm converter by gasshi 2018-(C)\n"
+	welcome_mes+="#Windows version by ONION software/onitama 2018-(C)\n"
 
 	buf=welcome_mes
 	compflag=0
