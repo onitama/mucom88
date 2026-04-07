@@ -1,0 +1,7 @@
+License
+
+FmToneEditorV2 and its source code are released under the Creative Commons CC BY-NC-SA 4.0 license, the same as MUCOM88 Windows.
+However, the SCCI2.h file included in the FmToneEditorV2 source code is licensed under the MIT License, in accordance with the SCCI2 license.
+
+Additionally, the "fmgenmodule.dll" included with SCCI2 uses fmgen, and therefore its licensing follows the terms described in fmgen’s "readme.txt".
+

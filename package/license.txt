@@ -1,17 +1,17 @@
 LICENSE INFO
 
 Name        : MUCOM88 Windows
-Platform    : Windows XP or later
+Platform    : Windows 10 or later
 Repository  : https://onitama.tv/mucom88/
 Download site : https://github.com/onitama/mucom88
 
 Copyright   : 
-OpenMucom88 Ver.1.7 Copyright 1987-2019(C) Yuzo Koshiro
-Z80 emulation by Yasuo Kuwahara 2002-2018(C)
+OpenMucom88 Ver.1.7 Copyright 1987-(C) Yuzo Koshiro
+Z80 emulation by Yasuo Kuwahara 2002-(C)
 FM Sound Generator by cisc 1998, 2003(C)
-SCCI system / adpcm converter by gasshi 2018(C)
+SCCI2 system / adpcm converter by gasshi 2024-(C)
 
-Windows version by ONION software/onitama 2018-2019(C)
+Windows version by ONION software/onitama 2018-(C)
 License     : CC BY-NC-SA 4.0
 
 This software is provided 'as-is', without any express or implied warranty.
@@ -122,6 +122,7 @@ https://creativecommons.org/licenses/by-nc-sa/4.0/deed.ja
 
 	各ライブラリについての詳細は、それぞれのソースコード及びドキュメントを
 	参照ください。
-	有償・商用での配布については、別途作者までお問い合わせください。
+	MUCOM88本体及び周辺ツールについて、	有償・商用での配布に関しては、
+	別途作者までお問い合わせください。
 
 

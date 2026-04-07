@@ -44,11 +44,11 @@ FmToneEditor
 
 実チップによるプレービューについて
 
-　FmToneEditorでは、SCCI(Sound Chip Common Interface)を経由して
+　FmToneEditorでは、SCCI2(Sound Chip Common Interface)を経由して
 　実際のFM音源チップ(YM2608)による演奏をサポートしています。
 　「SPFM FMの塔」、「SPFM Light」、「RE:Birth」等のYM2608実チップを
 　搭載したハードウェアに対応しています。
-　PCに、ハードウェアを接続した状態で、「scciconfig.exe」により
+　PCに、ハードウェアを接続した状態で、「scci2config.exe」により
 　設定を行っておく必要があります。
 
 制限事項
@@ -57,8 +57,8 @@ FmToneEditor
 　　・DATファイルの読込みとエディタ上で編集のみで
 　　　DATファイルへの保存は未対応となります。
 　　・編集中に音色番号を変更した場合は、設定中のパラメータは破棄されます。
-　　・SCCIによる実チップでのプレビュー再生はMUCOM88 Windows等で
-　　　SCCIを使用中に同時に利用はできません。
+　　・SCCI2による実チップでのプレビュー再生はMUCOM88 Windows等で
+　　　SCCI2を使用中に同時に利用はできません。
 
 ライセンス
 

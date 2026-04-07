@@ -1,0 +1,11 @@
+ライセンスについて
+
+FmToneEditorV2及びソースコードはMUCOM88 Windowsとと同様に
+クリエイティブコモンズで規定されたCC BY-NC-SA 4.0ライセンスでの公開となります。
+但し、FmToneEditorV2のソースコードに同梱されているSCCI2.hについては
+SCCI2のライセンスに従いMITライセンスとなります。
+
+また、SCCI2に同梱の「fmgenmodule.dll」については、fmgenを利用しているため
+licenseについてはfmgenの「readme.txt」の記載に従っての公開となります。
+
+

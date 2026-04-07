@@ -1,10 +1,12 @@
 ------------------------------------------------------------------------------
 MUCOM88 Windows document (Japanese UTF8 text)
 
-OpenMucom88 Ver.1.7d Copyright 1987-2020(C) Yuzo Koshiro
+OpenMucom88 Ver.1.7d Copyright 1987-(C) Yuzo Koshiro
 Z80 emulation by Yasuo Kuwahara 2002-2018(C)
 FM Sound Generator by cisc 1998, 2003(C)
-Windows version by ONION software/onitama 2018-2024(C)
+FM Tone Editor by gasshi 2024-(C)
+SCCI2 system / adpcm converter by gasshi 2024-(C)
+Windows version by ONION software/onitama 2018-(C)
 ------------------------------------------------------------------------------
 
 ・はじめに
@@ -20,7 +22,7 @@ Windows version by ONION software/onitama 2018-2024(C)
 	MUCOM88 Windowsを使用することにより、音楽記述に特化した言語
 	MML(Music Macro Language)として記述された音楽を、
 	PC-8801の音源と同様に演奏させることができます。
-	また、SCCI(Sound Chip Common Interface)を経由することで
+	また、SCCI2(Sound Chip Common Interface)を経由することで
 	実際のFM音源チップ(YM2608/YM2203)による演奏をサポートしています。
 
 	MUCOM88 Windowsについての詳細な説明、及びMMLリファレンスは
@@ -126,9 +128,9 @@ Windows version by ONION software/onitama 2018-2024(C)
 
 ・実チップの使用について
 
-	MUCOM88 Windowsでは、SCCI(Sound Chip Common Interface)を経由して
+	MUCOM88 Windowsでは、SCCI2(Sound Chip Common Interface)を経由して
 	実際のFM音源チップ(YM2608/YM2203)による演奏をサポートしています。
-	同梱されているSCCIのシステムDLLは、以下のハードウェアに実チップ
+	同梱されているSCCI2のシステムDLLは、以下のハードウェアに実チップ
 	(YM2608またはYM2203)を搭載したものに対応しています。
 
 	・SPFM FMの塔
@@ -137,21 +139,21 @@ Windows version by ONION software/onitama 2018-2024(C)
 	・G.I.M.I.C
 	・C86BOX
 
-	実チップの使用については、最新のSCCI関連情報を参照ください。
+	実チップの使用については、最新のSCCI2関連情報を参照ください。
 
-	SCCI(Sound Chip Common Interface)
-	http://www.pyonpyon.jp/~gasshi/fm/scci.html
+	SCCI2(Sound Chip Common Interface)
+	https://www.pyonpyon.jp/~gasshi/fm/
 
-	MUCOM88 WindowsからSCCIを使用する際は、メニュー→オプションで
-	「SCCI使用」のチェックをONにして、ツールを再起動してください。
-	(SCCIオプションは、ツールを再度起動した際に有効になります)
+	MUCOM88 WindowsからSCCI2を使用する際は、メニュー→オプションで
+	「SCCI2を使用」のチェックをONにして、ツールを再起動してください。
+	(SCCI2オプションは、ツールを再度起動した際に有効になります)
 
 	実際にに使用する際には、PCにハードウェアを接続した状態で、最初に
-	SCCIの設定を行っておく必要があります。
-	メニュー→オプション「SCCI設定」ボタンから、SCCIの設定メニュー
-	を起動することができます。(scciconfig.exeからも起動できます)
+	SCCI2の設定を行っておく必要があります。
+	メニュー→オプション「SCCI2設定」ボタンから、SCCI2の設定メニュー
+	を起動することができます。(scci2config.exeからも起動できます)
 
-	SCCI使用時は、Windows上でのFM音源再生は行わず、外部のチップのみで
+	SCCI2使用時は、Windows上でのFM音源再生は行わず、外部のチップのみで
 	再生を行います。
 
 
@@ -244,7 +246,7 @@ Windows version by ONION software/onitama 2018-2024(C)
 	       -a [filename]	指定されたDLLをプラグインとして読み込む(Windows版のみ)
 	       -f [drivername]	明示されたドライバ名を強制的に適用する
 	       -e           	MUCOM88システムファイルを外部から読み込む
-	       -s           	SCCIを経由して実チップでの演奏を行う
+	       -s           	SCCI2を経由して実チップでの演奏を行う
 	       -k           	PCMファイルの読み込みをスキップする
 	       -x		WAV/VGM/S98のレコーディングを行う
 	       -l [n]		レコーディングファイル出力時の時間(秒)をnに指定する
@@ -274,7 +276,7 @@ Windows version by ONION software/onitama 2018-2024(C)
 
 ・HSPプラグインについて
 
-	同梱されている、hspmucom.dllはスクリプト言語HSP(HotSoupProcessor)から
+	同梱されている、hspmucom.dllはスクリプト言語HSP3(HotSoupProcessor)から
 	呼び出して使用することが可能なプラグインになっています。
 	MUCOM88 Windowsアプリケーションも、HSPにより記述されています。
 	hspluginフォルダにスクリプトのソース及びプラグインドキュメントが
@@ -322,7 +324,7 @@ Windows version by ONION software/onitama 2018-2024(C)
 	  https://twitter.com/yuzokoshiro
 	・HSPMUCOM作者 おにたま(ONION software)
 	  https://www.onionsoft.net/
-	・adpcm converter/SCCI/FmToneEditor/mucom88DatToTxt作者
+	・adpcm converter/SCCI2/FmToneEditor/mucom88DatToTxt作者
 	  がし３(gasshi)氏
 	  http://www.pyonpyon.jp/~gasshi/fm/
 	・mucomDotNET作者 kumatan氏

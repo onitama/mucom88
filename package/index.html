@@ -38,7 +38,7 @@ The original MUCOM88 disk images are also available at <a href="https://www.anci
 <BR>
 <B>MUCOM88 Windows</B>は、MUCOM88をWindows上で動作させるためのシステムです。コマンドライン版、GUI版の両方が用意されています。PC-8801のBIOSやディスクイメージは必要ありません。
 <BR>
-外部接続されたYM2608またはYM2203の実チップを、SCCIを経由して再生することが可能です。
+外部接続されたYM2608またはYM2203の実チップを、SCCI2を経由して再生することが可能です。
 <BR>
 以下のリンクから最新版のアーカイブをダウンロードすることができます。<br>(Windows以外のプラットフォーム対応については、<a href="https://github.com/onitama/mucom88" target="_blank">Githubリポジトリ</a>を参照ください)
 
@@ -56,12 +56,16 @@ The original MUCOM88 disk images are also available at <a href="https://www.anci
 </P><PRE>
 		mucom88win.exe         Windows GUI版エディタ
 		mucom88.exe            Windows コマンドライン版
+		FmToneEditor.exe       FM音色エディタV2
 </PRE><P>
 	MUCOM88 Windowsを使用することにより、音楽記述に特化した言語
 	MML(Music Macro Language)として記述された音楽を、
 	PC-8801の音源と同様に演奏させることができます。
-	また、SCCI(Sound Chip Common Interface)を経由することで
+	また、SCCI2(Sound Chip Common Interface)を経由することで
 	実際のFM音源チップ(YM2608)による演奏をサポートしています。
+<BR><BR>
+	FmToneEditor(FM音色エディタV2)は、単体で動作するバージョンになっています。
+	(FmToneEditorV2フォルダにx64版も同梱されています)
 <BR><BR>
 	MUCOM88 Windowsについての詳細な説明、及びMMLリファレンスは
 	Open MUCOM88 WiKiにて提供されています。<BR>
@@ -99,11 +103,11 @@ Name        : MUCOM88 Windows
 Version     : Ver0.60 ( MUCOM88 Ver1.7c )
 Platform    : Windows 7 or later
 Copyright   : 
-OpenMucom88 Ver.1.7 Copyright 1987-2020(C) Yuzo Koshiro
-Z80 emulation by Yasuo Kuwahara 2002-2018(C)
+OpenMucom88 Ver.1.7 Copyright 1987-(C) Yuzo Koshiro
+Z80 emulation by Yasuo Kuwahara 2002-(C)
 FM Sound Generator by cisc 1998, 2003(C)
-SCCI system / adpcm converter by gasshi 2018(C)
-Windows version by ONION software/onitama 2018-2024(C)
+FM Tone Editor / SCCI2 system / adpcm converter by gasshi 2024-(C)
+Windows version by ONION software/onitama 2018-(C)
 License     : CC BY-NC-SA 4.0
 </pre>
 </div>
