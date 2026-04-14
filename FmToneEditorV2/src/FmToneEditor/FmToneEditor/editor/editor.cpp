@@ -692,10 +692,16 @@ BOOL FmToneEditor::KeyDown(WPARAM wParam,LPARAM lParam){
 		}
 		else if(wParam == VK_UP) {
 			if(m_iTargetTrack < 15) m_iTargetTrack++;
+			// キーの初期化
+			keyInitialize();
+			SetToneParam(m_VoiceData);
 			return bRet;
 		}
 		else if(wParam == VK_DOWN) {
 			if(m_iTargetTrack > 0) m_iTargetTrack--;
+			// キーの初期化
+			keyInitialize();
+			SetToneParam(m_VoiceData);
 			return bRet;
 		}
 	}
@@ -1739,8 +1745,22 @@ void	FmToneEditor::midiCallBack(UINT msg, DWORD_PTR dwParam1, DWORD_PTR dwParam2
 }
 
 void	FmToneEditor::midiCallBackMain(UINT msg, DWORD_PTR dwParam1, DWORD_PTR dwParam2) {
-	if (msg != MIM_DATA) {
-		return;
+//	if (msg != MIM_DATA) {
+//		return;
+//	}
+	switch(msg){
+		case MIM_OPEN:
+			return;
+		case MIM_CLOSE:
+			return;
+		case MIM_LONGDATA:
+			return;
+		case MIM_ERROR:
+			return;
+		case MIM_LONGERROR:
+			return;
+		case MIM_DATA:
+			break;
 	}
 	EnterCriticalSection(&cs);
 	int cmd = (int)dwParam1 & 0xff;

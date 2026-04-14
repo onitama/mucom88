@@ -164,8 +164,6 @@
     <ResourceCompile Include="FmToneEditor.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="icon1.ico" />
-    <Image Include="icon2.ico" />
     <Image Include="images\al0.bmp" />
     <Image Include="images\al1.bmp" />
     <Image Include="images\al2.bmp" />

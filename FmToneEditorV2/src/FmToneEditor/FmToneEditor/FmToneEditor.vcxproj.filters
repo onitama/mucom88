@@ -156,11 +156,5 @@
     <Image Include="main.ico">
       <Filter>リソース ファイル</Filter>
     </Image>
-    <Image Include="icon1.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
-    <Image Include="icon2.ico">
-      <Filter>リソース ファイル</Filter>
-    </Image>
   </ItemGroup>
 </Project>
