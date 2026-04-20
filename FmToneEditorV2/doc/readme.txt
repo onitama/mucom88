@@ -1,0 +1,13 @@
+FmToneEditorV2 単体版
+
+本プログラムは、MUCOM88 Windowsに添付されているFMToneEditor単体版のMIDI対応版になります。
+基本的な音色の操作については、旧バージョンと同様になります。
+
+DATファイルをWindow上にドラッグすることでDATファイル上の音色を編集可能となります。
+キー操作についてはImformation欄の内容を、ご確認ください。
+
+また、V2からはfmgenのはSCCI2経由での利用を前提としております。
+scciconfig2.exeにてInternalを有効の状態でご利用ください。
+
+srcフォルダ内のソースコードはVisual Studio 2022以降用となっています。
+

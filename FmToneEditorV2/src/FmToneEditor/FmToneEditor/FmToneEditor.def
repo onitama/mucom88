@@ -1,0 +1,2 @@
+LIBRARY 
+"WindowMain" DESCRIPTION "WindowMain func" EXPORTS WindowMain 
