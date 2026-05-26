@@ -10,7 +10,7 @@
 #include <stdio.h>
 #include <rpc.h>
 
-#include "hspdll.h"
+#include "../../hpi3sample/hsp3plugin.h"
 #include "../src/cmucom.h"
 
 #define MUCOM_USE_UUID
@@ -108,7 +108,7 @@ static int valsize( PVAL2 *pv )
 */
 /*------------------------------------------------------------*/
 
-EXPORT BOOL WINAPI mucominit( int p1, int p2, int p3, int p4 )
+EXPORT BOOL WINAPI mucominit( HSPPTRINT p1, HSPPTRINT p2, HSPPTRINT p3, HSPPTRINT p4 )
 {
 	//	DLL mucominit hwnd, option (type$00)
 	//
@@ -119,7 +119,7 @@ EXPORT BOOL WINAPI mucominit( int p1, int p2, int p3, int p4 )
 }
 
 
-EXPORT BOOL WINAPI mucombye(int p1, int p2, int p3, int p4)
+EXPORT BOOL WINAPI mucombye(HSPPTRINT p1, HSPPTRINT p2, HSPPTRINT p3, HSPPTRINT p4)
 {
 	//	DLL mucombye (type$00)
 	//
@@ -128,7 +128,7 @@ EXPORT BOOL WINAPI mucombye(int p1, int p2, int p3, int p4)
 }
 
 
-EXPORT BOOL WINAPI mucomreset(int p1, int p2, int p3, int p4)
+EXPORT BOOL WINAPI mucomreset(HSPPTRINT p1, HSPPTRINT p2, HSPPTRINT p3, HSPPTRINT p4)
 {
 	//	DLL mucomreset option (type$00)
 	//
@@ -139,7 +139,7 @@ EXPORT BOOL WINAPI mucomreset(int p1, int p2, int p3, int p4)
 }
 
 
-EXPORT BOOL WINAPI mucomplay(int p1, int p2, int p3, int p4)
+EXPORT BOOL WINAPI mucomplay(HSPPTRINT p1, HSPPTRINT p2, HSPPTRINT p3, HSPPTRINT p4)
 {
 	//	DLL mucomplay id,flag (type$00)
 	//
@@ -150,7 +150,7 @@ EXPORT BOOL WINAPI mucomplay(int p1, int p2, int p3, int p4)
 }
 
 
-EXPORT BOOL WINAPI mucomstop(int p1, int p2, int p3, int p4)
+EXPORT BOOL WINAPI mucomstop(HSPPTRINT p1, HSPPTRINT p2, HSPPTRINT p3, HSPPTRINT p4)
 {
 	//	DLL mucomstop mode (type$00)
 	//
@@ -166,7 +166,7 @@ EXPORT BOOL WINAPI mucomstop(int p1, int p2, int p3, int p4)
 }
 
 
-EXPORT BOOL WINAPI mucomfade(int p1, int p2, int p3, int p4)
+EXPORT BOOL WINAPI mucomfade(HSPPTRINT p1, HSPPTRINT p2, HSPPTRINT p3, HSPPTRINT p4)
 {
 	//	DLL mucomfade speed (type$00)
 	//
@@ -177,7 +177,7 @@ EXPORT BOOL WINAPI mucomfade(int p1, int p2, int p3, int p4)
 }
 
 
-EXPORT BOOL WINAPI mucomloadpcm(void *bmscr, char *p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomloadpcm(void *bmscr, char *p1, HSPPTRINT p2, HSPPTRINT p3)
 {
 	//	DLL mucomloadpcm "filename" (type$16)
 	//
@@ -195,7 +195,7 @@ EXPORT BOOL WINAPI mucomloadpcm(void *bmscr, char *p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomloadvoice(void *bmscr, char *p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomloadvoice(void *bmscr, char *p1, HSPPTRINT p2, HSPPTRINT p3)
 {
 	//	DLL mucomloadvoice "filename" (type$16)
 	//
@@ -208,7 +208,7 @@ EXPORT BOOL WINAPI mucomloadvoice(void *bmscr, char *p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomload(void *bmscr, char *p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomload(void *bmscr, char *p1, HSPPTRINT p2, HSPPTRINT p3)
 {
 	//	DLL mucomload "filename",num (type$16)
 	//
@@ -222,7 +222,7 @@ EXPORT BOOL WINAPI mucomload(void *bmscr, char *p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomres(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomres(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomres var (type$202)
 	//
@@ -239,7 +239,7 @@ EXPORT BOOL WINAPI mucomres(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomstat(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomstat(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomstat var,option (type$202)
 	//
@@ -258,7 +258,7 @@ EXPORT BOOL WINAPI mucomstat(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomcomp(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomcomp(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomcomp "mmlfile","outfile",option (type$202)
 	//
@@ -281,7 +281,7 @@ EXPORT BOOL WINAPI mucomcomp(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucommml(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucommml(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucommml mmldata_var,option (type$202)
 	//
@@ -303,7 +303,7 @@ EXPORT BOOL WINAPI mucommml(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomtag(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomtag(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomtag var,"tagname" (type$202)
 	//
@@ -327,7 +327,7 @@ EXPORT BOOL WINAPI mucomtag(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomloadtag(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomloadtag(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomloadtag var,"mmlfile" (type$202)
 	//
@@ -351,7 +351,7 @@ EXPORT BOOL WINAPI mucomloadtag(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomcnvpcm(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomcnvpcm(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomcnvpcm "WAVfile","ADPCMfile" (type$202)
 	//
@@ -371,7 +371,7 @@ EXPORT BOOL WINAPI mucomcnvpcm(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI getuuid(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI getuuid(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL getuuid var (type$202)
 	//
@@ -385,7 +385,7 @@ EXPORT BOOL WINAPI getuuid(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomsetuuid(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomsetuuid(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomsetuuid "UUID" (type$202)
 	//
@@ -398,7 +398,7 @@ EXPORT BOOL WINAPI mucomsetuuid(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomsetoption(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomsetoption(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomsetoption option, mode (type$202)
 	//		mode : 0=set/1=add/2=sub
@@ -413,7 +413,7 @@ EXPORT BOOL WINAPI mucomsetoption(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomsetfastfw(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomsetfastfw(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomsetfastfw speed (type$202)
 	//
@@ -426,7 +426,7 @@ EXPORT BOOL WINAPI mucomsetfastfw(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomsetvolume(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomsetvolume(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomsetvolume fmvol, ssgvol (type$202)
 	//
@@ -440,7 +440,7 @@ EXPORT BOOL WINAPI mucomsetvolume(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomgetchdata var, ch (type$202)
 	//
@@ -460,7 +460,7 @@ EXPORT BOOL WINAPI mucomgetchdata(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomplg_init(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomplg_init(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomplg_init "filename" (type$202)
 	//	MUCOM88プラグインの追加と初期化
@@ -479,7 +479,7 @@ EXPORT BOOL WINAPI mucomplg_init(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomplg_notice(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomplg_notice(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomplg_notice p1,p2,p3 (type$202)
 	//	MUCOM88プラグインの通知
@@ -498,7 +498,7 @@ EXPORT BOOL WINAPI mucomplg_notice(HSPEXINFO *hei, int p1, int p2, int p3)
 
 //--------------------------------------------------------------------------------------
 
-EXPORT BOOL WINAPI mucomedit_reset(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_reset(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_reset "MML", option (type$202)
 	//	MMLエディタサービスのリセット
@@ -514,7 +514,7 @@ EXPORT BOOL WINAPI mucomedit_reset(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_setfile(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_setfile(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_setfile "filename", "pathname",session (type$202)
 	//	MMLエディタファイル名の設定
@@ -536,7 +536,7 @@ EXPORT BOOL WINAPI mucomedit_setfile(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_getstat(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_getstat(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_getstat var, prmid (type$202)
 	//	MMLエディタのステータス取得
@@ -570,7 +570,7 @@ EXPORT BOOL WINAPI mucomedit_getstat(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_update(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_update(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_update var (type$202)
 	//	MMLエディタのテキスト更新(varは配列ではない単一の変数)
@@ -585,7 +585,7 @@ EXPORT BOOL WINAPI mucomedit_update(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_getline(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_getline(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_getline var, pos (type$202)
 	//	MMLエディタのpos->line取得
@@ -605,7 +605,7 @@ EXPORT BOOL WINAPI mucomedit_getline(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_save(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_save(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_save "filename" (type$202)
 	//	MMLエディタの保存実行
@@ -623,7 +623,7 @@ EXPORT BOOL WINAPI mucomedit_save(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_getreq(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_getreq(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_getreq var (type$202)
 	//	MMLエディタのリクエストMML文字列を取得
@@ -641,7 +641,7 @@ EXPORT BOOL WINAPI mucomedit_getreq(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_proc(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_proc(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_proc var (type$202)
 	//	MMLエディタの定期処理(オートセーブなど)
@@ -660,7 +660,7 @@ EXPORT BOOL WINAPI mucomedit_proc(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomedit_flush(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomedit_flush(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomedit_flush (type$202)
 	//	MMLエディタの一時ファイルをすべて破棄する
@@ -677,7 +677,7 @@ EXPORT BOOL WINAPI mucomedit_flush(HSPEXINFO *hei, int p1, int p2, int p3)
 //--------------------------------------------------------------------------------------
 
 
-EXPORT BOOL WINAPI mucomgetdriver(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomgetdriver(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomgetdriver var,"filename",option (type$202)
 	//		"filename"の#driverオプションを得る
@@ -706,7 +706,7 @@ EXPORT BOOL WINAPI mucomgetdriver(HSPEXINFO *hei, int p1, int p2, int p3)
 }
 
 
-EXPORT BOOL WINAPI mucomsetdriver(int p1, int p2, int p3, int p4)
+EXPORT BOOL WINAPI mucomsetdriver(HSPPTRINT p1, HSPPTRINT p2, HSPPTRINT p3, HSPPTRINT p4)
 {
 	//	DLL mucomsetdriver option (type$00)
 	//		mucomのドライバ動作モードを指定する、optionに MUCOM_DRIVER_* を指定する
@@ -719,7 +719,7 @@ EXPORT BOOL WINAPI mucomsetdriver(int p1, int p2, int p3, int p4)
 }
 
 
-EXPORT BOOL WINAPI mucomdumpvoice(HSPEXINFO *hei, int p1, int p2, int p3)
+EXPORT BOOL WINAPI mucomdumpvoice(HSPEXINFO *hei, HSPPTRINT _p1, HSPPTRINT _p2, HSPPTRINT _p3)
 {
 	//	DLL mucomdumpvoice var (type$202)
 	//	ボイスダンプ文字列を取得

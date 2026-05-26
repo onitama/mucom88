@@ -4,7 +4,11 @@
 #ifndef __hspmucom__
 #define __hspmucom__
 
+#ifdef __hsp64__
+#uselib "hspmucom_64.dll"
+#else
 #uselib "hspmucom.dll"
+#endif
 
 #func mucominit mucominit $0
 #func mucombye mucombye $100

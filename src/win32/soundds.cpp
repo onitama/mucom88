@@ -11,11 +11,9 @@
 #include "../fmgen/opna.h"
 
 #if defined( _MSC_VER )
-#pragma comment(lib,"winmm.lib")
-#pragma comment(lib, "lib/lib/d3d8.lib")
-#pragma comment(lib, "lib/lib/d3dx8.lib")
-#pragma comment(lib, "lib/lib/d3dxof.lib")
-#pragma comment(lib, "lib/lib/dxguid.lib")
+#pragma comment(lib, "dsound.lib")
+#pragma comment(lib, "dxguid.lib")
+#pragma comment(lib, "winmm.lib")
 #endif
 
 using namespace WinSoundDriver;
