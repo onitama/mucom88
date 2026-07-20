@@ -37,7 +37,9 @@ bool AudioSdl::Open(int rate) {
     Buffer->SendBuffer = false;
     Buffer->Reset();
 
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+    // SDLがSIGINT/SIGTERMを奪ってSDL_QUITに変換しないよう、
+    // シグナルハンドラ(通称parachute)のインストールを無効化する。
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE)) {
         printf("Failed to Initialize!!\n");
         return false;
     }

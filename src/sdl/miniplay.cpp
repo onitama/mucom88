@@ -1,7 +1,13 @@
 #include <stdio.h>
+#include <signal.h>
 #include <SDL.h>
 #include "audiosdl.h"
 #include "mucom_module.h"
+
+static volatile sig_atomic_t s_break_flag = 0;
+static void s_signal_handler(int) {
+    s_break_flag = 1;
+}
 
 class Player {
 public:
@@ -25,6 +31,8 @@ Player::~Player() {
 }
 
 bool Player::EventCheck() {
+    if (s_break_flag) return true;
+
     SDL_Event evt;
 
     while(SDL_PollEvent(&evt)) {
@@ -63,6 +71,10 @@ int Player::Play(const char *filename) {
     if (!r) return -1;
 
     sdl->Open(44100);
+
+    // SIGINT/SIGTERM を自前ハンドラで捕捉しブレークフラグを立てる
+    signal(SIGINT, s_signal_handler);
+    signal(SIGTERM, s_signal_handler);
 
     // イベントループ
     printf("Playing..\n");
