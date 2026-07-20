@@ -7,12 +7,14 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdarg.h>
+#include <stdint.h>
 #define BOOL int
 #define TRUE 1
 #define FALSE 0
 typedef unsigned char BYTE;
 typedef unsigned long DWORD;
 typedef unsigned short WORD;
+typedef uintptr_t DWORD_PTR;
 #endif
 
 typedef struct {
