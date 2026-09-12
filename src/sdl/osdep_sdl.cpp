@@ -2,6 +2,7 @@
 // BouKiCHi 2019
 
 #include <SDL.h>
+#include <signal.h>
 #include <stdio.h>
 #include "osdep_sdl.h"
 
@@ -15,6 +16,11 @@
 static void SdlAudioCallback(void *param, Uint8 *data, int len);
 static Uint32 SdlTimerCallback(Uint32 interval, void *param);
 
+static volatile sig_atomic_t s_break_flag = 0;
+static void s_signal_handler(int) {
+	s_break_flag = 1;
+}
+
 OsDependentSdl::OsDependentSdl() {
     Time = new AudioTimeInfo();
     Buffer = new AudioBuffer(AUDIO_CHANNELS, AUDIO_BUFFER_SIZE, AUDIO_BUFFER_BLOCK);
@@ -23,7 +29,10 @@ OsDependentSdl::OsDependentSdl() {
 	UserTimerCallback = new TimerCallback;
 	UserAudioCallback = new AudioCallback;
 
-    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER)) {
+    // SDLがSIGINT/SIGTERMを奪ってSDL_QUITに変換しないよう、
+    // シグナルハンドラ(通称parachute)のインストールを無効化する。
+    // 自前のsignal()ハンドラでブレークフラグを立てるため。
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_TIMER | SDL_INIT_NOPARACHUTE)) {
         printf("Failed to Initialize SDL!!\n");
     }
 }
@@ -259,12 +268,14 @@ int OsDependentSdl::KillFile(const char *filename)
 
 bool OsDependentSdl::SetBreakHook()
 {
+	signal(SIGINT, s_signal_handler);
+	signal(SIGTERM, s_signal_handler);
 	return true;
 }
 
 bool OsDependentSdl::GetBreakStatus()
 {
-	return false;
+	return s_break_flag != 0;
 }
 
 int OsDependentSdl::GetStatus(int option)
